@@ -1,0 +1,181 @@
+name: RaytracerAction
+
+on:
+  push:
+    branches-ignore:
+      - 'ga-ignore-*'
+      - 'HEAD'
+
+  pull_request:
+    branches-ignore:
+      - 'ga-ignore-*'
+      - 'HEAD'
+
+env:
+  MIRROR_URL: https://github.com/EpitechPromo2028/B-OOP-400-NAN-4-1-raytracer-samuel.tesson.git
+  GITHUB_URL: git@github.com:EpitechPromo2028/B-OOP-400-NAN-4-1-raytracer-samuel.tesson.git
+  EXECUTABLE: raytracer
+  LIBRARY: ""
+
+jobs:
+  cancel-if-mirror:
+    name: Cancel if repository is the mirror
+    runs-on: ubuntu-latest
+    outputs:
+      should_cancel: ${{ steps.check-repo-url.outputs.should_cancel }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - id: check-repo-url
+        name: Check repository URL
+        run: |
+          REPO_URL=$(git config --get remote.origin.url)
+
+          # Normalize URLs by removing any trailing `.git`
+          REPO_URL=${REPO_URL%.git}
+          MIRROR_URL=${MIRROR_URL%.git}
+
+          if [ "$REPO_URL" == "$MIRROR_URL" ]; then
+            echo "Repository URL matches the mirror URL. Skipping further jobs."
+            echo "should_cancel=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Repository URL does not match the mirror URL. Proceeding with other jobs."
+            echo "should_cancel=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build project
+    runs-on: ubuntu-latest
+    needs: [cancel-if-mirror]
+    if: needs.cancel-if-mirror.outputs.should_cancel == 'false'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -y && sudo apt install -y --no-install-recommends \
+            cmake g++ libconfig++-dev libsfml-dev
+
+      - name: Build project
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build .
+
+      - name: Check binary
+        run: |
+          if [ ! -f ${{ env.EXECUTABLE }} ]; then
+            echo "Binary not found"
+            exit 1
+          fi
+
+    #   - name: Check Libraries
+    #     run: |
+    #       for lib in $(echo ${{ env.LIBRARY }} | tr "," "\n"); do
+    #         if [ ! -f "./lib/$lib" ]; then
+    #           echo "❌ Library $lib not found in ./lib/"
+    #           exit 1
+    #         else
+    #           echo "✅ Library $lib found in ./lib/"
+    #         fi
+    #       done
+
+      - name: Run unit-tests
+        run: |
+          cd build
+          cmake .. -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON
+          cmake --build .
+          ctest
+          make coverage
+
+  coding-style-C:
+    name: Checking coding-style and display it if error
+    runs-on: ubuntu-latest
+    needs: cancel-if-mirror
+    if: needs.cancel-if-mirror.outputs.should_cancel == 'false'
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run coding-style
+        run: check.sh $(pwd) $(pwd)
+
+      - name: Create annotation for coding-style errors
+        shell: bash
+        run: |
+          input=$(pwd)/coding-style-reports.log
+          while IFS= read -r -a line; do
+            fields=($(printf "%s" "$line"|cut -d':' --output-delimiter=' ' -f1-))
+            echo "::error title=${fields[2]} coding style error,file=${fields[0]},line=${fields[1]}::${fields[3]}"
+          done < $input
+
+      - name: Report banana result
+        shell: bash
+        run: |
+          NB_ERROR=$(cat $(pwd)/coding-style-reports.log | wc -l)
+          if [ $NB_ERROR -gt 0 ]; then
+            exit 1
+          fi
+  coding-style-CPP:
+    needs: coding-style-C
+    name: Checking CPP code with cppcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck gcc g++ libtinyxml2-dev
+          pip install cpplint
+
+      - name: Run cpplint
+        id: cpplint
+        run: |
+          has_error=0
+          while IFS= read -r line; do
+            file=$(echo "$line" | awk -F':' '{print $1}')
+            # Skip stb_image.h file from checks
+            if [[ "$file" == *"src/Graphics/OpenGL/OpenGLUtils/stb_image.h"* ]]; then
+              continue
+            fi
+            line_num=$(echo "$line" | awk -F':' '{print $2}')
+            msg=$(echo "$line" | awk -F':' '{print $3}')
+            # Extract severity and type from message using regex
+            if [[ $msg =~ (.*)\ \[([a-zA-Z0-9_/]+)\]\ \[([0-9]+)\] ]]; then
+              description="${BASH_REMATCH[1]}"
+              category="${BASH_REMATCH[2]}"
+              severity="${BASH_REMATCH[3]}"
+
+              if [[ $severity -ge 4 ]]; then
+                echo "::error file=$file,line=$line_num,title=cpplint [$category]::$description"
+                has_error=1
+              else
+                echo "::warning file=$file,line=$line_num,title=cpplint [$category]::$description"
+              fi
+            fi
+          done < <(cpplint --recursive --filter=-legal/copyright,-whitespace/indentation,-readability/todo src/ 2>&1)
+
+          exit $has_error
+
+  push_to_mirror:
+    name: Pushing to good repository
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build, coding-style-CPP]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to mirror repository
+        uses: pixta-dev/repository-mirroring-action@v1.1.1
+        with:
+          target_repo_url: ${{ env.GITHUB_URL }}
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}

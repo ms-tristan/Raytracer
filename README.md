@@ -45,7 +45,7 @@ This raytracer supports:
 ## 🚀 Getting Started
 ### 📥 Clone the repository
 ```bash
-git clone https://github.com/your-username/raytracer.git
+git clone https://github.com/SamTess/Raytracer.git
 cd raytracer
 ```
 

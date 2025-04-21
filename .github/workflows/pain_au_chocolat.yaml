@@ -56,7 +56,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -y && sudo apt install -y --no-install-recommends \
-            cmake g++ libconfig++-dev libsfml-dev
+            cmake g++ libconfig++-dev libsfml-dev gcovr
 
       - name: Build project
         run: |

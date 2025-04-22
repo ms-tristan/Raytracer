@@ -5,6 +5,7 @@
 ** Main
 */
 #include <iostream>
+#include <vector>  // Moved include to the top of the file
 
 // Intentional clang-tidy error: mismatched parameter names
 void exampleFunction(int param1, int param2);
@@ -28,9 +29,6 @@ int main() {
 
     // Intentional cpplint error: missing space around operators
     int result=1+2;
-
-    // Intentional cpplint error: include not at the top of the file
-    #include <vector>
 
     TestNamespace::testFunction();
     return 0;

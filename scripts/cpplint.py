@@ -26,9 +26,7 @@ def run_cpplint(directory):
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE
                     )
-                    print(f"✅ Passed: {filepath}")
                 except subprocess.CalledProcessError as e:
-                    print(f"❌ Failed: {filepath}")
                     print(e.stderr.decode())
 
 if __name__ == "__main__":

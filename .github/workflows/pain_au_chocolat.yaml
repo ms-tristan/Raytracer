@@ -112,6 +112,9 @@ jobs:
     #           echo "✅ Library $lib found in ./lib/"
     #         fi
     #       done
+      - name: Clean up
+        run: |
+          rm -rf build
 
       - name: Run unit-tests
         run: |

@@ -123,7 +123,10 @@ jobs:
           error_found=false
           if [ -f $cpplint_log ]; then
             while IFS= read -r line; do
-              severity=$(echo "$line" | awk -F'[][]' '{print $2}')
+              severity=$(echo "$line" | awk -F'[][]' '{print $2}' | grep -E '^[0-9]+$' || echo "0")
+              if ! [[ "$severity" =~ ^[0-9]+$ ]]; then
+                severity=0
+              fi
               file=$(echo "$line" | awk -F':' '{print $1}')
               line_num=$(echo "$line" | awk -F':' '{print $2}')
               msg=$(echo "$line" | cut -d':' -f3- | sed 's/^[[:space:]]*//')
@@ -157,7 +160,6 @@ jobs:
     #         else
     #           echo "✅ Library $lib found in ./lib/"
     #         fi
-    #       done
       - name: Clean up
         run: |
           rm -rf build

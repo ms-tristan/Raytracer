@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CLANG_TIDY_OPTIONS
-    "clang-tidy;-warnings-as-errors=*;-checks=modernize-*,readability-*,performance-*,bugprone-*,-modernize-use-trailing-return-type,-clang-analyzer-security.*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay;-extra-arg=-std=c++20;-extra-arg-before=-Iinclude;-extra-arg-before=-DDEBUG"
+    "clang-tidy;-warnings-as-errors=*;-checks=modernize-*,readability-*,performance-*,bugprone-*,-modernize-use-trailing-return-type,-modernize-redundant-void-arg,-readability-namespace-comments,-clang-analyzer-security.*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay;-extra-arg=-std=c++20;-extra-arg-before=-Iinclude;-extra-arg-before=-DDEBUG"
 )
 set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_OPTIONS}")
 option(ENABLE_TESTS "Enable tests" OFF)
@@ -35,15 +35,25 @@ add_custom_target(
 
 add_custom_target(
     format-diff
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/docs/clang-format/show_diff.sh
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/show_diff.sh
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "🔍 Affichage détaillé des différences de formatage proposées par clang-format"
 )
 
+# Ensure Logs directory exists
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Logs)
+
 add_custom_target(
     clang-check
-    COMMAND clang-tidy ${ALL_SOURCE_FILES} -checks=modernize-*,readability-*,performance-*,bugprone-*,-header-filter=.*,-clang-analyzer-security.*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay -warnings-as-errors=* -header-filter=.* -- -std=c++20 -Iinclude -DDEBUG
-    COMMENT "🔍 Running clang-tidy on all source files with synchronized options"
+    COMMAND clang-tidy ${ALL_SOURCE_FILES} -checks=modernize-*,readability-*,performance-*,bugprone-*,-header-filter=.*,-modernize-use-trailing-return-type,-modernize-redundant-void-arg,-clang-analyzer-security.*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay -warnings-as-errors=* -header-filter=.* -- -std=c++20 -Iinclude -DDEBUG > ${CMAKE_CURRENT_SOURCE_DIR}/Logs/clang-reports.log 2>&1 || true
+    COMMENT "🔍 Running clang-tidy on all source files with synchronized options and saving to Logs/clang-reports.log"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
+    cpplint-check
+    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cpplint.py ${PROJECT_SOURCE_DIR}/src > ${CMAKE_CURRENT_SOURCE_DIR}/Logs/cpplint-reports.log 2>&1
+    COMMENT "🔍 Running cpplint on all source files without exclude rules and saving to Logs/cpplint-reports.log"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

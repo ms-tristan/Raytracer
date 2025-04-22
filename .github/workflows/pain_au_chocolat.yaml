@@ -56,7 +56,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -y && sudo apt install -y --no-install-recommends \
-            cmake g++ libconfig++-dev libsfml-dev gcovr
+            cmake g++ clang clang-tidy clang-format libconfig++-dev libsfml-dev gcovr
 
       - name: Build project
         run: |
@@ -64,6 +64,36 @@ jobs:
           cd build
           cmake ..
           cmake --build .
+
+      - name: Run clang-format
+        run: |
+          cd build
+          cmake --build . --target format
+
+      - name: Rebuild project
+        run: |
+          cd build
+          cmake --build .
+
+      - name: Run clang-check
+        id: clang-check
+        run: |
+          cd build
+          cmake --build . --target clang-check || true
+
+      - name: Create annotations for clang-check errors
+        if: steps.clang-check.outcome == 'failure'
+        run: |
+          clang_check_log="clang-check.log"
+          cd build
+          cmake --build . --target clang-check 2> $clang_check_log || true
+          while IFS= read -r line; do
+            file=$(echo "$line" | awk -F':' '{print $1}')
+            line_num=$(echo "$line" | awk -F':' '{print $2}')
+            msg=$(echo "$line" | cut -d':' -f3-)
+            echo "::error file=$file,line=$line_num::$msg"
+          done < $clang_check_log
+          exit 1
 
       - name: Check binary
         run: |

@@ -84,6 +84,7 @@ jobs:
       - name: Create annotations for clang-check
         run: |
           clang_check_log="../Logs/clang-reports.log"
+          cat $clang_check_log
           error_found=false
           if [ -f $clang_check_log ]; then
             while IFS= read -r line; do
@@ -119,6 +120,7 @@ jobs:
       - name: Create annotations for cpplint-check
         run: |
           cpplint_log="../Logs/cpplint-reports.log"
+          cat $cpplint_log
           error_found=false
           if [ -f $cpplint_log ]; then
             while IFS= read -r line; do

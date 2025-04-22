@@ -56,7 +56,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -y && sudo apt install -y --no-install-recommends \
-            cmake g++ clang clang-tidy clang-format libconfig++-dev libsfml-dev gcovr
+            cmake g++ clang clang-tidy clang-format libconfig++-dev libsfml-dev gcovr python3-pip \
+            cpplint
 
       - name: Build project
         run: |

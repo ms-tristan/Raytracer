@@ -78,8 +78,7 @@ jobs:
       - name: Run clang-check
         id: clang-check
         run: |
-          cd build
-          cmake --build . --target clang-check || true
+          cmake --build build --target clang-check || true
 
       - name: Create annotations for clang-check
         run: |
@@ -114,8 +113,7 @@ jobs:
       - name: Run cpplint-check
         id: cpplint-check
         run: |
-          cd build
-          cmake --build . --target cpplint-check || true
+          cmake --build build --target cpplint-check || true
 
       - name: Create annotations for cpplint-check
         run: |

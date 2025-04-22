@@ -3,6 +3,8 @@
 uml_code = """
 @startuml Raytracer_Complete
 
+' -- CLASSES ET STRUCTURE --
+
 package Math {
     class Vector3D {
         +x: double
@@ -68,6 +70,13 @@ package RayTracer {
 
     PrimitiveFactory --> IPrimitive
 
+    class PrimitiveDecorator {
+        -primitive: IPrimitive
+        +hit(ray: Ray): bool
+    }
+
+    PrimitiveDecorator --> IPrimitive
+
     class Ray {
         +origin: Point3D
         +direction: Vector3D
@@ -97,6 +106,19 @@ package RayTracer {
     }
 
     SceneBuilder --> CompositePrimitive
+
+    interface IObserver <<interface>> {
+        +update()
+    }
+
+    class SceneFileWatcher {
+        -observers: List<IObserver>
+        +attach(observer: IObserver)
+        +detach(observer: IObserver)
+        +notify()
+    }
+
+    SceneFileWatcher --> IObserver
 }
 
 class SceneDirector {
@@ -106,6 +128,19 @@ class SceneDirector {
 
 SceneDirector --> SceneBuilder
 
+@enduml
+
+@startuml Raytracer_LogicFlow
+start
+:Read Scene File;
+:Parse with libconfig++;
+:SceneBuilder.build();
+:For each pixel;
+:Cast Ray via Camera;
+:Check hit with primitives;
+:Write color to output;
+:Write image to PPM;
+stop
 @enduml
 """
 

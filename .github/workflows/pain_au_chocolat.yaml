@@ -82,7 +82,6 @@ jobs:
           cmake --build . --target clang-check || true
 
       - name: Create annotations for clang-check
-        if: steps.clang-check.outcome == 'failure'
         run: |
           clang_check_log="../Logs/clang-reports.log"
           error_found=false
@@ -118,7 +117,6 @@ jobs:
           cmake --build . --target cpplint-check || true
 
       - name: Create annotations for cpplint-check
-        if: steps.cpplint-check.outcome == 'failure'
         run: |
           cpplint_log="../Logs/cpplint-reports.log"
           error_found=false

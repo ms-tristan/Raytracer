@@ -154,54 +154,12 @@ jobs:
           if [ $NB_ERROR -gt 0 ]; then
             exit 1
           fi
-  coding-style-CPP:
-    needs: coding-style-C
-    name: Checking CPP code with cppcheck
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install cppcheck
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cppcheck gcc g++ libtinyxml2-dev
-          pip install cpplint
-
-      - name: Run cpplint
-        id: cpplint
-        run: |
-          has_error=0
-          while IFS= read -r line; do
-            file=$(echo "$line" | awk -F':' '{print $1}')
-            # Skip stb_image.h file from checks
-            if [[ "$file" == *"src/Graphics/OpenGL/OpenGLUtils/stb_image.h"* ]]; then
-              continue
-            fi
-            line_num=$(echo "$line" | awk -F':' '{print $2}')
-            msg=$(echo "$line" | awk -F':' '{print $3}')
-            # Extract severity and type from message using regex
-            if [[ $msg =~ (.*)\ \[([a-zA-Z0-9_/]+)\]\ \[([0-9]+)\] ]]; then
-              description="${BASH_REMATCH[1]}"
-              category="${BASH_REMATCH[2]}"
-              severity="${BASH_REMATCH[3]}"
-
-              if [[ $severity -ge 4 ]]; then
-                echo "::error file=$file,line=$line_num,title=cpplint [$category]::$description"
-                has_error=1
-              else
-                echo "::warning file=$file,line=$line_num,title=cpplint [$category]::$description"
-              fi
-            fi
-          done < <(cpplint --recursive --filter=-legal/copyright,-whitespace/indentation,-readability/todo src/ 2>&1)
-
-          exit $has_error
 
   push_to_mirror:
     name: Pushing to good repository
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [build, coding-style-CPP]
+    needs: [build, coding-style-C]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

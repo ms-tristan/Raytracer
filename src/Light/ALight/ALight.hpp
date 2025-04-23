@@ -12,16 +12,16 @@
 
 namespace RayTracer {
 class ALight : public ILight {
-  protected:
+ protected:
     Math::Vector3D color;
 
-  public:
+ public:
     ALight();
     explicit ALight(const Math::Vector3D &color);
     virtual ~ALight() = default;
 
     Math::Vector3D getLightColor() const override;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_LIGHT_ALIGHT_ALIGHT_HPP_
+#endif  // SRC_LIGHT_ALIGHT_ALIGHT_HPP_

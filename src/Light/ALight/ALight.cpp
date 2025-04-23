@@ -16,4 +16,4 @@ ALight::ALight() {
 ALight::ALight(const Math::Vector3D &colors) : color(colors) {}
 
 Math::Vector3D ALight::getLightColor() const { return color; }
-} // namespace RayTracer
+}  // namespace RayTracer

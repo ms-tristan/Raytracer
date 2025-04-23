@@ -27,6 +27,7 @@ class Cone : public APrimitive {
 
     void translate(const Math::Vector3D &translation) override;
     std::optional<HitInfo> hit(const Ray &ray, double tMin, double tMax) const override;
+    std::shared_ptr<IPrimitive> clone() const override;
 };
 } // namespace RayTracer
 

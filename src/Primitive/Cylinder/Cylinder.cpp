@@ -104,4 +104,8 @@ std::optional<HitInfo> Cylinder::hit(const Ray &ray, double tMin, double tMax) c
     info.primitive = this;
     return info;
 }
+
+std::shared_ptr<IPrimitive> Cylinder::clone() const {
+    return std::make_shared<Cylinder>(center, axis, radius, height, material);
+}
 } // namespace RayTracer

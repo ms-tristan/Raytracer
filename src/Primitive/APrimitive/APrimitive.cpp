@@ -5,7 +5,7 @@
 ** File description:
 ** APrimitve
 */
-#include "APrimitive/APrimitive.hpp"
+#include "APrimitive.hpp"
 #include <memory>
 
 namespace RayTracer {

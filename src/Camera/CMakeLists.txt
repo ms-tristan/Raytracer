@@ -1,0 +1,1 @@
+file(GLOB CAMERA_SOURCES "*.cpp")

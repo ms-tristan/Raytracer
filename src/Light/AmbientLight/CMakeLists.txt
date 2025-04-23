@@ -1,0 +1,1 @@
+file(GLOB AMBIENT_LIGHT_SOURCES "*.cpp")

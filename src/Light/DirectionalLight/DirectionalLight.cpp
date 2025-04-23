@@ -9,10 +9,12 @@
 #include "Light/DirectionalLight/DirectionalLight.hpp"
 
 namespace RayTracer {
-DirectionalLight::DirectionalLight(const Math::Vector3D &direction, const Math::Vector3D &color)
-    : ALight(color), direction(direction.normalize()) {}
+DirectionalLight::DirectionalLight(const Math::Vector3D &direction,
+const Math::Vector3D &color)
+: ALight(color), direction(direction.normalize()) {}
 
-Math::Vector3D DirectionalLight::getLightDirection(const Math::Point3D &) const {
+Math::Vector3D DirectionalLight::getLightDirection(
+const Math::Point3D &) const {
     return direction * -1.0;
 }
-} // namespace RayTracer
+}  // namespace RayTracer

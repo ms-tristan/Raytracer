@@ -1,0 +1,1 @@
+file(GLOB VECTOR3D_SOURCES "*.cpp")

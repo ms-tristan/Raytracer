@@ -5,12 +5,12 @@
 ** File description:
 ** Point3D
 */
-#include "Point3D/Point3D.hpp"
+#include "Point3D.hpp"
 
 namespace Math {
 
 Point3D::Point3D(const Math::Coords &coords)
-    : X(coords.Xcoords), Y(coords.Ycoords), Z(coords.Zcoords) {}
+: X(coords.Xcoords), Y(coords.Ycoords), Z(coords.Zcoords) {}
 
 Point3D Point3D::operator+(const Vector3D &vector) const {
     const Coords coords{X + vector.X, Y + vector.Y, Z + vector.Z};
@@ -41,4 +41,4 @@ Vector3D Point3D::operator-(const Point3D &other) const {
     return Vector3D(coords);
 }
 
-} // namespace Math
+}  // namespace Math

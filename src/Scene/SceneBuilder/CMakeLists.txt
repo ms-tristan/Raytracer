@@ -1,0 +1,1 @@
+file(GLOB SCENE_BUILDER_SOURCES "*.cpp")

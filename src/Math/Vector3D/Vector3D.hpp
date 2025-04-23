@@ -18,7 +18,7 @@ struct Coords {
 };
 
 class Vector3D {
-  public:
+ public:
     double X;
     double Y;
     double Z;

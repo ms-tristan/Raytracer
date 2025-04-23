@@ -1,16 +1,35 @@
 set(CMAKE_CXX_CLANG_TIDY "" CACHE STRING "" FORCE) # Disable clang-tidy for raytracer build
-SET(SRCMAIN ${CMAKE_CURRENT_SOURCE_DIR})
-SET(INCMAIN ${CMAKE_CURRENT_SOURCE_DIR})
 
-SET(SRC
-    ${SRCMAIN}/main.cpp
+# Define include directories
+set(INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(raytracer ${SRC})
+# Add subdirectories for each component
+add_subdirectory(Math)
+add_subdirectory(Primitive)
+add_subdirectory(Scene)
+add_subdirectory(Camera)
+add_subdirectory(Material)
+add_subdirectory(Light)
+add_subdirectory(IObserver)
+add_subdirectory(Ray)
+add_subdirectory(Transformation)
+add_subdirectory(Rectangle3D)
+
+# Collect all source files
+file(GLOB_RECURSE RAYTRACER_SOURCES
+    "*.cpp"
+)
+
+# Main executable
+add_executable(raytracer ${RAYTRACER_SOURCES})
+target_include_directories(raytracer PRIVATE ${INCLUDE_DIRS})
 
 # Explicitly disable clang-tidy for the raytracer target
 set_target_properties(raytracer PROPERTIES CXX_CLANG_TIDY "")
 
+# Copy executable to root directory
 add_custom_command(TARGET raytracer POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:raytracer> ${CMAKE_SOURCE_DIR}/raytracer
 )

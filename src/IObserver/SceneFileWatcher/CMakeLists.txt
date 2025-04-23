@@ -1,0 +1,1 @@
+file(GLOB SCENE_FILE_WATCHER_SOURCES "*.cpp")

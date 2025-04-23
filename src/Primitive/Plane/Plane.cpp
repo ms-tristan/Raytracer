@@ -38,4 +38,8 @@ std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin, double tMax) cons
     info.primitive = this;
     return info;
 }
+
+std::shared_ptr<IPrimitive> Plane::clone() const {
+    return std::make_shared<Plane>(position, normal, material);
+}
 } // namespace RayTracer

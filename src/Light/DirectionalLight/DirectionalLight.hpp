@@ -12,14 +12,15 @@
 
 namespace RayTracer {
 class DirectionalLight : public ALight {
-  public:
+ public:
     Math::Vector3D direction;
 
-    DirectionalLight(const Math::Vector3D &direction, const Math::Vector3D &color);
+    DirectionalLight(const Math::Vector3D &direction,
+      const Math::Vector3D &color);
     ~DirectionalLight() override = default;
 
     Math::Vector3D getLightDirection(const Math::Point3D &point) const override;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
+#endif  // SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_

@@ -85,8 +85,12 @@ std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const
 
     Math::Vector3D cp = hitPoint - apex;
     double m = cp.dot(axis) / axis.dot(axis);
-    Math::Vector3D projection = apex + axis * m - apex;
-    Math::Vector3D normal = projection;
+    Math::Point3D axisPoint = apex + axis * m;
+
+    // Correct normal calculation for a cone
+    Math::Vector3D normal = (hitPoint - axisPoint).normalize();
+    // Adjust normal direction based on cone angle
+    normal = normal + axis * (cosAngle / (1.0 - cosAngle));
     normal = normal.normalize();
 
     if (normal.dot(transformedRay.direction) > 0)
@@ -108,4 +112,8 @@ std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const
     info.primitive = this;
     return info;
 }
-} // namespace RayTracer
+
+std::shared_ptr<IPrimitive> Cone::clone() const {
+    return std::make_shared<Cone>(apex, axis, radius, height, material);
+}
+}  // namespace RayTracer

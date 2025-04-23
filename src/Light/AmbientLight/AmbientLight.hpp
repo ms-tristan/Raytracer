@@ -12,12 +12,12 @@
 
 namespace RayTracer {
 class AmbientLight {
-  public:
+ public:
     Math::Vector3D color;
 
     AmbientLight();
     explicit AmbientLight(const Math::Vector3D &color);
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_LIGHT_AMBIENTLIGHT_AMBIENTLIGHT_HPP_
+#endif  // SRC_LIGHT_AMBIENTLIGHT_AMBIENTLIGHT_HPP_

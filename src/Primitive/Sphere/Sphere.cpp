@@ -43,4 +43,8 @@ std::optional<HitInfo> Sphere::hit(const Ray &ray, double tMin, double tMax) con
     info.primitive = this;
     return info;
 }
+
+std::shared_ptr<IPrimitive> Sphere::clone() const {
+    return std::make_shared<Sphere>(center, radius, material);
+}
 } // namespace RayTracer

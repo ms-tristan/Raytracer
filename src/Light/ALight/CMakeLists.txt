@@ -1,0 +1,1 @@
+file(GLOB ALIGHT_SOURCES "*.cpp")

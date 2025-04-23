@@ -1,0 +1,10 @@
+add_subdirectory(APrimitive)
+add_subdirectory(CompositePrimitive)
+add_subdirectory(PrimitiveDecorator)
+add_subdirectory(PrimitiveFactory)
+add_subdirectory(Sphere)
+add_subdirectory(Plane)
+add_subdirectory(Cylinder)
+add_subdirectory(Cone)
+
+file(GLOB PRIMITIVE_SOURCES "*.cpp")

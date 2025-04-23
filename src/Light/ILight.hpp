@@ -13,12 +13,13 @@
 
 namespace RayTracer {
 class ILight {
-  public:
+ public:
     virtual ~ILight() = default;
 
-    virtual Math::Vector3D getLightDirection(const Math::Point3D &point) const = 0;
+    virtual Math::Vector3D getLightDirection(
+      const Math::Point3D &point) const = 0;
     virtual Math::Vector3D getLightColor() const = 0;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_LIGHT_ILIGHT_HPP_
+#endif  // SRC_LIGHT_ILIGHT_HPP_

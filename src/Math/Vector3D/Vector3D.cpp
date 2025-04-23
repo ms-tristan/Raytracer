@@ -5,12 +5,12 @@
 ** File description:
 ** Vector3D
 */
-#include "Vector3D/Vector3D.hpp"
+#include "Vector3D.hpp"
 
 namespace Math {
 
 Vector3D::Vector3D(const Coords &coords)
-    : X(coords.Xcoords), Y(coords.Ycoords), Z(coords.Zcoords) {}
+: X(coords.Xcoords), Y(coords.Ycoords), Z(coords.Zcoords) {}
 
 double Vector3D::length() const { return std::sqrt(X * X + Y * Y + Z * Z); }
 
@@ -104,4 +104,4 @@ Vector3D &Vector3D::operator/=(double scalar) {
 double Vector3D::dot(const Vector3D &other) const {
     return X * other.X + Y * other.Y + Z * other.Z;
 }
-} // namespace Math
+}  // namespace Math

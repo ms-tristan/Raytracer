@@ -42,12 +42,16 @@ std::optional<HitInfo> Scene::trace(const Ray &ray) const {
 
 bool Scene::isInShadow(const Math::Point3D &hitPoint, const Math::Vector3D &lightDir) const {
     double shadowBias = 0.001;
+    // Use the light direction directly for the shadow bias offset
     Math::Point3D shadowOrigin = hitPoint + lightDir * shadowBias;
     Ray shadowRay(shadowOrigin, lightDir);
-
+    
     for (const auto &primitive : primitives) {
-        if (primitive->hit(shadowRay, 0.001, std::numeric_limits<double>::infinity()))
+        // Use hit() to check for intersection along the shadow ray
+        auto shadowHit = primitive->hit(shadowRay, 0.001, std::numeric_limits<double>::infinity());
+        if (shadowHit) {
             return true;
+        }
     }
     return false;
 }
@@ -57,19 +61,32 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     if (!hit)
         return Math::Vector3D(Math::Coords{0.0, 0.0, 0.0});
 
+    // Start with ambient lighting
     Math::Vector3D pixelColor = hit->primitive->getMaterial()->color * ambientLight.color;
 
     for (const auto &light : lights) {
         Math::Vector3D lightDir = light->getLightDirection(hit->hitPoint);
+        
+        // Calculate if point is in shadow
+        bool shadowed = isInShadow(hit->hitPoint, lightDir);
 
-        if (!isInShadow(hit->hitPoint, lightDir)) {
-            double diffuseFactor = std::max(0.0, hit->normal.dot(lightDir));
-
-            Math::Vector3D diffuse =
-                hit->primitive->getMaterial()->color * light->getLightColor() * diffuseFactor;
-            pixelColor += diffuse;
+        // Even if in shadow, add a small amount of diffuse lighting to soften shadows
+        double diffuseFactor = std::max(0.0, hit->normal.dot(lightDir));
+        
+        if (shadowed) {
+            // Add a small amount of diffuse light even in shadow (softer shadows)
+            diffuseFactor *= 0.15; // 15% of normal diffuse lighting for shadowed areas
         }
+
+        Math::Vector3D diffuse =
+            hit->primitive->getMaterial()->color * light->getLightColor() * diffuseFactor;
+        pixelColor += diffuse;
     }
+
+    // Clamp final color values
+    pixelColor.X = std::min(1.0, pixelColor.X);
+    pixelColor.Y = std::min(1.0, pixelColor.Y);
+    pixelColor.Z = std::min(1.0, pixelColor.Z);
 
     return pixelColor;
 }

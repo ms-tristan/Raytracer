@@ -1,0 +1,1 @@
+file(GLOB POINT_LIGHT_SOURCES "*.cpp")

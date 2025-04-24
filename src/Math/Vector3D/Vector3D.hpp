@@ -27,7 +27,7 @@ class Vector3D {
     explicit Vector3D(const Coords &coords);
 
     double length() const;
-    Vector3D normalize() const;
+    [[nodiscard]]Vector3D normalize() const;
     Vector3D cross(const Vector3D &other) const;
     Vector3D operator+(const Vector3D &other) const;
     Vector3D &operator+=(const Vector3D &other);
@@ -44,6 +44,6 @@ class Vector3D {
     double dot(const Vector3D &other) const;
 };
 inline Vector3D operator*(double scalar, const Vector3D &vector) { return vector * scalar; }
-} // namespace Math
+}  // namespace Math
 
-#endif // SRC_MATH_VECTOR3D_VECTOR3D_HPP_
+#endif  // SRC_MATH_VECTOR3D_VECTOR3D_HPP_

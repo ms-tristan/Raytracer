@@ -6,14 +6,14 @@
 ** Rectangle3D
 */
 
-#ifndef SRC_MATH_RECTANGLE3D_RECTANGLE3D_HPP_
-#define SRC_MATH_RECTANGLE3D_RECTANGLE3D_HPP_
-#include "Math/Point3D/Point3D.hpp"
-#include "Math/Vector3D/Vector3D.hpp"
+#ifndef SRC_RECTANGLE3D_RECTANGLE3D_HPP_
+    #define SRC_RECTANGLE3D_RECTANGLE3D_HPP_
+    #include "Math/Point3D/Point3D.hpp"
+    #include "Math/Vector3D/Vector3D.hpp"
 
 namespace RayTracer {
 class Rectangle3D {
-  public:
+ public:
     Math::Point3D origin;
     Math::Vector3D bottom_side;
     Math::Vector3D left_side;
@@ -23,6 +23,6 @@ class Rectangle3D {
                 const Math::Vector3D &left_side);
     Math::Point3D pointAt(double u, double v) const;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_MATH_RECTANGLE3D_RECTANGLE3D_HPP_
+#endif  // SRC_RECTANGLE3D_RECTANGLE3D_HPP_

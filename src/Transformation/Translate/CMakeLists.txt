@@ -1,0 +1,1 @@
+file(GLOB TRANSLATE_SOURCES "*.cpp")

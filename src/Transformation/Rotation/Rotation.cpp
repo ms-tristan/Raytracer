@@ -5,10 +5,11 @@
 ** File description:
 ** Rotation
 */
-#include "Rotation.hpp"
 #include <cmath>
+#include "Rotation.hpp"
 
 namespace Math {
+
 Vector3D Rotation::rotateX(const Vector3D &v, double degrees) {
     double rad = toRadians(degrees);
     double cosA = std::cos(rad);
@@ -22,7 +23,7 @@ Vector3D Rotation::rotateY(const Vector3D &v, double degrees) {
     double rad = toRadians(degrees);
     double cosA = std::cos(rad);
     double sinA = std::sin(rad);
-    const Coords coords{v.X * cosA + v.Z * sinA, v.Y, -v.X * sinA + v.Z * cosA};
+    const Coords coords{v.X * cosA + v.Z * sinA, v.Y, v.Z * cosA - v.X * sinA};
 
     return Vector3D(coords);
 }
@@ -56,4 +57,5 @@ Point3D Rotation::rotateZ(const Point3D &p, double degrees) {
     const Coords coords_point{v.X, v.Y, v.Z};
     return Point3D(coords_point);
 }
-} // namespace Math
+
+}  // namespace Math

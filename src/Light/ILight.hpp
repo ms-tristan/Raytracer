@@ -8,6 +8,7 @@
 
 #ifndef SRC_LIGHT_ILIGHT_HPP_
 #define SRC_LIGHT_ILIGHT_HPP_
+#include <memory>
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
 
@@ -19,6 +20,7 @@ class ILight {
     virtual Math::Vector3D getLightDirection(
       const Math::Point3D &point) const = 0;
     virtual Math::Vector3D getLightColor() const = 0;
+    virtual std::shared_ptr<ILight> clone() const = 0;
 };
 }  // namespace RayTracer
 

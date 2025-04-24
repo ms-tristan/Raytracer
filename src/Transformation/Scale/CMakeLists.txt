@@ -1,0 +1,1 @@
+file(GLOB SCALE_SOURCES "*.cpp")

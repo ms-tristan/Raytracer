@@ -5,7 +5,7 @@
 ** File description:
 ** DirectionalLight implementation
 */
-
+#include <memory>
 #include "Light/DirectionalLight/DirectionalLight.hpp"
 
 namespace RayTracer {
@@ -16,5 +16,9 @@ const Math::Vector3D &color)
 Math::Vector3D DirectionalLight::getLightDirection(
 const Math::Point3D &) const {
     return direction * -1.0;
+}
+
+std::shared_ptr<ILight> DirectionalLight::clone() const {
+    return std::make_shared<DirectionalLight>(direction, color);
 }
 }  // namespace RayTracer

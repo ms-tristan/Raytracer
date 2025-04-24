@@ -1,0 +1,1 @@
+file(GLOB LIGHT_DECORATOR_SOURCES "*.cpp")

@@ -7,8 +7,9 @@
 */
 
 #ifndef SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
-#define SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
-#include "Light/ALight/ALight.hpp"
+  #define SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
+  #include <memory>
+  #include "Light/ALight/ALight.hpp"
 
 namespace RayTracer {
 class DirectionalLight : public ALight {
@@ -20,6 +21,7 @@ class DirectionalLight : public ALight {
     ~DirectionalLight() override = default;
 
     Math::Vector3D getLightDirection(const Math::Point3D &point) const override;
+    std::shared_ptr<ILight> clone() const override;
 };
 }  // namespace RayTracer
 

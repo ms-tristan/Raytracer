@@ -14,14 +14,23 @@
 
 namespace RayTracer {
 class Camera {
-  public:
+ public:
     Math::Point3D origin;
     Rectangle3D screen;
+    double fov;
 
     Camera();
-    Camera(const Math::Point3D &origin, const Rectangle3D &screen);
+    Camera(const Math::Point3D &origin,
+      const Rectangle3D &screen, double fov = 90.0);
+    void setFOV(double newFov);
+    double getFOV() const;
     Ray ray(double u, double v) const;
+    void rotateX(double degrees);
+    void rotateY(double degrees);
+    void rotateZ(double degrees);
+ private:
+    void updateScreenForFOV();
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_CAMERA_CAMERA_HPP_
+#endif  // SRC_CAMERA_CAMERA_HPP_

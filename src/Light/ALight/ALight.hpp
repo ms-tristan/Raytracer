@@ -7,8 +7,9 @@
 */
 
 #ifndef SRC_LIGHT_ALIGHT_ALIGHT_HPP_
-#define SRC_LIGHT_ALIGHT_ALIGHT_HPP_
-#include "Light/ILight.hpp"
+    #define SRC_LIGHT_ALIGHT_ALIGHT_HPP_
+    #include <memory>
+    #include "Light/ILight.hpp"
 
 namespace RayTracer {
 class ALight : public ILight {
@@ -21,6 +22,7 @@ class ALight : public ILight {
     virtual ~ALight() = default;
 
     Math::Vector3D getLightColor() const override;
+    std::shared_ptr<ILight> clone() const override = 0;
 };
 }  // namespace RayTracer
 

@@ -7,38 +7,31 @@
 */
 
 #ifndef SRC_IOBSERVER_SCENEFILEWATCHER_SCENEFILEWATCHER_HPP_
-    #define SRC_IOBSERVER_SCENEFILEWATCHER_SCENEFILEWATCHER_HPP_
-    #include <sys/stat.h>
-    #include <string>
-    #include <vector>
-    #include <thread>
-    #include <atomic>
-    #include <chrono>
-    #include "IObserver/IObserver.hpp"
-
+#define SRC_IOBSERVER_SCENEFILEWATCHER_SCENEFILEWATCHER_HPP_
+#include <string>
+#include <vector>
+#include <memory>
+#include <sys/stat.h>
+#include "IObserver/IObserver.hpp"
 
 namespace RayTracer {
 class SceneFileWatcher {
  private:
-    std::string filePath;
-    std::vector<IObserver*> observers;
+    std::string filepath;
+    std::vector<std::shared_ptr<IObserver>> observers;
     time_t lastModified;
-    std::thread watchThread;
-    std::atomic<bool> running;
 
-    void watchLoop();
+    time_t getFileModificationTime() const;
 
  public:
-    explicit SceneFileWatcher(const std::string& path);
-    ~SceneFileWatcher();
+    explicit SceneFileWatcher(const std::string& filepath);
 
-    void attach(IObserver* observer);
-    void detach(IObserver* observer);
-    void notify();
+    void attach(std::shared_ptr<IObserver> observer);
+    void detach(std::shared_ptr<IObserver> observer);
+    void notify() const;
 
     bool checkForChanges();
-    void startWatching();
-    void stopWatching();
+    std::string getFilePath() const;
 };
 }  // namespace RayTracer
 

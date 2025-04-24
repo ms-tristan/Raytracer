@@ -5,12 +5,12 @@
 ** File description:
 ** Scene implementation
 */
-#include "Scene/Scene.hpp"
 #include <algorithm>
 #include <iostream>
 #include <limits>
 #include <memory>
-
+#include "Scene/Scene.hpp"
+#include "Light/PointLight/PointLight.hpp"
 namespace RayTracer {
 
 void Scene::setCamera(const Camera &cam) { camera = cam; }
@@ -23,7 +23,8 @@ void Scene::addPrimitive(const std::shared_ptr<IPrimitive> &primitive) {
     primitives.push_back(primitive);
 }
 
-void Scene::addLight(const std::shared_ptr<ILight> &light) { lights.push_back(light); }
+void Scene::addLight(const std::shared_ptr<ILight> &light) {
+lights.push_back(light); }
 
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
     double closest = std::numeric_limits<double>::infinity();
@@ -40,18 +41,21 @@ std::optional<HitInfo> Scene::trace(const Ray &ray) const {
     return closestHit;
 }
 
-bool Scene::isInShadow(const Math::Point3D &hitPoint, const Math::Vector3D &lightDir) const {
+bool Scene::isInShadow(const Math::Point3D &hitPoint,
+const Math::Vector3D &lightDir, const std::shared_ptr<ILight> &light)
+const {
     double shadowBias = 0.001;
-    // Use the light direction directly for the shadow bias offset
     Math::Point3D shadowOrigin = hitPoint + lightDir * shadowBias;
     Ray shadowRay(shadowOrigin, lightDir);
-    
+
+    double maxDistance = std::numeric_limits<double>::infinity();
+    if (auto pointLight = dynamic_cast<PointLight*>(light.get()))
+        maxDistance = (pointLight->position - hitPoint).length();
+
     for (const auto &primitive : primitives) {
-        // Use hit() to check for intersection along the shadow ray
-        auto shadowHit = primitive->hit(shadowRay, 0.001, std::numeric_limits<double>::infinity());
-        if (shadowHit) {
+        auto shadowHit = primitive->hit(shadowRay, 0.001, maxDistance);
+        if (shadowHit)
             return true;
-        }
     }
     return false;
 }
@@ -61,29 +65,30 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     if (!hit)
         return Math::Vector3D(Math::Coords{0.0, 0.0, 0.0});
 
-    // Start with ambient lighting
-    Math::Vector3D pixelColor = hit->primitive->getMaterial()->color * ambientLight.color;
+    Math::Vector3D pixelColor = hit->primitive->getMaterial()->color
+        * ambientLight.color;
 
     for (const auto &light : lights) {
         Math::Vector3D lightDir = light->getLightDirection(hit->hitPoint);
-        
-        // Calculate if point is in shadow
-        bool shadowed = isInShadow(hit->hitPoint, lightDir);
+        Math::Vector3D lightColor;
 
-        // Even if in shadow, add a small amount of diffuse lighting to soften shadows
+        if (auto pointLight = dynamic_cast<PointLight*>(light.get()))
+            lightColor = pointLight->getLightColor(hit->hitPoint);
+        else
+            lightColor = light->getLightColor();
+
+        bool shadowed = isInShadow(hit->hitPoint, lightDir, light);
+
         double diffuseFactor = std::max(0.0, hit->normal.dot(lightDir));
-        
-        if (shadowed) {
-            // Add a small amount of diffuse light even in shadow (softer shadows)
-            diffuseFactor *= 0.15; // 15% of normal diffuse lighting for shadowed areas
-        }
 
-        Math::Vector3D diffuse =
-            hit->primitive->getMaterial()->color * light->getLightColor() * diffuseFactor;
+        if (shadowed)
+            diffuseFactor *= 0.4;
+
+        Math::Vector3D diffuse = hit->primitive->getMaterial()->color *
+            lightColor * diffuseFactor;
         pixelColor += diffuse;
     }
 
-    // Clamp final color values
     pixelColor.X = std::min(1.0, pixelColor.X);
     pixelColor.Y = std::min(1.0, pixelColor.Y);
     pixelColor.Z = std::min(1.0, pixelColor.Z);
@@ -103,4 +108,4 @@ void Scene::writeColor(const Math::Vector3D &color) {
     std::cout << ir << " " << ig << " " << ib << std::endl;
 }
 
-} // namespace RayTracer
+}  // namespace RayTracer

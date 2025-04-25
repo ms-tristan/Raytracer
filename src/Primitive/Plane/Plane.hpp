@@ -8,12 +8,12 @@
 
 #ifndef SRC_PRIMITIVE_PLANE_PLANE_HPP_
 #define SRC_PRIMITIVE_PLANE_PLANE_HPP_
-#include "Primitive/APrimitive/APrimitive.hpp"
 #include <memory>
+#include "Primitive/APrimitive/APrimitive.hpp"
 
 namespace RayTracer {
 class Plane : public APrimitive {
-  public:
+ public:
     Math::Point3D position;
     Math::Vector3D normal;
 
@@ -23,9 +23,10 @@ class Plane : public APrimitive {
     ~Plane() override = default;
 
     void translate(const Math::Vector3D &translation) override;
-    std::optional<HitInfo> hit(const Ray &ray, double tMin, double tMax) const override;
+    std::optional<HitInfo> hit(const Ray &ray,
+        double tMin, double tMax) const override;
     std::shared_ptr<IPrimitive> clone() const override;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_PRIMITIVE_PLANE_PLANE_HPP_
+#endif  // SRC_PRIMITIVE_PLANE_PLANE_HPP_

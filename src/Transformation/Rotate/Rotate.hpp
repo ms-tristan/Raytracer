@@ -10,7 +10,6 @@
     #define SRC_TRANSFORMATION_ROTATE_ROTATE_HPP_
     #include <string>
     #include "Transformation/ITransformation.hpp"
-    #include "Transformation/Rotation/Rotation.hpp"
 
 namespace RayTracer {
 

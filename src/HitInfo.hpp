@@ -21,6 +21,6 @@ struct HitInfo {
     Math::Vector3D normal;
     const IPrimitive *primitive;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_HITINFO_HPP_
+#endif  // SRC_HITINFO_HPP_

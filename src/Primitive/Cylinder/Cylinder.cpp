@@ -11,34 +11,41 @@
 #include <memory>
 
 namespace RayTracer {
-Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis, double radius,
-                   double height)
-    : center(center), axis(axis.normalize()), radius(radius), height(height) {}
+Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
+double radius, double height)
+: center(center), axis(axis.normalize()),
+radius(radius), height(height) {}
 
-Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis, double radius,
-                   double height, const std::shared_ptr<Material> &material)
-    : APrimitive(material), center(center), axis(axis.normalize()), radius(radius), height(height) {
+Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
+double radius, double height, const std::shared_ptr<Material> &material)
+: APrimitive(material), center(center), axis(axis.normalize()),
+radius(radius), height(height) {}
+
+void Cylinder::translate(const Math::Vector3D &translation) {
+    center += translation;
 }
 
-void Cylinder::translate(const Math::Vector3D &translation) { center += translation; }
-
-std::optional<HitInfo> Cylinder::hit(const Ray &ray, double tMin, double tMax) const {
+std::optional<HitInfo> Cylinder::hit(const Ray &ray,
+double tMin, double tMax) const {
     Ray transformedRay = ray;
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         Math::Point3D newOrigin = ray.origin;
         Math::Vector3D newDirection = ray.direction;
 
         if (rotationZ != 0.0) {
-            newOrigin = Math::Rotation::rotateZ(newOrigin, -rotationZ);
-            newDirection = Math::Rotation::rotateZ(newDirection, -rotationZ);
+            RayTracer::Rotate rotateZ("z", -rotationZ);
+            newOrigin = rotateZ.applyToPoint(newOrigin);
+            newDirection = rotateZ.applyToVector(newDirection);
         }
         if (rotationY != 0.0) {
-            newOrigin = Math::Rotation::rotateY(newOrigin, -rotationY);
-            newDirection = Math::Rotation::rotateY(newDirection, -rotationY);
+            RayTracer::Rotate rotateY("y", -rotationY);
+            newOrigin = rotateY.applyToPoint(newOrigin);
+            newDirection = rotateY.applyToVector(newDirection);
         }
         if (rotationX != 0.0) {
-            newOrigin = Math::Rotation::rotateX(newOrigin, -rotationX);
-            newDirection = Math::Rotation::rotateX(newDirection, -rotationX);
+            RayTracer::Rotate rotateX("x", -rotationX);
+            newOrigin = rotateX.applyToPoint(newOrigin);
+            newDirection = rotateX.applyToVector(newDirection);
         }
 
         transformedRay = Ray(newOrigin, newDirection);
@@ -67,7 +74,8 @@ std::optional<HitInfo> Cylinder::hit(const Ray &ray, double tMin, double tMax) c
             return std::nullopt;
     }
 
-    Math::Point3D hitPoint = transformedRay.origin + transformedRay.direction * t;
+    Math::Point3D hitPoint = transformedRay.origin +
+        transformedRay.direction * t;
 
     double heightIntersect = (hitPoint - center).dot(axis);
     if (heightIntersect < 0 || heightIntersect > height) {
@@ -89,12 +97,18 @@ std::optional<HitInfo> Cylinder::hit(const Ray &ray, double tMin, double tMax) c
     }
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
-        if (rotationX != 0.0)
-            normal = Math::Rotation::rotateX(normal, rotationX);
-        if (rotationY != 0.0)
-            normal = Math::Rotation::rotateY(normal, rotationY);
-        if (rotationZ != 0.0)
-            normal = Math::Rotation::rotateZ(normal, rotationZ);
+        if (rotationX != 0.0) {
+            RayTracer::Rotate rotateX("x", rotationX);
+            normal = rotateX.applyToVector(normal);
+        }
+        if (rotationY != 0.0) {
+            RayTracer::Rotate rotateY("y", rotationY);
+            normal = rotateY.applyToVector(normal);
+        }
+        if (rotationZ != 0.0) {
+            RayTracer::Rotate rotateZ("z", rotationZ);
+            normal = rotateZ.applyToVector(normal);
+        }
     }
 
     HitInfo info;
@@ -108,4 +122,4 @@ std::optional<HitInfo> Cylinder::hit(const Ray &ray, double tMin, double tMax) c
 std::shared_ptr<IPrimitive> Cylinder::clone() const {
     return std::make_shared<Cylinder>(center, axis, radius, height, material);
 }
-} // namespace RayTracer
+}  // namespace RayTracer

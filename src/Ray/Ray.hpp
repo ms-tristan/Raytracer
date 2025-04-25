@@ -13,13 +13,13 @@
 
 namespace RayTracer {
 class Ray {
-  public:
+ public:
     Math::Point3D origin;
     Math::Vector3D direction;
 
     Ray() = default;
     Ray(const Math::Point3D &origin, const Math::Vector3D &direction);
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_RAY_RAY_HPP_
+#endif  // SRC_RAY_RAY_HPP_

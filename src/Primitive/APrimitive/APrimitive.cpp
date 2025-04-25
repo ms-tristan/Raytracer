@@ -5,13 +5,14 @@
 ** File description:
 ** APrimitve
 */
-#include "APrimitive.hpp"
 #include <memory>
+#include "APrimitive.hpp"
 
 namespace RayTracer {
 APrimitive::APrimitive() : material(std::make_shared<Material>()) {}
 
-APrimitive::APrimitive(const std::shared_ptr<Material> &material) : material(material) {}
+APrimitive::APrimitive(const std::shared_ptr<Material> &material)
+: material(material) {}
 
 std::shared_ptr<Material> APrimitive::getMaterial() const { return material; }
 
@@ -21,4 +22,4 @@ void APrimitive::rotateY(double degrees) { rotationY += degrees; }
 
 void APrimitive::rotateZ(double degrees) { rotationZ += degrees; }
 
-} // namespace RayTracer
+}  // namespace RayTracer

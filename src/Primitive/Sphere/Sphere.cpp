@@ -10,15 +10,19 @@
 #include <memory>
 
 namespace RayTracer {
-Sphere::Sphere(const Math::Point3D &center, double radius) : center(center), radius(radius) {}
+Sphere::Sphere(const Math::Point3D &center,
+double radius) : center(center), radius(radius) {}
 
 Sphere::Sphere(const Math::Point3D &center, double radius,
-               const std::shared_ptr<Material> &material)
-    : APrimitive(material), center(center), radius(radius) {}
+const std::shared_ptr<Material> &material)
+: APrimitive(material), center(center), radius(radius) {}
 
-void Sphere::translate(const Math::Vector3D &translation) { center += translation; }
+void Sphere::translate(const Math::Vector3D &translation) {
+    center += translation;
+}
 
-std::optional<HitInfo> Sphere::hit(const Ray &ray, double tMin, double tMax) const {
+std::optional<HitInfo> Sphere::hit(const Ray &ray, double tMin,
+double tMax) const {
     Math::Vector3D oc = ray.origin - center;
     double a = ray.direction.dot(ray.direction);
     double b = 2.0 * oc.dot(ray.direction);
@@ -47,4 +51,4 @@ std::optional<HitInfo> Sphere::hit(const Ray &ray, double tMin, double tMax) con
 std::shared_ptr<IPrimitive> Sphere::clone() const {
     return std::make_shared<Sphere>(center, radius, material);
 }
-} // namespace RayTracer
+}  // namespace RayTracer

@@ -17,7 +17,8 @@ class ITransformation {
  public:
     virtual ~ITransformation() = default;
 
-    virtual Math::Vector3D applyToVector(const Math::Vector3D& vector) const = 0;
+    virtual Math::Vector3D applyToVector(
+        const Math::Vector3D& vector) const = 0;
     virtual Math::Point3D applyToPoint(const Math::Point3D& point) const = 0;
 };
 

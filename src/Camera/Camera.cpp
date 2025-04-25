@@ -6,7 +6,7 @@
 ** Camera
 */
 #include "Camera/Camera.hpp"
-#include "Transformation/Rotation/Rotation.hpp"
+#include "Transformation/Rotate/Rotate.hpp"
 
 namespace RayTracer {
 Camera::Camera()
@@ -60,24 +60,27 @@ Ray Camera::ray(double u, double v) const {
 }
 
 void Camera::rotateX(double degrees) {
-    origin = Math::Rotation::rotateX(origin, degrees);
-    screen.origin = Math::Rotation::rotateX(screen.origin, degrees);
-    screen.bottom_side = Math::Rotation::rotateX(screen.bottom_side, degrees);
-    screen.left_side = Math::Rotation::rotateX(screen.left_side, degrees);
+    RayTracer::Rotate rotateX("x", degrees);
+    origin = rotateX.applyToPoint(origin);
+    screen.origin = rotateX.applyToPoint(screen.origin);
+    screen.bottom_side = rotateX.applyToVector(screen.bottom_side);
+    screen.left_side = rotateX.applyToVector(screen.left_side);
 }
 
 void Camera::rotateY(double degrees) {
-    origin = Math::Rotation::rotateY(origin, degrees);
-    screen.origin = Math::Rotation::rotateY(screen.origin, degrees);
-    screen.bottom_side = Math::Rotation::rotateY(screen.bottom_side, degrees);
-    screen.left_side = Math::Rotation::rotateY(screen.left_side, degrees);
+    RayTracer::Rotate rotateY("y", degrees);
+    origin = rotateY.applyToPoint(origin);
+    screen.origin = rotateY.applyToPoint(screen.origin);
+    screen.bottom_side = rotateY.applyToVector(screen.bottom_side);
+    screen.left_side = rotateY.applyToVector(screen.left_side);
 }
 
 void Camera::rotateZ(double degrees) {
-    origin = Math::Rotation::rotateZ(origin, degrees);
-    screen.origin = Math::Rotation::rotateZ(screen.origin, degrees);
-    screen.bottom_side = Math::Rotation::rotateZ(screen.bottom_side, degrees);
-    screen.left_side = Math::Rotation::rotateZ(screen.left_side, degrees);
+    RayTracer::Rotate rotateZ("z", degrees);
+    origin = rotateZ.applyToPoint(origin);
+    screen.origin = rotateZ.applyToPoint(screen.origin);
+    screen.bottom_side = rotateZ.applyToVector(screen.bottom_side);
+    screen.left_side = rotateZ.applyToVector(screen.left_side);
 }
 
 }  // namespace RayTracer

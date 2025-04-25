@@ -43,7 +43,8 @@ class Vector3D {
     Vector3D &operator/=(double scalar);
     double dot(const Vector3D &other) const;
 };
-inline Vector3D operator*(double scalar, const Vector3D &vector) { return vector * scalar; }
+inline Vector3D operator*(double scalar,
+const Vector3D &vector) { return vector * scalar; }
 }  // namespace Math
 
 #endif  // SRC_MATH_VECTOR3D_VECTOR3D_HPP_

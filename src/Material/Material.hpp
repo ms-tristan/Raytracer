@@ -8,19 +8,19 @@
 
 #ifndef SRC_MATERIAL_MATERIAL_HPP_
 #define SRC_MATERIAL_MATERIAL_HPP_
+#include <algorithm>
 #include "HitInfo.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
-#include <algorithm>
 
 namespace RayTracer {
 class Material {
-  public:
+ public:
     Math::Vector3D color;
 
     Material();
     explicit Material(const Math::Vector3D &color);
     virtual ~Material() = default;
 };
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // SRC_MATERIAL_MATERIAL_HPP_
+#endif  // SRC_MATERIAL_MATERIAL_HPP_

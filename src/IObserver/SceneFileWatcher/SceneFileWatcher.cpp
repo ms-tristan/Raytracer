@@ -5,6 +5,7 @@
 ** File description:
 ** SceneFileWatcher implementation
 */
+#include <string>
 #include <algorithm>
 #include <iostream>
 #include "SceneFileWatcher.hpp"
@@ -12,7 +13,7 @@
 namespace RayTracer {
 
 SceneFileWatcher::SceneFileWatcher(const std::string& filepath)
-    : filepath(filepath) {
+: filepath(filepath) {
     lastModified = getFileModificationTime();
 }
 
@@ -23,8 +24,7 @@ void SceneFileWatcher::attach(std::shared_ptr<IObserver> observer) {
 void SceneFileWatcher::detach(std::shared_ptr<IObserver> observer) {
     observers.erase(
         std::remove(observers.begin(), observers.end(), observer),
-        observers.end()
-    );
+        observers.end());
 }
 
 void SceneFileWatcher::notify() const {

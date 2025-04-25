@@ -1,1 +1,0 @@
-file(GLOB ROTATION_SOURCES "*.cpp")

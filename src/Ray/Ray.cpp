@@ -9,6 +9,6 @@
 namespace RayTracer {
 
 Ray::Ray(const Math::Point3D &origin, const Math::Vector3D &direction)
-    : origin(origin), direction(direction) {}
+: origin(origin), direction(direction) {}
 
-} // namespace RayTracer
+}  // namespace RayTracer

@@ -15,4 +15,4 @@ Material::Material() {
 
 Material::Material(const Math::Vector3D &colors) : color(colors) {}
 
-} // namespace RayTracer
+}  // namespace RayTracer

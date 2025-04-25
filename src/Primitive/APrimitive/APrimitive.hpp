@@ -8,18 +8,18 @@
 
 #ifndef SRC_PRIMITIVE_APRIMITIVE_APRIMITIVE_HPP_
 #define SRC_PRIMITIVE_APRIMITIVE_APRIMITIVE_HPP_
-#include "../IPrimitive.hpp"
 #include <memory>
+#include "../IPrimitive.hpp"
 
 namespace RayTracer {
 class APrimitive : public IPrimitive {
-  protected:
+ protected:
     std::shared_ptr<Material> material;
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
 
-  public:
+ public:
     APrimitive();
     explicit APrimitive(const std::shared_ptr<Material> &material);
     virtual ~APrimitive() = default;
@@ -29,8 +29,9 @@ class APrimitive : public IPrimitive {
     void rotateY(double degrees) override;
     void rotateZ(double degrees) override;
     virtual void translate(const Math::Vector3D &translation) = 0;
-    virtual std::optional<HitInfo> hit(const Ray &ray, double tMin, double tMax) const = 0;
+    virtual std::optional<HitInfo> hit(const Ray &ray,
+        double tMin, double tMax) const = 0;
 };
-} // namespace RayTracer
+}   // namespace RayTracer
 
-#endif // SRC_PRIMITIVE_APRIMITIVE_APRIMITIVE_HPP_
+#endif  // SRC_PRIMITIVE_APRIMITIVE_APRIMITIVE_HPP_

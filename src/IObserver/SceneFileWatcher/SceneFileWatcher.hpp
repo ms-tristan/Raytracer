@@ -8,10 +8,10 @@
 
 #ifndef SRC_IOBSERVER_SCENEFILEWATCHER_SCENEFILEWATCHER_HPP_
 #define SRC_IOBSERVER_SCENEFILEWATCHER_SCENEFILEWATCHER_HPP_
+#include <sys/stat.h>
 #include <string>
 #include <vector>
 #include <memory>
-#include <sys/stat.h>
 #include "IObserver/IObserver.hpp"
 
 namespace RayTracer {

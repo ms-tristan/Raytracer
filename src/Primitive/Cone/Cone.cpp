@@ -5,37 +5,44 @@
 ** File description:
 ** Cone implementation
 */
-#include "Primitive/Cone/Cone.hpp"
 #include <cmath>
 #include <memory>
+#include "Primitive/Cone/Cone.hpp"
+
 
 namespace RayTracer {
-Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis, double radius, double height)
-    : apex(apex), axis(axis.normalize()), radius(radius), height(height) {}
+Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis,
+double radius, double height)
+: apex(apex), axis(axis.normalize()), radius(radius), height(height) {}
 
-Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis, double radius, double height,
-           const std::shared_ptr<Material> &material)
-    : APrimitive(material), apex(apex), axis(axis.normalize()), radius(radius), height(height) {}
+Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis,
+double radius, double height, const std::shared_ptr<Material> &material)
+: APrimitive(material), apex(apex), axis(axis.normalize()), radius(radius),
+height(height) {}
 
 void Cone::translate(const Math::Vector3D &translation) { apex += translation; }
 
-std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const {
+std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin,
+double tMax) const {
     Ray transformedRay = ray;
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         Math::Point3D newOrigin = ray.origin;
         Math::Vector3D newDirection = ray.direction;
 
         if (rotationZ != 0.0) {
-            newOrigin = Math::Rotation::rotateZ(newOrigin, -rotationZ);
-            newDirection = Math::Rotation::rotateZ(newDirection, -rotationZ);
+            RayTracer::Rotate rotateZ("z", -rotationZ);
+            newOrigin = rotateZ.applyToPoint(newOrigin);
+            newDirection = rotateZ.applyToVector(newDirection);
         }
         if (rotationY != 0.0) {
-            newOrigin = Math::Rotation::rotateY(newOrigin, -rotationY);
-            newDirection = Math::Rotation::rotateY(newDirection, -rotationY);
+            RayTracer::Rotate rotateY("y", -rotationY);
+            newOrigin = rotateY.applyToPoint(newOrigin);
+            newDirection = rotateY.applyToVector(newDirection);
         }
         if (rotationX != 0.0) {
-            newOrigin = Math::Rotation::rotateX(newOrigin, -rotationX);
-            newDirection = Math::Rotation::rotateX(newDirection, -rotationX);
+            RayTracer::Rotate rotateX("x", -rotationX);
+            newOrigin = rotateX.applyToPoint(newOrigin);
+            newDirection = rotateX.applyToVector(newDirection);
         }
 
         transformedRay = Ray(newOrigin, newDirection);
@@ -50,8 +57,9 @@ std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const
     double dir_dot_axis = transformedRay.direction.dot(axis);
 
     double a = dir_dot_axis * dir_dot_axis -
-               cosAngle2 * transformedRay.direction.dot(transformedRay.direction);
-    double b = 2.0 * (dir_dot_axis * oc_dot_axis - cosAngle2 * co.dot(transformedRay.direction));
+        cosAngle2 * transformedRay.direction.dot(transformedRay.direction);
+    double b = 2.0 * (dir_dot_axis * oc_dot_axis - cosAngle2 *
+        co.dot(transformedRay.direction));
     double c = oc_dot_axis * oc_dot_axis - cosAngle2 * co.dot(co);
 
     double discriminant = b * b - 4 * a * c;
@@ -69,7 +77,8 @@ std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const
             return std::nullopt;
     }
 
-    Math::Point3D hitPoint = transformedRay.origin + transformedRay.direction * t;
+    Math::Point3D hitPoint = transformedRay.origin +
+    transformedRay.direction * t;
 
     double heightIntersect = (hitPoint - apex).dot(axis);
     if (heightIntersect < 0 || heightIntersect > height) {
@@ -87,9 +96,8 @@ std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const
     double m = cp.dot(axis) / axis.dot(axis);
     Math::Point3D axisPoint = apex + axis * m;
 
-    // Correct normal calculation for a cone
     Math::Vector3D normal = (hitPoint - axisPoint).normalize();
-    // Adjust normal direction based on cone angle
+
     normal = normal + axis * (cosAngle / (1.0 - cosAngle));
     normal = normal.normalize();
 
@@ -97,12 +105,18 @@ std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin, double tMax) const
         normal = normal * -1.0;
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
-        if (rotationX != 0.0)
-            normal = Math::Rotation::rotateX(normal, rotationX);
-        if (rotationY != 0.0)
-            normal = Math::Rotation::rotateY(normal, rotationY);
-        if (rotationZ != 0.0)
-            normal = Math::Rotation::rotateZ(normal, rotationZ);
+        if (rotationX != 0.0) {
+            RayTracer::Rotate rotateX("x", rotationX);
+            normal = rotateX.applyToVector(normal);
+        }
+        if (rotationY != 0.0) {
+            RayTracer::Rotate rotateY("y", rotationY);
+            normal = rotateY.applyToVector(normal);
+        }
+        if (rotationZ != 0.0) {
+            RayTracer::Rotate rotateZ("z", rotationZ);
+            normal = rotateZ.applyToVector(normal);
+        }
     }
 
     HitInfo info;

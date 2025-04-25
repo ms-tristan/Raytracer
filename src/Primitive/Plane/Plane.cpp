@@ -12,15 +12,18 @@
 
 namespace RayTracer {
 Plane::Plane(const Math::Point3D &position, const Math::Vector3D &normal)
-    : position(position), normal(normal.normalize()) {}
+: position(position), normal(normal.normalize()) {}
 
 Plane::Plane(const Math::Point3D &position, const Math::Vector3D &normal,
-             const std::shared_ptr<Material> &material)
-    : APrimitive(material), position(position), normal(normal.normalize()) {}
+const std::shared_ptr<Material> &material)
+: APrimitive(material), position(position), normal(normal.normalize()) {}
 
-void Plane::translate(const Math::Vector3D &translation) { position += translation; }
+void Plane::translate(const Math::Vector3D &translation) {
+    position += translation;
+}
 
-std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin, double tMax) const {
+std::optional<HitInfo> Plane::hit(const Ray &ray,
+double tMin, double tMax) const {
     double denom = normal.dot(ray.direction);
     if (std::abs(denom) < 1e-8)
         return std::nullopt;
@@ -42,4 +45,4 @@ std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin, double tMax) cons
 std::shared_ptr<IPrimitive> Plane::clone() const {
     return std::make_shared<Plane>(position, normal, material);
 }
-} // namespace RayTracer
+}  // namespace RayTracer

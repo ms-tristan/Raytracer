@@ -7,36 +7,13 @@
 
 #ifndef SOURCES_SHARED_CLASSES_INTERFACES_IDISPLAYMANAGER_HPP_
 #define SOURCES_SHARED_CLASSES_INTERFACES_IDISPLAYMANAGER_HPP_
+
 #include <string>
 #include <vector>
 #include <memory>
 
+#include "../../defs.hpp"
 namespace RayTracer {
-
-  struct Color {
-    unsigned char r, g, b, a;
-  };
-  using color_t = Color;
-
-  struct Vector2f {
-    float x, y;
-  };
-  using vector2f_t = Vector2f;
-
-  struct Vector2u {
-    unsigned int x, y;
-  };
-  using vector2u_t = Vector2u;
-
-  struct Recti {
-    int x, y, width, height;
-  };
-  using recti_t = Recti;
-
-  struct Vector2i {
-    int x, y;
-  };
-  using vector2i_t = Vector2i;
 
 class IDisplayManager {
  public:

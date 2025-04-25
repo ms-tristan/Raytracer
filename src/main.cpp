@@ -19,6 +19,9 @@
 #include "./Renderer/DisplayManager/SFMLDisplayManager.hpp"
 #include "./Renderer/Renderer.hpp"
 
+// Events Manager
+#include "./EventsManager/SFMLEventsManager.hpp"
+
 // Scene components
 #include "Scene/Scene.hpp"
 #include "Scene/SceneBuilder/SceneBuilder.hpp"
@@ -65,6 +68,9 @@ int main(int argc, char **argv) {
     RayTracer::Camera camera = scene->getCamera();
 
     RayTracer::SFMLDisplayManager displayManager;
+
+    RayTracer::SFMLEventsManager eventsManager(displayManager.getWindow());
+
     displayManager.initialize(image_width, image_height, "Raytracer", false);
 
     RayTracer::Renderer renderer(displayManager);
@@ -72,38 +78,11 @@ int main(int argc, char **argv) {
     while (displayManager.isWindowOpen()) {
 
         renderer.drawScene(*scene, camera);
-
-        sf::Event event;
-        while (displayManager.getWindow().pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                // scene->setCamera(camera);
-                // if (!director.getCurrentSceneFile().empty()) {
-                //     std::cout << "Saving scene to: " << director.getCurrentSceneFile() << std::endl;
-                //     director.saveScene(*scene);
-                // }
-                displayManager.closeWindow();
-            }
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Left)
-                    camera.rotateY(-5);
-                if (event.key.code == sf::Keyboard::Right)
-                    camera.rotateY(5);
-                if (event.key.code == sf::Keyboard::Up)
-                    camera.rotateX(-5);
-                if (event.key.code == sf::Keyboard::Down)
-                    camera.rotateX(5);
-                if (event.key.code == sf::Keyboard::Space) {
-                    camera.origin = Math::Point3D(Math::Coords{
-                        camera.origin.X, camera.origin.Y + 0.1, camera.origin.Z
-                    });
-                }
-                if (event.key.code == sf::Keyboard::LControl) {
-                    camera.origin = Math::Point3D(Math::Coords{
-                        camera.origin.X, camera.origin.Y - 0.1, camera.origin.Z
-                    });
-                }
-            }
+        eventsManager.processEvents();
+        if (eventsManager.isKeyPressed("SPACE")) {
+            camera.rotateX(10);
         }
+
     }
 
     return 0;

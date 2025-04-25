@@ -20,6 +20,7 @@ add_subdirectory(Ray)
 add_subdirectory(Transformation)
 add_subdirectory(Rectangle3D)
 add_subdirectory(Renderer)
+add_subdirectory(EventsManager)
 
 # Collect all source files
 file(GLOB_RECURSE RAYTRACER_SOURCES
@@ -33,6 +34,7 @@ target_include_directories(raytracer PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(raytracer PRIVATE
     ${SFML_LIBRARIES}
     renderer
+    eventsmanager
     PkgConfig::LIBCONFIG
 )
 

@@ -10,6 +10,7 @@
 #include <vector>
 #include <utility>
 #include "CompositePrimitive.hpp"
+#include "Transformation/Rotate/Rotate.hpp"
 
 namespace RayTracer {
 
@@ -23,18 +24,21 @@ void CompositePrimitive::translate(const Math::Vector3D &translation) {
 }
 
 void CompositePrimitive::rotateX(double degrees) {
+    rotationX += degrees;
     for (auto &primitive : primitives) {
         primitive->rotateX(degrees);
     }
 }
 
 void CompositePrimitive::rotateY(double degrees) {
+    rotationY += degrees;
     for (auto &primitive : primitives) {
         primitive->rotateY(degrees);
     }
 }
 
 void CompositePrimitive::rotateZ(double degrees) {
+    rotationZ += degrees;
     for (auto &primitive : primitives) {
         primitive->rotateZ(degrees);
     }
@@ -62,6 +66,10 @@ std::shared_ptr<Material> CompositePrimitive::getMaterial() const {
 
 std::shared_ptr<IPrimitive> CompositePrimitive::clone() const {
     auto copy = std::make_shared<CompositePrimitive>(material);
+    copy->rotationX = rotationX;
+    copy->rotationY = rotationY;
+    copy->rotationZ = rotationZ;
+    
     for (const auto &primitive : primitives) {
         copy->add(primitive->clone());
     }

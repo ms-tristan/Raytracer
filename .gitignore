@@ -4,3 +4,5 @@ coding-style-reports.log
 cpp-lint-reports.log
 Logs
 .vscode
+plugins
+libraytracer_core.so

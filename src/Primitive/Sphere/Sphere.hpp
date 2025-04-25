@@ -9,10 +9,17 @@
 #ifndef SRC_PRIMITIVE_SPHERE_SPHERE_HPP_
 #define SRC_PRIMITIVE_SPHERE_SPHERE_HPP_
 #include <memory>
-#include "Primitive/APrimitive/APrimitive.hpp"
+#include "Primitive/IPrimitive.hpp"
+#include "Transformation/Rotate/Rotate.hpp"
 
 namespace RayTracer {
-class Sphere : public APrimitive {
+class Sphere : public IPrimitive {
+ private:
+    std::shared_ptr<Material> material;
+    double rotationX = 0.0;
+    double rotationY = 0.0;
+    double rotationZ = 0.0;
+
  public:
     Math::Point3D center;
     double radius;
@@ -23,8 +30,12 @@ class Sphere : public APrimitive {
     ~Sphere() override = default;
 
     void translate(const Math::Vector3D &translation) override;
+    void rotateX(double degrees) override;
+    void rotateY(double degrees) override;
+    void rotateZ(double degrees) override;
     std::optional<HitInfo> hit(const Ray &ray, double tMin,
         double tMax) const override;
+    std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
 };
 }  // namespace RayTracer

@@ -13,14 +13,42 @@
 namespace RayTracer {
 Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis,
 double radius, double height)
-: apex(apex), axis(axis.normalize()), radius(radius), height(height) {}
+: material(std::make_shared<Material>()), apex(apex), 
+  axis(axis.normalize()), radius(radius), height(height) {}
 
 Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis,
 double radius, double height, const std::shared_ptr<Material> &material)
-: APrimitive(material), apex(apex), axis(axis.normalize()), radius(radius),
-height(height) {}
+: material(material), apex(apex), axis(axis.normalize()), 
+  radius(radius), height(height) {}
 
-void Cone::translate(const Math::Vector3D &translation) { apex += translation; }
+void Cone::translate(const Math::Vector3D &translation) { 
+    apex += translation; 
+}
+
+void Cone::rotateX(double degrees) {
+    rotationX += degrees;
+    RayTracer::Rotate rotateX("x", degrees);
+    apex = rotateX.applyToPoint(apex);
+    axis = rotateX.applyToVector(axis).normalize();
+}
+
+void Cone::rotateY(double degrees) {
+    rotationY += degrees;
+    RayTracer::Rotate rotateY("y", degrees);
+    apex = rotateY.applyToPoint(apex);
+    axis = rotateY.applyToVector(axis).normalize();
+}
+
+void Cone::rotateZ(double degrees) {
+    rotationZ += degrees;
+    RayTracer::Rotate rotateZ("z", degrees);
+    apex = rotateZ.applyToPoint(apex);
+    axis = rotateZ.applyToVector(axis).normalize();
+}
+
+std::shared_ptr<Material> Cone::getMaterial() const {
+    return material;
+}
 
 std::optional<HitInfo> Cone::hit(const Ray &ray, double tMin,
 double tMax) const {
@@ -128,6 +156,10 @@ double tMax) const {
 }
 
 std::shared_ptr<IPrimitive> Cone::clone() const {
-    return std::make_shared<Cone>(apex, axis, radius, height, material);
+    auto copy = std::make_shared<Cone>(apex, axis, radius, height, material);
+    copy->rotationX = rotationX;
+    copy->rotationY = rotationY;
+    copy->rotationZ = rotationZ;
+    return copy;
 }
 }  // namespace RayTracer

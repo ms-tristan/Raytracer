@@ -5,44 +5,107 @@
 ** File description:
 ** Plane implementation
 */
-
-#include "Primitive/Plane/Plane.hpp"
-#include <cmath>
 #include <memory>
+#include <cmath>
+#include "Primitive/Plane/Plane.hpp"
 
 namespace RayTracer {
 Plane::Plane(const Math::Point3D &position, const Math::Vector3D &normal)
-: position(position), normal(normal.normalize()) {}
+: material(std::make_shared<Material>()),
+  position(position), normal(normal.normalize()) {}
 
 Plane::Plane(const Math::Point3D &position, const Math::Vector3D &normal,
 const std::shared_ptr<Material> &material)
-: APrimitive(material), position(position), normal(normal.normalize()) {}
+: material(material), position(position), normal(normal.normalize()) {}
 
 void Plane::translate(const Math::Vector3D &translation) {
     position += translation;
 }
 
-std::optional<HitInfo> Plane::hit(const Ray &ray,
-double tMin, double tMax) const {
-    double denom = normal.dot(ray.direction);
-    if (std::abs(denom) < 1e-8)
+void Plane::rotateX(double degrees) {
+    rotationX += degrees;
+    RayTracer::Rotate rotateX("x", degrees);
+    position = rotateX.applyToPoint(position);
+    normal = rotateX.applyToVector(normal).normalize();
+}
+
+void Plane::rotateY(double degrees) {
+    rotationY += degrees;
+    RayTracer::Rotate rotateY("y", degrees);
+    position = rotateY.applyToPoint(position);
+    normal = rotateY.applyToVector(normal).normalize();
+}
+
+void Plane::rotateZ(double degrees) {
+    rotationZ += degrees;
+    RayTracer::Rotate rotateZ("z", degrees);
+    position = rotateZ.applyToPoint(position);
+    normal = rotateZ.applyToVector(normal).normalize();
+}
+
+std::shared_ptr<Material> Plane::getMaterial() const {
+    return material;
+}
+
+std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin, 
+double tMax) const {
+    Ray transformedRay = ray;
+    Math::Vector3D transformedNormal = normal;
+    
+    // Apply inverse rotations if needed
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
+        Math::Point3D newOrigin = ray.origin;
+        Math::Vector3D newDirection = ray.direction;
+
+        if (rotationZ != 0.0) {
+            RayTracer::Rotate rotateZ("z", -rotationZ);
+            newOrigin = rotateZ.applyToPoint(newOrigin);
+            newDirection = rotateZ.applyToVector(newDirection);
+        }
+        if (rotationY != 0.0) {
+            RayTracer::Rotate rotateY("y", -rotationY);
+            newOrigin = rotateY.applyToPoint(newOrigin);
+            newDirection = rotateY.applyToVector(newDirection);
+        }
+        if (rotationX != 0.0) {
+            RayTracer::Rotate rotateX("x", -rotationX);
+            newOrigin = rotateX.applyToPoint(newOrigin);
+            newDirection = rotateX.applyToVector(newDirection);
+        }
+
+        transformedRay = Ray(newOrigin, newDirection);
+    }
+
+    double denominator = transformedNormal.dot(transformedRay.direction);
+    
+    // Ray is parallel to the plane
+    if (std::abs(denominator) < 1e-8)
         return std::nullopt;
 
-    Math::Vector3D p0l0 = position - ray.origin;
-    double t = p0l0.dot(normal) / denom;
-
+    double t = (position - transformedRay.origin).dot(transformedNormal) / denominator;
+    
     if (t < tMin || t > tMax)
         return std::nullopt;
 
     HitInfo info;
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
-    info.normal = denom < 0 ? normal : normal * -1.0;
+    info.normal = normal;
+    
+    // Adjust normal direction if ray is coming from behind
+    if (denominator > 0) {
+        info.normal = info.normal * -1.0;
+    }
+    
     info.primitive = this;
     return info;
 }
 
 std::shared_ptr<IPrimitive> Plane::clone() const {
-    return std::make_shared<Plane>(position, normal, material);
+    auto copy = std::make_shared<Plane>(position, normal, material);
+    copy->rotationX = rotationX;
+    copy->rotationY = rotationY;
+    copy->rotationZ = rotationZ;
+    return copy;
 }
 }  // namespace RayTracer

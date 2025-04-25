@@ -1,19 +1,11 @@
-// Copyright <2025> Epitech
-/*
-** EPITECH PROJECT, 2025
-** Raytracer
-** File description:
-** Cylinder Primitive
-*/
-
-#ifndef SRC_PRIMITIVE_CYLINDER_CYLINDER_HPP_
-#define SRC_PRIMITIVE_CYLINDER_CYLINDER_HPP_
+#ifndef SRC_PRIMITIVE_BOX_BOX_HPP_
+#define SRC_PRIMITIVE_BOX_BOX_HPP_
 #include <memory>
 #include "Primitive/IPrimitive.hpp"
 #include "Transformation/Rotate/Rotate.hpp"
 
 namespace RayTracer {
-class Cylinder : public IPrimitive {
+class Box : public IPrimitive {
  private:
     std::shared_ptr<Material> material;
     double rotationX = 0.0;
@@ -22,16 +14,12 @@ class Cylinder : public IPrimitive {
 
  public:
     Math::Point3D center;
-    Math::Vector3D axis;
-    double radius;
-    double height;
+    Math::Vector3D dimensions; // Half-width, half-height, half-depth
 
-    Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
-        double radius, double height);
-    Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
-        double radius, double height,
+    Box(const Math::Point3D &center, const Math::Vector3D &dimensions);
+    Box(const Math::Point3D &center, const Math::Vector3D &dimensions,
         const std::shared_ptr<Material> &material);
-    ~Cylinder() override = default;
+    ~Box() override = default;
 
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
@@ -44,4 +32,4 @@ class Cylinder : public IPrimitive {
 };
 }  // namespace RayTracer
 
-#endif  // SRC_PRIMITIVE_CYLINDER_CYLINDER_HPP_
+#endif  // SRC_PRIMITIVE_BOX_BOX_HPP_

@@ -13,16 +13,41 @@
 namespace RayTracer {
 Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
 double radius, double height)
-: center(center), axis(axis.normalize()),
-radius(radius), height(height) {}
+: material(std::make_shared<Material>()), center(center), 
+  axis(axis.normalize()), radius(radius), height(height) {}
 
 Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
 double radius, double height, const std::shared_ptr<Material> &material)
-: APrimitive(material), center(center), axis(axis.normalize()),
-radius(radius), height(height) {}
+: material(material), center(center), axis(axis.normalize()),
+  radius(radius), height(height) {}
 
 void Cylinder::translate(const Math::Vector3D &translation) {
     center += translation;
+}
+
+void Cylinder::rotateX(double degrees) {
+    rotationX += degrees;
+    RayTracer::Rotate rotateX("x", degrees);
+    center = rotateX.applyToPoint(center);
+    axis = rotateX.applyToVector(axis).normalize();
+}
+
+void Cylinder::rotateY(double degrees) {
+    rotationY += degrees;
+    RayTracer::Rotate rotateY("y", degrees);
+    center = rotateY.applyToPoint(center);
+    axis = rotateY.applyToVector(axis).normalize();
+}
+
+void Cylinder::rotateZ(double degrees) {
+    rotationZ += degrees;
+    RayTracer::Rotate rotateZ("z", degrees);
+    center = rotateZ.applyToPoint(center);
+    axis = rotateZ.applyToVector(axis).normalize();
+}
+
+std::shared_ptr<Material> Cylinder::getMaterial() const {
+    return material;
 }
 
 std::optional<HitInfo> Cylinder::hit(const Ray &ray,
@@ -120,6 +145,10 @@ double tMin, double tMax) const {
 }
 
 std::shared_ptr<IPrimitive> Cylinder::clone() const {
-    return std::make_shared<Cylinder>(center, axis, radius, height, material);
+    auto copy = std::make_shared<Cylinder>(center, axis, radius, height, material);
+    copy->rotationX = rotationX;
+    copy->rotationY = rotationY;
+    copy->rotationZ = rotationZ;
+    return copy;
 }
 }  // namespace RayTracer

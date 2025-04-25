@@ -11,21 +11,71 @@
 
 namespace RayTracer {
 Sphere::Sphere(const Math::Point3D &center,
-double radius) : center(center), radius(radius) {}
+double radius) : material(std::make_shared<Material>()), center(center), radius(radius) {}
 
 Sphere::Sphere(const Math::Point3D &center, double radius,
 const std::shared_ptr<Material> &material)
-: APrimitive(material), center(center), radius(radius) {}
+: material(material), center(center), radius(radius) {}
 
 void Sphere::translate(const Math::Vector3D &translation) {
     center += translation;
 }
 
+void Sphere::rotateX(double degrees) {
+    rotationX += degrees;
+
+    RayTracer::Rotate rotateX("x", degrees);
+    center = rotateX.applyToPoint(center);
+}
+
+void Sphere::rotateY(double degrees) {
+    rotationY += degrees;
+
+    RayTracer::Rotate rotateY("y", degrees);
+    center = rotateY.applyToPoint(center);
+}
+
+void Sphere::rotateZ(double degrees) {
+    rotationZ += degrees;
+
+    RayTracer::Rotate rotateZ("z", degrees);
+    center = rotateZ.applyToPoint(center);
+}
+
+std::shared_ptr<Material> Sphere::getMaterial() const {
+    return material;
+}
+
 std::optional<HitInfo> Sphere::hit(const Ray &ray, double tMin,
 double tMax) const {
-    Math::Vector3D oc = ray.origin - center;
-    double a = ray.direction.dot(ray.direction);
-    double b = 2.0 * oc.dot(ray.direction);
+    Ray transformedRay = ray;
+
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
+        Math::Point3D newOrigin = ray.origin;
+        Math::Vector3D newDirection = ray.direction;
+
+        if (rotationZ != 0.0) {
+            RayTracer::Rotate rotateZ("z", -rotationZ);
+            newOrigin = rotateZ.applyToPoint(newOrigin);
+            newDirection = rotateZ.applyToVector(newDirection);
+        }
+        if (rotationY != 0.0) {
+            RayTracer::Rotate rotateY("y", -rotationY);
+            newOrigin = rotateY.applyToPoint(newOrigin);
+            newDirection = rotateY.applyToVector(newDirection);
+        }
+        if (rotationX != 0.0) {
+            RayTracer::Rotate rotateX("x", -rotationX);
+            newOrigin = rotateX.applyToPoint(newOrigin);
+            newDirection = rotateX.applyToVector(newDirection);
+        }
+
+        transformedRay = Ray(newOrigin, newDirection);
+    }
+
+    Math::Vector3D oc = transformedRay.origin - center;
+    double a = transformedRay.direction.dot(transformedRay.direction);
+    double b = 2.0 * oc.dot(transformedRay.direction);
     double c = oc.dot(oc) - radius * radius;
     double discriminant = b * b - 4 * a * c;
 
@@ -43,12 +93,35 @@ double tMax) const {
     HitInfo info;
     info.distance = root;
     info.hitPoint = ray.origin + ray.direction * root;
-    info.normal = (info.hitPoint - center) / radius;
+
+    Math::Point3D hitPoint = transformedRay.at(root);
+    Math::Vector3D normal = (hitPoint - center) / radius;
+
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
+        if (rotationX != 0.0) {
+            RayTracer::Rotate rotateX("x", rotationX);
+            normal = rotateX.applyToVector(normal);
+        }
+        if (rotationY != 0.0) {
+            RayTracer::Rotate rotateY("y", rotationY);
+            normal = rotateY.applyToVector(normal);
+        }
+        if (rotationZ != 0.0) {
+            RayTracer::Rotate rotateZ("z", rotationZ);
+            normal = rotateZ.applyToVector(normal);
+        }
+    }
+
+    info.normal = normal;
     info.primitive = this;
     return info;
 }
 
 std::shared_ptr<IPrimitive> Sphere::clone() const {
-    return std::make_shared<Sphere>(center, radius, material);
+    auto copy = std::make_shared<Sphere>(center, radius, material);
+    copy->rotationX = rotationX;
+    copy->rotationY = rotationY;
+    copy->rotationZ = rotationZ;
+    return copy;
 }
 }  // namespace RayTracer

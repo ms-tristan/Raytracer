@@ -17,6 +17,9 @@ class CompositePrimitive : public IPrimitive {
  private:
     std::vector<std::shared_ptr<IPrimitive>> primitives;
     std::shared_ptr<Material> material;
+    double rotationX = 0.0;
+    double rotationY = 0.0;
+    double rotationZ = 0.0;
 
  public:
     explicit CompositePrimitive(std::shared_ptr<Material> material);

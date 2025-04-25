@@ -12,9 +12,13 @@ option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_DOCS "Enable documentation" OFF)
 
 
-#? Find SFML
+# Find SFML
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system sfml-audio)
+
+# Find libconfig++
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBCONFIG REQUIRED IMPORTED_TARGET libconfig++)
 
 add_subdirectory(src)
 

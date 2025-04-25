@@ -11,9 +11,11 @@
 #include <string>
 #include <memory>
 #include "SceneDirector.hpp"
+#include "ConfigParser.hpp"
 #include "Light/DirectionalLight/DirectionalLight.hpp"
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
+#include "Material/Material.hpp"
 
 namespace RayTracer {
 
@@ -50,24 +52,14 @@ std::unique_ptr<Scene> SceneDirector::createBasicSphereScene() {
 
 std::unique_ptr<Scene> SceneDirector::createSceneFromFile(
 const std::string& filename) {
-    builder.reset();
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open scene file: " << filename << std::endl;
+    try {
+        // Use our new config parser to load the scene from the file
+        SceneConfigParser parser;
+        return parser.parseFile(filename);
+    } catch (const std::exception& ex) {
+        std::cerr << "Error creating scene from file: " << ex.what() << std::endl;
         return createDefaultScene();
     }
-
-    builder.setCamera(Math::Point3D(Math::Coords{0, 0, 5}),
-        Math::Point3D(Math::Coords{0, 0, 0}))
-        .setAmbientLight(Math::Vector3D(Math::Coords{0.1, 0.1, 0.1}));
-
-    std::string line;
-    while (std::getline(file, line)) {
-        // Parse scene file and use builder to construct the scene
-        // This is a simplified example - you'd implement your own parsing logic
-    }
-
-    return builder.build();
 }
 
 }  // namespace RayTracer

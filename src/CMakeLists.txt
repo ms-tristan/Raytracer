@@ -33,6 +33,7 @@ target_include_directories(raytracer PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(raytracer PRIVATE
     ${SFML_LIBRARIES}
     renderer
+    PkgConfig::LIBCONFIG
 )
 
 # Explicitly disable clang-tidy for the raytracer target

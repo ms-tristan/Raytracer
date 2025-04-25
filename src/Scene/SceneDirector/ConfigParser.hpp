@@ -1,0 +1,89 @@
+#ifndef SRC_SCENE_SCENEDIRECTOR_CONFIGPARSER_HPP_
+#define SRC_SCENE_SCENEDIRECTOR_CONFIGPARSER_HPP_
+
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <libconfig.h++>
+#include "Math/Vector3D/Vector3D.hpp"
+#include "Math/Point3D/Point3D.hpp"
+#include "Scene/SceneBuilder/SceneBuilder.hpp"
+
+namespace RayTracer {
+
+/**
+ * @brief Base class for parsing different sections of a config file
+ */
+class ConfigParser {
+ public:
+    virtual ~ConfigParser() = default;
+    virtual void parse(const libconfig::Setting& setting, SceneBuilder& builder) = 0;
+
+ protected:
+    // Common utility methods for all parsers
+    template<typename T>
+    T getValueOrDefault(const libconfig::Setting& setting,
+                        const std::string& key,
+                        const T& defaultValue) {
+        if (!setting.exists(key)) {
+            return defaultValue;
+        }
+        return static_cast<T>(setting[key.c_str()]);
+    }
+
+    Math::Point3D parsePoint3D(const libconfig::Setting& setting);
+    Math::Vector3D parseVector3D(const libconfig::Setting& setting);
+    Math::Vector3D parseColor(const libconfig::Setting& setting);
+};
+
+/**
+ * @brief Parses camera settings from a config file
+ */
+class CameraParser : public ConfigParser {
+ public:
+    void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+};
+
+/**
+ * @brief Parses light settings from a config file
+ */
+class LightsParser : public ConfigParser {
+ public:
+    void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+
+ private:
+    void parsePointLights(const libconfig::Setting& lights, SceneBuilder& builder);
+    void parseDirectionalLights(const libconfig::Setting& lights, SceneBuilder& builder);
+};
+
+/**
+ * @brief Parses primitive settings from a config file
+ */
+class PrimitivesParser : public ConfigParser {
+ public:
+    void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+
+ private:
+    void parseSpheres(const libconfig::Setting& primitives, SceneBuilder& builder);
+    void parsePlanes(const libconfig::Setting& primitives, SceneBuilder& builder);
+    void parseCylinders(const libconfig::Setting& primitives, SceneBuilder& builder);
+    void parseCones(const libconfig::Setting& primitives, SceneBuilder& builder);
+};
+
+/**
+ * @brief Main config parser that orchestrates parsing of all sections
+ */
+class SceneConfigParser {
+ public:
+    SceneConfigParser();
+    std::unique_ptr<Scene> parseFile(const std::string& filename);
+
+ private:
+    SceneBuilder builder;
+    std::unordered_map<std::string, std::unique_ptr<ConfigParser>> sectionParsers;
+};
+
+}  // namespace RayTracer
+
+#endif  // SRC_SCENE_SCENEDIRECTOR_CONFIGPARSER_HPP_

@@ -12,7 +12,7 @@
 namespace RayTracer {
 Plane::Plane(const Math::Point3D &position, const Math::Vector3D &normal)
 : material(std::make_shared<Material>()),
-  position(position), normal(normal.normalize()) {}
+position(position), normal(normal.normalize()) {}
 
 Plane::Plane(const Math::Point3D &position, const Math::Vector3D &normal,
 const std::shared_ptr<Material> &material)
@@ -47,12 +47,11 @@ std::shared_ptr<Material> Plane::getMaterial() const {
     return material;
 }
 
-std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin, 
+std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin,
 double tMax) const {
     Ray transformedRay = ray;
     Math::Vector3D transformedNormal = normal;
-    
-    // Apply inverse rotations if needed
+
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         Math::Point3D newOrigin = ray.origin;
         Math::Vector3D newDirection = ray.direction;
@@ -77,13 +76,13 @@ double tMax) const {
     }
 
     double denominator = transformedNormal.dot(transformedRay.direction);
-    
-    // Ray is parallel to the plane
+
     if (std::abs(denominator) < 1e-8)
         return std::nullopt;
 
-    double t = (position - transformedRay.origin).dot(transformedNormal) / denominator;
-    
+    double t = (position - transformedRay.origin).dot(transformedNormal)
+        / denominator;
+
     if (t < tMin || t > tMax)
         return std::nullopt;
 
@@ -91,12 +90,10 @@ double tMax) const {
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
-    
-    // Adjust normal direction if ray is coming from behind
-    if (denominator > 0) {
+
+    if (denominator > 0)
         info.normal = info.normal * -1.0;
-    }
-    
+
     info.primitive = this;
     return info;
 }

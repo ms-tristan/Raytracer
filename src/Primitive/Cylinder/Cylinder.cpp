@@ -13,13 +13,13 @@
 namespace RayTracer {
 Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
 double radius, double height)
-: material(std::make_shared<Material>()), center(center), 
-  axis(axis.normalize()), radius(radius), height(height) {}
+: material(std::make_shared<Material>()), center(center),
+axis(axis.normalize()), radius(radius), height(height) {}
 
 Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
 double radius, double height, const std::shared_ptr<Material> &material)
 : material(material), center(center), axis(axis.normalize()),
-  radius(radius), height(height) {}
+radius(radius), height(height) {}
 
 void Cylinder::translate(const Math::Vector3D &translation) {
     center += translation;
@@ -145,7 +145,8 @@ double tMin, double tMax) const {
 }
 
 std::shared_ptr<IPrimitive> Cylinder::clone() const {
-    auto copy = std::make_shared<Cylinder>(center, axis, radius, height, material);
+    auto copy = std::make_shared<Cylinder>(center, axis,
+        radius, height, material);
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;

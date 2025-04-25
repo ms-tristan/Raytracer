@@ -69,7 +69,7 @@ std::shared_ptr<IPrimitive> CompositePrimitive::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
-    
+
     for (const auto &primitive : primitives) {
         copy->add(primitive->clone());
     }

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
 #include "Primitive/Cone/Cone.hpp"
 #include "Math/Point3D/Point3D.hpp"
@@ -28,16 +29,13 @@ class ConePlugin : public IPrimitivePlugin {
     std::shared_ptr<IPrimitive> createPrimitive(
         const std::map<std::string, double>& params,
         const std::shared_ptr<Material>& material) override {
-        
-        // Check all required parameters are present
         auto requiredParams = getRequiredParameters();
         for (const auto& param : requiredParams) {
-            if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: " + param);
-            }
+            if (params.find(param) == params.end())
+                throw std::runtime_error("Missing required parameter: "
+                    + param);
         }
 
-        // Extract parameters
         Math::Coords apexCoords {
             params.at("x"),
             params.at("y"),
@@ -48,13 +46,12 @@ class ConePlugin : public IPrimitivePlugin {
             params.at("ay"),
             params.at("az")
         };
-        
+
         Math::Point3D apex(apexCoords);
         Math::Vector3D axis(axisCoords);
         double radius = params.at("radius");
         double height = params.at("height");
 
-        // Create and return the cone
         return std::make_shared<Cone>(apex, axis, radius, height, material);
     }
 
@@ -63,7 +60,6 @@ class ConePlugin : public IPrimitivePlugin {
     }
 };
 
-// Create the plugin entry point function
 extern "C" {
     IPrimitivePlugin* createPlugin() {
         return new ConePlugin();

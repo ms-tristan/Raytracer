@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <string>
+#include <iostream>
 #include <vector>
 #include <map>
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
@@ -28,31 +29,27 @@ class BoxPlugin : public IPrimitivePlugin {
     std::shared_ptr<IPrimitive> createPrimitive(
         const std::map<std::string, double>& params,
         const std::shared_ptr<Material>& material) override {
-        
-        // Check all required parameters are present
         auto requiredParams = getRequiredParameters();
         for (const auto& param : requiredParams) {
-            if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: " + param);
-            }
+            if (params.find(param) == params.end())
+                throw std::runtime_error("Missing required parameter: "
+                    + param);
         }
 
-        // Extract parameters
         Math::Coords centerCoords {
             params.at("x"),
             params.at("y"),
             params.at("z")
         };
         Math::Coords dimensionsCoords {
-            params.at("width") / 2.0,  // Convert to half-width
-            params.at("height") / 2.0, // Convert to half-height
-            params.at("depth") / 2.0   // Convert to half-depth
+            params.at("width") / 2.0,
+            params.at("height") / 2.0,
+            params.at("depth") / 2.0
         };
-        
+
         Math::Point3D center(centerCoords);
         Math::Vector3D dimensions(dimensionsCoords);
 
-        // Create and return the box
         return std::make_shared<Box>(center, dimensions, material);
     }
 
@@ -61,7 +58,6 @@ class BoxPlugin : public IPrimitivePlugin {
     }
 };
 
-// Create the plugin entry point function
 extern "C" {
     IPrimitivePlugin* createPlugin() {
         return new BoxPlugin();

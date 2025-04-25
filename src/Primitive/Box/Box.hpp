@@ -1,3 +1,11 @@
+// Copyright <2025> Epitech
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** Box
+*/
+
 #ifndef SRC_PRIMITIVE_BOX_BOX_HPP_
 #define SRC_PRIMITIVE_BOX_BOX_HPP_
 #include <memory>
@@ -14,7 +22,7 @@ class Box : public IPrimitive {
 
  public:
     Math::Point3D center;
-    Math::Vector3D dimensions; // Half-width, half-height, half-depth
+    Math::Vector3D dimensions;
 
     Box(const Math::Point3D &center, const Math::Vector3D &dimensions);
     Box(const Math::Point3D &center, const Math::Vector3D &dimensions,

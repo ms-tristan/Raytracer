@@ -1,12 +1,19 @@
-#ifndef SRC_PRIMITIVE_PLUGIN_PRIMITIVEPLUGINMANAGER_HPP_
-#define SRC_PRIMITIVE_PLUGIN_PRIMITIVEPLUGINMANAGER_HPP_
+// Copyright <2025> Epitech
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** PrimitivePluginManager
+*/
 
-#include <string>
-#include <map>
-#include <memory>
-#include <vector>
-#include <dlfcn.h>
-#include "IPrimitivePlugin.hpp"
+#ifndef SRC_PRIMITIVE_PLUGIN_PRIMITIVEPLUGINMANAGER_HPP_
+    #define SRC_PRIMITIVE_PLUGIN_PRIMITIVEPLUGINMANAGER_HPP_
+    #include <dlfcn.h>
+    #include <string>
+    #include <map>
+    #include <memory>
+    #include <vector>
+    #include "IPrimitivePlugin.hpp"
 
 namespace RayTracer {
 
@@ -29,19 +36,10 @@ class PrimitivePluginManager {
 
     static PrimitivePluginManager* getInstance();
 
-    // Load a plugin from a shared library file
     bool loadPlugin(const std::string& path);
-    
-    // Unload a specific plugin by name
     bool unloadPlugin(const std::string& typeName);
-    
-    // Get a plugin by its type name
     std::shared_ptr<IPrimitivePlugin> getPlugin(const std::string& typeName);
-    
-    // Get all loaded plugin names
     std::vector<std::string> getLoadedPluginNames() const;
-    
-    // Create a primitive using a plugin
     std::shared_ptr<IPrimitive> createPrimitive(
         const std::string& typeName,
         const std::map<std::string, double>& params,

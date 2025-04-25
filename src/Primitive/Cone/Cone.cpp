@@ -13,16 +13,16 @@
 namespace RayTracer {
 Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis,
 double radius, double height)
-: material(std::make_shared<Material>()), apex(apex), 
-  axis(axis.normalize()), radius(radius), height(height) {}
+: material(std::make_shared<Material>()), apex(apex),
+axis(axis.normalize()), radius(radius), height(height) {}
 
 Cone::Cone(const Math::Point3D &apex, const Math::Vector3D &axis,
 double radius, double height, const std::shared_ptr<Material> &material)
-: material(material), apex(apex), axis(axis.normalize()), 
-  radius(radius), height(height) {}
+: material(material), apex(apex), axis(axis.normalize()),
+radius(radius), height(height) {}
 
-void Cone::translate(const Math::Vector3D &translation) { 
-    apex += translation; 
+void Cone::translate(const Math::Vector3D &translation) {
+    apex += translation;
 }
 
 void Cone::rotateX(double degrees) {

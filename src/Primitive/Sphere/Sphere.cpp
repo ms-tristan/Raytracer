@@ -11,7 +11,8 @@
 
 namespace RayTracer {
 Sphere::Sphere(const Math::Point3D &center,
-double radius) : material(std::make_shared<Material>()), center(center), radius(radius) {}
+double radius) : material(std::make_shared<Material>()),
+center(center), radius(radius) {}
 
 Sphere::Sphere(const Math::Point3D &center, double radius,
 const std::shared_ptr<Material> &material)

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
 #include "Primitive/Plane/Plane.hpp"
 #include "Math/Point3D/Point3D.hpp"
@@ -28,16 +29,14 @@ class PlanePlugin : public IPrimitivePlugin {
     std::shared_ptr<IPrimitive> createPrimitive(
         const std::map<std::string, double>& params,
         const std::shared_ptr<Material>& material) override {
-        
-        // Check all required parameters are present
         auto requiredParams = getRequiredParameters();
         for (const auto& param : requiredParams) {
             if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: " + param);
+                throw std::runtime_error("Missing required parameter: "
+                    + param);
             }
         }
 
-        // Extract parameters
         Math::Coords posCoords {
             params.at("x"),
             params.at("y"),
@@ -48,11 +47,9 @@ class PlanePlugin : public IPrimitivePlugin {
             params.at("ny"),
             params.at("nz")
         };
-        
         Math::Point3D position(posCoords);
         Math::Vector3D normal(normalCoords);
 
-        // Create and return the plane
         return std::make_shared<Plane>(position, normal, material);
     }
 
@@ -61,7 +58,6 @@ class PlanePlugin : public IPrimitivePlugin {
     }
 };
 
-// Create the plugin entry point function
 extern "C" {
     IPrimitivePlugin* createPlugin() {
         return new PlanePlugin();

@@ -19,8 +19,7 @@ class Ray {
 
     Ray() = default;
     Ray(const Math::Point3D &origin, const Math::Vector3D &direction);
-    
-    // Returns a point at distance t along the ray
+
     Math::Point3D at(double t) const;
 };
 }  // namespace RayTracer

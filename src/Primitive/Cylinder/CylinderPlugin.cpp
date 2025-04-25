@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
 #include "Primitive/Cylinder/Cylinder.hpp"
 #include "Math/Point3D/Point3D.hpp"
@@ -28,16 +29,14 @@ class CylinderPlugin : public IPrimitivePlugin {
     std::shared_ptr<IPrimitive> createPrimitive(
         const std::map<std::string, double>& params,
         const std::shared_ptr<Material>& material) override {
-        
-        // Check all required parameters are present
         auto requiredParams = getRequiredParameters();
         for (const auto& param : requiredParams) {
             if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: " + param);
+                throw std::runtime_error("Missing required parameter: "
+                    + param);
             }
         }
 
-        // Extract parameters
         Math::Coords centerCoords {
             params.at("x"),
             params.at("y"),
@@ -48,14 +47,14 @@ class CylinderPlugin : public IPrimitivePlugin {
             params.at("ay"),
             params.at("az")
         };
-        
+
         Math::Point3D center(centerCoords);
         Math::Vector3D axis(axisCoords);
         double radius = params.at("radius");
         double height = params.at("height");
 
-        // Create and return the cylinder
-        return std::make_shared<Cylinder>(center, axis, radius, height, material);
+        return std::make_shared<Cylinder>(center, axis, radius,
+            height, material);
     }
 
     std::vector<std::string> getRequiredParameters() const override {
@@ -63,7 +62,6 @@ class CylinderPlugin : public IPrimitivePlugin {
     }
 };
 
-// Create the plugin entry point function
 extern "C" {
     IPrimitivePlugin* createPlugin() {
         return new CylinderPlugin();

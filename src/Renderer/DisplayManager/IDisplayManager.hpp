@@ -13,21 +13,30 @@
 
 namespace RayTracer {
 
-  using color_t = struct {
+  struct Color {
     unsigned char r, g, b, a;
   };
-  using vector2f_t = struct {
+  using color_t = Color;
+
+  struct Vector2f {
     float x, y;
   };
-  using vector2u_t = struct {
+  using vector2f_t = Vector2f;
+
+  struct Vector2u {
     unsigned int x, y;
   };
-  using recti_t = struct {
+  using vector2u_t = Vector2u;
+
+  struct Recti {
     int x, y, width, height;
   };
-  using vector2i_t = struct {
+  using recti_t = Recti;
+
+  struct Vector2i {
     int x, y;
   };
+  using vector2i_t = Vector2i;
 
 class IDisplayManager {
  public:
@@ -88,6 +97,12 @@ class IDisplayManager {
                           const color_t& color,
                           const color_t& outlineColor = {0, 0, 0, 0},
                           float outlineThickness = 0.0f) = 0;
+
+  virtual void drawImage(const std::vector<color_t>& pixelData, 
+                        unsigned int width, 
+                        unsigned int height,
+                        const vector2f_t& position = {0.0f, 0.0f},
+                        const vector2f_t& scale = {1.0f, 1.0f}) = 0;
 
   virtual void drawLine(const vector2f_t& start,
                         const vector2f_t& end,

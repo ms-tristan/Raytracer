@@ -19,8 +19,6 @@ class IRenderer {
 
     virtual void drawScene(const Scene& scene, const Camera& camera) = 0;
 
-    virtual void setPixelSamples(int samples) = 0;
-    virtual void setMaxRayDepth(int depth) = 0;
 };
 
 } // namespace RayTracer

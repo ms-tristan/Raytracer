@@ -71,6 +71,12 @@ class SFMLDisplayManager : public IDisplayManager {
                      const color_t& outlineColor = {0, 0, 0, 0},
                      float outlineThickness = 0.0f) override;
 
+    void drawImage(const std::vector<color_t>& pixelData,
+                  unsigned int width,
+                  unsigned int height,
+                  const vector2f_t& position = {0.0f, 0.0f},
+                  const vector2f_t& scale = {1.0f, 1.0f}) override;
+
     void drawLine(const vector2f_t& start,
                   const vector2f_t& end,
                   const color_t& color = {255, 255, 255, 255},

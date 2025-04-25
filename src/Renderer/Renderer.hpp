@@ -14,9 +14,13 @@ namespace RayTracer {
 
 class Renderer : public IRenderer {
   public:
-    Renderer(IDisplayManager& displayManager)
-        : _displayManager(displayManager) {};
+    Renderer(IDisplayManager& displayManager);
     ~Renderer();
+
+    void drawScene(const Scene& scene, const Camera& camera) override;
+
+  private:
+    IDisplayManager& _displayManager;
 };
 
 }  // namespace RayTracer

@@ -5,6 +5,9 @@ set(INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+# Make the include directories available to all targets
+include_directories(${INCLUDE_DIRS})
+
 # Add subdirectories for each component
 add_subdirectory(Math)
 add_subdirectory(Primitive)
@@ -16,6 +19,7 @@ add_subdirectory(IObserver)
 add_subdirectory(Ray)
 add_subdirectory(Transformation)
 add_subdirectory(Rectangle3D)
+add_subdirectory(Renderer)
 
 # Collect all source files
 file(GLOB_RECURSE RAYTRACER_SOURCES
@@ -25,6 +29,11 @@ file(GLOB_RECURSE RAYTRACER_SOURCES
 # Main executable
 add_executable(raytracer ${RAYTRACER_SOURCES})
 target_include_directories(raytracer PRIVATE ${INCLUDE_DIRS})
+
+target_link_libraries(raytracer PRIVATE
+    ${SFML_LIBRARIES}
+    renderer
+)
 
 # Explicitly disable clang-tidy for the raytracer target
 set_target_properties(raytracer PROPERTIES CXX_CLANG_TIDY "")

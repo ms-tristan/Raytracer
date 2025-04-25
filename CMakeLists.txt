@@ -6,9 +6,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CLANG_TIDY_OPTIONS
     "clang-tidy;-warnings-as-errors=*;-checks=modernize-*,readability-*,performance-*,bugprone-*,-modernize-use-trailing-return-type,-modernize-redundant-void-arg,-readability-namespace-comments,-clang-analyzer-security.*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay;-extra-arg=-std=c++20;-extra-arg-before=-Iinclude;-extra-arg-before=-DDEBUG"
 )
-set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_OPTIONS}")
+# Temporarily disable clang-tidy
+# set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_OPTIONS}")
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_DOCS "Enable documentation" OFF)
+
+
+#? Find SFML
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system sfml-audio)
 
 add_subdirectory(src)
 

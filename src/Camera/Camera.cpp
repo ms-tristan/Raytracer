@@ -59,6 +59,8 @@ Ray Camera::ray(double u, double v) const {
     return Ray(origin, direction);
 }
 
+void Camera::translate(const Math::Vector3D &translation) { origin += translation; }
+
 void Camera::rotateX(double degrees) {
     origin = Math::Rotation::rotateX(origin, degrees);
     screen.origin = Math::Rotation::rotateX(screen.origin, degrees);

@@ -28,6 +28,7 @@ class Camera {
     void rotateX(double degrees);
     void rotateY(double degrees);
     void rotateZ(double degrees);
+    void translate(const Math::Vector3D &translation);
  private:
     void updateScreenForFOV();
 };

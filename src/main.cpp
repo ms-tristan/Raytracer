@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
         renderer.drawScene(*scene, camera);
         eventsManager.processEvents();
         if (eventsManager.isKeyPressed("SPACE")) {
-            camera.rotateX(10);
+            camera.translate(Math::Vector3D(Math::Coords{0, 0, -0.1}));
         }
 
     }

@@ -75,8 +75,14 @@ int main(int argc, char **argv) {
 
         sf::Event event;
         while (displayManager.getWindow().pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
+                scene->setCamera(camera);
+                if (!director.getCurrentSceneFile().empty()) {
+                    std::cout << "Saving scene to: " << director.getCurrentSceneFile() << std::endl;
+                    director.saveScene(*scene);
+                }
                 displayManager.closeWindow();
+            }
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Left)
                     camera.rotateY(-5);
@@ -95,6 +101,15 @@ int main(int argc, char **argv) {
                     camera.origin = Math::Point3D(Math::Coords{
                         camera.origin.X, camera.origin.Y - 0.1, camera.origin.Z
                     });
+                }
+                if (event.key.code == sf::Keyboard::S) {
+                    scene->setCamera(camera);
+                    if (!director.getCurrentSceneFile().empty()) {
+                        std::cout << "Saving scene to: " << director.getCurrentSceneFile() << std::endl;
+                        director.saveScene(*scene);
+                    } else {
+                        std::cout << "Cannot save scene: No file specified." << std::endl;
+                    }
                 }
             }
         }

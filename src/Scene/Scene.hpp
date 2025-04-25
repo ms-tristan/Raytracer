@@ -41,6 +41,10 @@ class Scene {
       const std::shared_ptr<ILight> &light) const;
     Math::Vector3D computeColor(const Ray &ray) const;
     void writeColor(const Math::Vector3D &color);
+
+    const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
+    const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }
+    const AmbientLight& getAmbientLight() const { return ambientLight; }
 };
 }  // namespace RayTracer
 

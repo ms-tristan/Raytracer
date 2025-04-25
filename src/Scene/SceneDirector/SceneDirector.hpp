@@ -16,6 +16,7 @@ namespace RayTracer {
 class SceneDirector {
  private:
     SceneBuilder builder;
+    std::string currentSceneFile; // Track the currently loaded scene file
 
  public:
     SceneDirector() = default;
@@ -23,6 +24,15 @@ class SceneDirector {
     std::unique_ptr<Scene> createDefaultScene();
     std::unique_ptr<Scene> createSceneFromFile(const std::string& filename);
     std::unique_ptr<Scene> createBasicSphereScene();
+    
+    // New method to save a scene to a file
+    bool saveSceneToFile(const Scene& scene, const std::string& filename);
+    
+    // New method to save a scene to the file it was loaded from
+    bool saveScene(const Scene& scene);
+    
+    // Get the current scene file path
+    std::string getCurrentSceneFile() const { return currentSceneFile; }
 };
 }  // namespace RayTracer
 

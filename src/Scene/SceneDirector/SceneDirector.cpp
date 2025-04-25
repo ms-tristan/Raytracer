@@ -12,6 +12,7 @@
 #include <memory>
 #include "SceneDirector.hpp"
 #include "ConfigParser.hpp"
+#include "SceneSerializer.hpp"
 #include "Light/DirectionalLight/DirectionalLight.hpp"
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
@@ -53,13 +54,32 @@ std::unique_ptr<Scene> SceneDirector::createBasicSphereScene() {
 std::unique_ptr<Scene> SceneDirector::createSceneFromFile(
 const std::string& filename) {
     try {
-        // Use our new config parser to load the scene from the file
+        currentSceneFile = filename;
+
         SceneConfigParser parser;
         return parser.parseFile(filename);
     } catch (const std::exception& ex) {
         std::cerr << "Error creating scene from file: " << ex.what() << std::endl;
         return createDefaultScene();
     }
+}
+
+bool SceneDirector::saveSceneToFile(const Scene& scene, const std::string& filename) {
+    SceneSerializer serializer;
+    bool success = serializer.saveToFile(scene, filename);
+    if (success) {
+        std::cout << "Scene saved to file: " << filename << std::endl;
+    }
+    return success;
+}
+
+bool SceneDirector::saveScene(const Scene& scene) {
+    if (currentSceneFile.empty()) {
+        std::cerr << "No scene file to save to. The scene was not loaded from a file." << std::endl;
+        return false;
+    }
+
+    return saveSceneToFile(scene, currentSceneFile);
 }
 
 }  // namespace RayTracer

@@ -82,38 +82,38 @@ int main(int argc, char **argv) {
         
         // Vertical movement (up/down)
         if (eventsManager.isKeyPressed("SPACE")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, 0.1, 0}));
+            camera.translate(Math::Vector3D(Math::Coords{0, 0.5, 0}));
         }
         if (eventsManager.isKeyPressed("LCONTROL")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, -0.1, 0}));
+            camera.translate(Math::Vector3D(Math::Coords{0, -0.5, 0}));
         }
         
         // ZQSD movement (forward, left, backward, right)
         if (eventsManager.isKeyPressed("Z")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, 0, -0.1}));
+            camera.translate(Math::Vector3D(Math::Coords{0, 0, -0.5}));
         }
         if (eventsManager.isKeyPressed("S")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, 0, 0.1}));
+            camera.translate(Math::Vector3D(Math::Coords{0, 0, 0.5}));
         }
         if (eventsManager.isKeyPressed("Q")) {
-            camera.translate(Math::Vector3D(Math::Coords{-0.1, 0, 0}));
+            camera.translate(Math::Vector3D(Math::Coords{-0.5, 0, 0}));
         }
         if (eventsManager.isKeyPressed("D")) {
-            camera.translate(Math::Vector3D(Math::Coords{0.1, 0, 0}));
+            camera.translate(Math::Vector3D(Math::Coords{0.5, 0, 0}));
         }
         
         // Arrow keys for rotation
         if (eventsManager.isKeyPressed("LEFT")) {
-            camera.rotateY(1.0);
+            camera.rotateY(2.0);
         }
         if (eventsManager.isKeyPressed("RIGHT")) {
-            camera.rotateY(-1.0);
+            camera.rotateY(-2.0);
         }
         if (eventsManager.isKeyPressed("UP")) {
-            camera.rotateX(1.0);
+            camera.rotateX(2.0);
         }
         if (eventsManager.isKeyPressed("DOWN")) {
-            camera.rotateX(-1.0);
+            camera.rotateX(-2.0);
         }
     }
 

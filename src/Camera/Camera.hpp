@@ -8,6 +8,7 @@
 
 #ifndef SRC_CAMERA_CAMERA_HPP_
 #define SRC_CAMERA_CAMERA_HPP_
+#include <libconfig.h++>
 #include "Math/Point3D/Point3D.hpp"
 #include "Ray/Ray.hpp"
 #include "Rectangle3D/Rectangle3D.hpp"
@@ -29,6 +30,7 @@ class Camera {
     void rotateY(double degrees);
     void rotateZ(double degrees);
     void translate(const Math::Vector3D &translation);
+    void getLibConfigParams(libconfig::Setting& setting) const;
  private:
     void updateScreenForFOV();
 };

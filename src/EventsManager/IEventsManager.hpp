@@ -20,6 +20,11 @@ class IEventsManager {
   virtual ~IEventsManager() = default;
   virtual bool isKeyPressed(std::string key) const = 0;
   virtual vector2f_t getMousePos() = 0;
+
+  virtual bool processEvents() = 0;
+  virtual bool isWindowClosed() const = 0;
+  virtual bool isWindowResized() const = 0;
+  virtual vector2i_t getResizedDimensions() const = 0;
 };
 }  // namespace RayTracer
 

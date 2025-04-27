@@ -9,7 +9,12 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <typeinfo>
 #include "CompositePrimitive.hpp"
+#include "Primitive/Sphere/Sphere.hpp"
+#include "Primitive/Plane/Plane.hpp"
+#include "Primitive/Cylinder/Cylinder.hpp"
+#include "Primitive/Cone/Cone.hpp"
 
 namespace RayTracer {
 
@@ -81,6 +86,37 @@ void CompositePrimitive::remove(std::shared_ptr<IPrimitive> primitive) {
 const std::vector<std::shared_ptr<IPrimitive>>&
 CompositePrimitive::getPrimitives() const {
     return primitives;
+}
+
+void CompositePrimitive::getLibConfigParams(libconfig::Setting& setting) const {
+
+    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
+    color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
+    color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
+    color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
+
+    mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
+    mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+
+    libconfig::Setting& children = setting.add("children", libconfig::Setting::TypeList);
+
+    for (const auto& primitive : primitives) {
+        libconfig::Setting& child = children.add(libconfig::Setting::TypeGroup);
+
+        const std::type_info& type = typeid(*primitive);
+        std::string primitiveType = "unknown";
+
+        if (type == typeid(Sphere)) primitiveType = "sphere";
+        else if (type == typeid(Plane)) primitiveType = "plane";
+        else if (type == typeid(Cylinder)) primitiveType = "cylinder";
+        else if (type == typeid(Cone)) primitiveType = "cone";
+
+        child.add("type", libconfig::Setting::TypeString) = primitiveType;
+
+        primitive->getLibConfigParams(child);
+    }
 }
 
 }  // namespace RayTracer

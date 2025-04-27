@@ -9,8 +9,14 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <typeinfo>
 #include "Scene/Scene.hpp"
 #include "Light/PointLight/PointLight.hpp"
+#include "Light/DirectionalLight/DirectionalLight.hpp"
+#include "Primitive/Sphere/Sphere.hpp"
+#include "Primitive/Plane/Plane.hpp"
+#include "Primitive/Cylinder/Cylinder.hpp"
+#include "Primitive/Cone/Cone.hpp"
 namespace RayTracer {
 
 void Scene::setCamera(const Camera &cam) { camera = cam; }
@@ -106,6 +112,56 @@ void Scene::writeColor(const Math::Vector3D &color) {
     int ib = static_cast<int>(255.999 * b);
 
     std::cout << ir << " " << ig << " " << ib << std::endl;
+}
+
+void Scene::getLibConfigParams(libconfig::Setting& setting) const {
+    libconfig::Setting& cameraSettings = setting.add("camera", libconfig::Setting::TypeGroup);
+    camera.getLibConfigParams(cameraSettings);
+
+    libconfig::Setting& primitives = setting.add("primitives", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& spheres = primitives.add("spheres", libconfig::Setting::TypeList);
+    libconfig::Setting& planes = primitives.add("planes", libconfig::Setting::TypeList);
+    libconfig::Setting& cylinders = primitives.add("cylinders", libconfig::Setting::TypeList);
+    libconfig::Setting& cones = primitives.add("cones", libconfig::Setting::TypeList);
+
+    for (const auto& primitive : getPrimitives()) {
+        const std::type_info& type = typeid(*primitive);
+
+        if (type == typeid(Sphere)) {
+            libconfig::Setting& sphere = spheres.add(libconfig::Setting::TypeGroup);
+            primitive->getLibConfigParams(sphere);
+        } else if (type == typeid(Plane)) {
+            libconfig::Setting& plane = planes.add(libconfig::Setting::TypeGroup);
+            primitive->getLibConfigParams(plane);
+        } else if (type == typeid(Cylinder)) {
+            libconfig::Setting& cylinder = cylinders.add(libconfig::Setting::TypeGroup);
+            primitive->getLibConfigParams(cylinder);
+        } else if (type == typeid(Cone)) {
+            libconfig::Setting& cone = cones.add(libconfig::Setting::TypeGroup);
+            primitive->getLibConfigParams(cone);
+        }
+    }
+
+    libconfig::Setting& lights = setting.add("lights", libconfig::Setting::TypeGroup);
+
+    lights.add("ambient", libconfig::Setting::TypeFloat) = ambientLight.getLightColor().X;
+    lights.add("diffuse", libconfig::Setting::TypeFloat) = 0.6; // Default diffuse value
+
+    libconfig::Setting& pointLights = lights.add("point", libconfig::Setting::TypeList);
+    libconfig::Setting& directionalLights = lights.add("directional", libconfig::Setting::TypeList);
+
+    for (const auto& light : getLights()) {
+        const std::type_info& type = typeid(*light);
+
+        if (type == typeid(PointLight)) {
+            libconfig::Setting& pointLight = pointLights.add(libconfig::Setting::TypeGroup);
+            light->getLibConfigParams(pointLight);
+        } else if (type == typeid(DirectionalLight)) {
+            libconfig::Setting& directionalLight = directionalLights.add(libconfig::Setting::TypeGroup);
+            light->getLibConfigParams(directionalLight);
+        }
+    }
 }
 
 }  // namespace RayTracer

@@ -23,10 +23,10 @@ class SFMLEventsManager : public IEventsManager {
     bool isKeyPressed(std::string key) const override;
     vector2f_t getMousePos() override;
 
-    bool processEvents();
-    bool isWindowClosed() const;
-    bool isWindowResized() const;
-    vector2i_t getResizedDimensions() const;
+    bool processEvents() override;
+    bool isWindowClosed() const override;
+    bool isWindowResized() const override;
+    vector2i_t getResizedDimensions() const override;
 
  private:
     sf::RenderWindow& _window;
@@ -34,10 +34,9 @@ class SFMLEventsManager : public IEventsManager {
     bool _isWindowResized;
     vector2i_t _resizedDimensions;
     sf::Event _event;
-    
-    // Map SFML keyboard keys to string representation for easier usage
+
     std::unordered_map<std::string, sf::Keyboard::Key> _keyMap;
-    
+
     void initKeyMap();
 };
 

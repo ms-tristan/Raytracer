@@ -23,4 +23,8 @@ Math::Vector3D LightDecorator::getLightColor() const {
     return wrappedLight->getLightColor();
 }
 
+void LightDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+    wrappedLight->getLibConfigParams(setting);
+}
+
 }  // namespace RayTracer

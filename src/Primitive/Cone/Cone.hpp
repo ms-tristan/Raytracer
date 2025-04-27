@@ -11,6 +11,7 @@
 #include "Primitive/APrimitive/APrimitive.hpp"
 #include "Transformation/Rotation/Rotation.hpp"
 #include <memory>
+#include <libconfig.h++>
 
 namespace RayTracer {
 class Cone : public APrimitive {
@@ -28,6 +29,7 @@ class Cone : public APrimitive {
     void translate(const Math::Vector3D &translation) override;
     std::optional<HitInfo> hit(const Ray &ray, double tMin, double tMax) const override;
     std::shared_ptr<IPrimitive> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 } // namespace RayTracer
 

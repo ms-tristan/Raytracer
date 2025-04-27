@@ -8,16 +8,19 @@
 
 #ifndef SRC_SCENE_SCENE_HPP_
   #define SRC_SCENE_SCENE_HPP_
-  #include <algorithm>
-  #include <limits>
-  #include <memory>
-  #include <vector>
+
   #include "Camera/Camera.hpp"
   #include "HitInfo.hpp"
   #include "Light/AmbientLight/AmbientLight.hpp"
   #include "Light/ILight.hpp"
   #include "Primitive/IPrimitive.hpp"
   #include "Ray/Ray.hpp"
+
+  #include <algorithm>
+  #include <limits>
+  #include <memory>
+  #include <vector>
+  #include <libconfig.h++>
 
 namespace RayTracer {
 class Scene {
@@ -41,6 +44,7 @@ class Scene {
       const std::shared_ptr<ILight> &light) const;
     Math::Vector3D computeColor(const Ray &ray) const;
     void writeColor(const Math::Vector3D &color);
+    void getLibConfigParams(libconfig::Setting& setting) const;
 
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
     const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }

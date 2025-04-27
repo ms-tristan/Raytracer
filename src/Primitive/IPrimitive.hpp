@@ -10,6 +10,7 @@
 #define SRC_PRIMITIVE_IPRIMITIVE_HPP_
 #include <memory>
 #include <optional>
+#include <libconfig.h++>
 #include "HitInfo.hpp"
 #include "Material/Material.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
@@ -28,6 +29,7 @@ class IPrimitive {
       double tMin, double tMax) const = 0;
     virtual std::shared_ptr<Material> getMaterial() const = 0;
     virtual std::shared_ptr<IPrimitive> clone() const = 0;
+    virtual void getLibConfigParams(libconfig::Setting& setting) const = 0;
 };
 }  // namespace RayTracer
 

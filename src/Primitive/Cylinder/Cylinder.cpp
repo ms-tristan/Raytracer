@@ -108,4 +108,37 @@ std::optional<HitInfo> Cylinder::hit(const Ray &ray, double tMin, double tMax) c
 std::shared_ptr<IPrimitive> Cylinder::clone() const {
     return std::make_shared<Cylinder>(center, axis, radius, height, material);
 }
+
+void Cylinder::getLibConfigParams(libconfig::Setting& setting) const {
+
+    libconfig::Setting& pos = setting.add("position", libconfig::Setting::TypeGroup);
+    pos.add("x", libconfig::Setting::TypeFloat) = center.X;
+    pos.add("y", libconfig::Setting::TypeFloat) = center.Y;
+    pos.add("z", libconfig::Setting::TypeFloat) = center.Z;
+
+    libconfig::Setting& dir = setting.add("direction", libconfig::Setting::TypeGroup);
+    dir.add("x", libconfig::Setting::TypeFloat) = axis.X;
+    dir.add("y", libconfig::Setting::TypeFloat) = axis.Y;
+    dir.add("z", libconfig::Setting::TypeFloat) = axis.Z;
+
+    setting.add("radius", libconfig::Setting::TypeFloat) = radius;
+    setting.add("height", libconfig::Setting::TypeFloat) = height;
+
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
+        libconfig::Setting& rotation = setting.add("rotation", libconfig::Setting::TypeGroup);
+        rotation.add("x", libconfig::Setting::TypeFloat) = rotationX;
+        rotation.add("y", libconfig::Setting::TypeFloat) = rotationY;
+        rotation.add("z", libconfig::Setting::TypeFloat) = rotationZ;
+    }
+
+    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
+    color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
+    color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
+    color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
+
+    mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
+    mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+}
 } // namespace RayTracer

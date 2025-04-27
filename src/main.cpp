@@ -5,6 +5,7 @@
 ** File description:
 ** Main with demonstration of design patterns
 */
+
 #include <iostream>
 #include <memory>
 #include <algorithm>
@@ -54,13 +55,13 @@ int main(int argc, char **argv) {
 
     RayTracer::SceneDirector director;
     std::unique_ptr<RayTracer::Scene> scene;
+    std::string sceneFile = "scenes/default_scene.cfg";
 
     if (argc > 1) {
-        std::string sceneFile = argv[1];
+        sceneFile = argv[1];
         std::cout << "Loading scene from file: " << sceneFile << std::endl;
         scene = director.createSceneFromFile(sceneFile);
     } else {
-        // Create a hardcoded scene if no file was specified
         std::cout << "No scene file specified, using default scene." << std::endl;
         scene = director.createDefaultScene();
     }
@@ -79,16 +80,14 @@ int main(int argc, char **argv) {
 
         renderer.drawScene(*scene, camera);
         eventsManager.processEvents();
-        
-        // Vertical movement (up/down)
+
         if (eventsManager.isKeyPressed("SPACE")) {
             camera.translate(Math::Vector3D(Math::Coords{0, 0.5, 0}));
         }
         if (eventsManager.isKeyPressed("LCONTROL")) {
             camera.translate(Math::Vector3D(Math::Coords{0, -0.5, 0}));
         }
-        
-        // ZQSD movement (forward, left, backward, right)
+
         if (eventsManager.isKeyPressed("Z")) {
             camera.translate(Math::Vector3D(Math::Coords{0, 0, -0.5}));
         }
@@ -101,8 +100,7 @@ int main(int argc, char **argv) {
         if (eventsManager.isKeyPressed("D")) {
             camera.translate(Math::Vector3D(Math::Coords{0.5, 0, 0}));
         }
-        
-        // Arrow keys for rotation
+
         if (eventsManager.isKeyPressed("LEFT")) {
             camera.rotateY(2.0);
         }
@@ -115,6 +113,15 @@ int main(int argc, char **argv) {
         if (eventsManager.isKeyPressed("DOWN")) {
             camera.rotateX(-2.0);
         }
+        if (eventsManager.isKeyPressed("ESCAPE")) {
+            displayManager.closeWindow();
+        }
+    }
+
+    if (!director.saveSceneToFile(*scene, sceneFile)) {
+        std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
+    } else {
+        std::cout << "Scene saved successfully to " << sceneFile << std::endl;
     }
 
     return 0;

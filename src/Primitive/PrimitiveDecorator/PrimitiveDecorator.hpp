@@ -8,8 +8,11 @@
 
 #ifndef SRC_PRIMITIVE_PRIMITIVEDECORATOR_PRIMITIVEDECORATOR_HPP_
     #define SRC_PRIMITIVE_PRIMITIVEDECORATOR_PRIMITIVEDECORATOR_HPP_
-    #include <memory>
+
     #include "Primitive/IPrimitive.hpp"
+
+    #include <memory>
+    #include <libconfig.h++>
 
 namespace RayTracer {
 class PrimitiveDecorator : public IPrimitive {
@@ -28,6 +31,7 @@ class PrimitiveDecorator : public IPrimitive {
         double tMax) const override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override = 0;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 }  // namespace RayTracer
 

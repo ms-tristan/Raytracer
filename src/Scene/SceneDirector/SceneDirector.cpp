@@ -34,17 +34,25 @@ std::unique_ptr<Scene> SceneDirector::createBasicSphereScene() {
     whiteMaterial->color = Math::Vector3D(white_color);
 
     const Math::Coords full_white{1.0, 1.0, 1.0};
-    const Math::Coords light_coords{0, 5, 5};
+    const Math::Coords light_blue{0.1, 0.0, 0.0};
 
-    auto directionalLight = std::make_shared<DirectionalLight>(
-        Math::Vector3D(light_coords),
+    const Math::Coords light1_coords{30, -10, 0};
+    const Math::Coords light2_coords{-5, -10, 0};
+
+    auto directionalLight1 = std::make_shared<DirectionalLight>(
+        Math::Vector3D(light2_coords),
+        Math::Vector3D(full_white));
+
+    auto directionalLight2 = std::make_shared<DirectionalLight>(
+        Math::Vector3D(light1_coords),
         Math::Vector3D(full_white));
 
     return builder.reset()
         .setCamera(Math::Point3D(Math::Coords{0, 1, 5}),
             Math::Point3D(Math::Coords{0, 0, 0}))
         .setAmbientLight(Math::Vector3D(Math::Coords{0.2, 0.2, 0.2}))
-        .addLight(directionalLight)
+        .addLight(directionalLight1)
+        .addLight(directionalLight2)
         .addSphere(Math::Point3D(Math::Coords{0, 0, 0}), 1.0, redMaterial)
         .addPlane(Math::Point3D(Math::Coords{0, -1, 0}),
             Math::Vector3D(Math::Coords{0, 1, 0}), whiteMaterial)

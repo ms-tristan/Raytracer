@@ -29,4 +29,24 @@ std::shared_ptr<ILight> ColorLightDecorator::clone() const {
         wrappedLight->clone(), colorFilter);
 }
 
+void ColorLightDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+    // First, let the wrapped light add its configuration parameters
+    LightDecorator::getLibConfigParams(setting);
+    
+    // Then add the color filter information
+    if (setting.exists("color")) {
+        // Modify existing color settings if they exist
+        libconfig::Setting& color = setting["color"];
+        color["r"] = static_cast<double>(color["r"]) * colorFilter.X;
+        color["g"] = static_cast<double>(color["g"]) * colorFilter.Y;
+        color["b"] = static_cast<double>(color["b"]) * colorFilter.Z;
+    } else {
+        // Add color filter as a separate entry if no color settings exist
+        libconfig::Setting& filter = setting.add("colorFilter", libconfig::Setting::TypeGroup);
+        filter.add("r", libconfig::Setting::TypeFloat) = colorFilter.X;
+        filter.add("g", libconfig::Setting::TypeFloat) = colorFilter.Y;
+        filter.add("b", libconfig::Setting::TypeFloat) = colorFilter.Z;
+    }
+}
+
 }  // namespace RayTracer

@@ -39,4 +39,8 @@ std::shared_ptr<Material> PrimitiveDecorator::getMaterial() const {
     return wrappedPrimitive->getMaterial();
 }
 
+void PrimitiveDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+    wrappedPrimitive->getLibConfigParams(setting);
+}
+
 }  // namespace RayTracer

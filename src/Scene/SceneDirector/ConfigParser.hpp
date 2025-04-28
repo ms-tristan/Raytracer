@@ -12,16 +12,12 @@
 
 namespace RayTracer {
 
-/**
- * @brief Base class for parsing different sections of a config file
- */
 class ConfigParser {
  public:
     virtual ~ConfigParser() = default;
     virtual void parse(const libconfig::Setting& setting, SceneBuilder& builder) = 0;
 
  protected:
-    // Common utility methods for all parsers
     template<typename T>
     T getValueOrDefault(const libconfig::Setting& setting,
                         const std::string& key,
@@ -37,17 +33,11 @@ class ConfigParser {
     Math::Vector3D parseColor(const libconfig::Setting& setting);
 };
 
-/**
- * @brief Parses camera settings from a config file
- */
 class CameraParser : public ConfigParser {
  public:
     void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
 };
 
-/**
- * @brief Parses light settings from a config file
- */
 class LightsParser : public ConfigParser {
  public:
     void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
@@ -57,9 +47,6 @@ class LightsParser : public ConfigParser {
     void parseDirectionalLights(const libconfig::Setting& lights, SceneBuilder& builder);
 };
 
-/**
- * @brief Parses primitive settings from a config file
- */
 class PrimitivesParser : public ConfigParser {
  public:
     void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
@@ -71,9 +58,6 @@ class PrimitivesParser : public ConfigParser {
     void parseCones(const libconfig::Setting& primitives, SceneBuilder& builder);
 };
 
-/**
- * @brief Main config parser that orchestrates parsing of all sections
- */
 class SceneConfigParser {
  public:
     SceneConfigParser();

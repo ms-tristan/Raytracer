@@ -81,42 +81,63 @@ int main(int argc, char **argv) {
         renderer.drawScene(*scene, camera);
         eventsManager.processEvents();
 
-        if (eventsManager.isKeyPressed("SPACE")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, 0.5, 0}));
-        }
-        if (eventsManager.isKeyPressed("LCONTROL")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, -0.5, 0}));
-        }
+        // Calculate camera's forward and right vectors for movement
+        Math::Point3D screenCenter = camera.screen.origin + 
+            camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
+        Math::Vector3D forwardDir = (screenCenter - camera.origin).normalize();
+        // Right vector is perpendicular to forward and up (cross product)
+        Math::Vector3D upDir = camera.screen.left_side.normalize();
+        Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
+        // Movement speed
+        const double moveSpeed = 0.2;
+        const double rotateSpeed = 2.0;
+
+        // ZQSD movement
         if (eventsManager.isKeyPressed("Z")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, 0, -0.5}));
+            // Move forward in camera direction
+            camera.translate(forwardDir * moveSpeed);
         }
         if (eventsManager.isKeyPressed("S")) {
-            camera.translate(Math::Vector3D(Math::Coords{0, 0, 0.5}));
+            // Move backward in camera direction
+            camera.translate(forwardDir * -moveSpeed);
         }
         if (eventsManager.isKeyPressed("Q")) {
-            camera.translate(Math::Vector3D(Math::Coords{-0.5, 0, 0}));
+            // Strafe left (perpendicular to view direction)
+            camera.translate(rightDir * -moveSpeed);
         }
         if (eventsManager.isKeyPressed("D")) {
-            camera.translate(Math::Vector3D(Math::Coords{0.5, 0, 0}));
+            // Strafe right (perpendicular to view direction)
+            camera.translate(rightDir * moveSpeed);
         }
 
+        // Up/Down movement
+        if (eventsManager.isKeyPressed("SPACE")) {
+            camera.translate(upDir * moveSpeed);
+        }
+        if (eventsManager.isKeyPressed("LCONTROL")) {
+            camera.translate(upDir * -moveSpeed);
+        }
+
+        // Camera rotation with arrow keys - use improved camera rotation methods
         if (eventsManager.isKeyPressed("LEFT")) {
-            camera.rotateY(2.0);
+            camera.rotateY(rotateSpeed);
         }
         if (eventsManager.isKeyPressed("RIGHT")) {
-            camera.rotateY(-2.0);
+            camera.rotateY(-rotateSpeed);
         }
         if (eventsManager.isKeyPressed("UP")) {
-            camera.rotateX(2.0);
+            camera.rotateX(rotateSpeed);
         }
         if (eventsManager.isKeyPressed("DOWN")) {
-            camera.rotateX(-2.0);
+            camera.rotateX(-rotateSpeed);
         }
         if (eventsManager.isKeyPressed("ESCAPE")) {
             displayManager.closeWindow();
         }
     }
+
+    scene->setCamera(camera);
 
     if (!director.saveSceneToFile(*scene, sceneFile)) {
         std::cerr << "Failed to save the scene to " << sceneFile << std::endl;

@@ -8,7 +8,10 @@
 
 #ifndef SRC_LIGHT_AMBIENTLIGHT_AMBIENTLIGHT_HPP_
 #define SRC_LIGHT_AMBIENTLIGHT_AMBIENTLIGHT_HPP_
+
 #include "Math/Vector3D/Vector3D.hpp"
+
+#include <libconfig.h++>
 
 namespace RayTracer {
 class AmbientLight {
@@ -17,6 +20,8 @@ class AmbientLight {
 
     AmbientLight();
     explicit AmbientLight(const Math::Vector3D &color);
+    void getLibConfigParams(libconfig::Setting& setting) const;
+    Math::Vector3D getLightColor() const;
 };
 }  // namespace RayTracer
 

@@ -8,8 +8,11 @@
 
 #ifndef SRC_LIGHT_LIGHTDECORATOR_COLORLIGHTDECORATOR_HPP_
     #define SRC_LIGHT_LIGHTDECORATOR_COLORLIGHTDECORATOR_HPP_
-    #include <memory>
+
     #include "LightDecorator.hpp"
+
+    #include <memory>
+    #include <libconfig.h++>
 
 namespace RayTracer {
 
@@ -24,6 +27,7 @@ class ColorLightDecorator : public LightDecorator {
 
     Math::Vector3D getLightColor() const override;
     std::shared_ptr<ILight> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 
 }  // namespace RayTracer

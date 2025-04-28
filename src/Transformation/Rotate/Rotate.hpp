@@ -13,6 +13,8 @@
 
 namespace RayTracer {
 
+inline double toRadians(double degrees) { return degrees * M_PI / 180.0; }
+
 class Rotate : public ITransformation {
  private:
     std::string axis;

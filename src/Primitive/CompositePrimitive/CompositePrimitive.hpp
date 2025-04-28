@@ -8,9 +8,12 @@
 
 #ifndef SRC_PRIMITIVE_COMPOSITEPRIMITIVE_COMPOSITEPRIMITIVE_HPP_
     #define SRC_PRIMITIVE_COMPOSITEPRIMITIVE_COMPOSITEPRIMITIVE_HPP_
+
+    #include "Primitive/IPrimitive.hpp"
+
     #include <vector>
     #include <memory>
-    #include "Primitive/IPrimitive.hpp"
+    #include <libconfig.h++>
 
 namespace RayTracer {
 class CompositePrimitive : public IPrimitive {
@@ -32,6 +35,7 @@ class CompositePrimitive : public IPrimitive {
         double tMin, double tMax) const override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
     void add(std::shared_ptr<IPrimitive> primitive);
     void remove(std::shared_ptr<IPrimitive> primitive);
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const;

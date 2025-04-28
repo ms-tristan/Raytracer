@@ -8,8 +8,11 @@
 
 #ifndef SRC_LIGHT_POINTLIGHT_POINTLIGHT_HPP_
     #define SRC_LIGHT_POINTLIGHT_POINTLIGHT_HPP_
-    #include <memory>
+
     #include "Light/ALight/ALight.hpp"
+
+    #include <memory>
+    #include <libconfig.h++>
 
 namespace RayTracer {
 class PointLight : public ALight {
@@ -29,6 +32,7 @@ class PointLight : public ALight {
     Math::Vector3D getLightDirection(const Math::Point3D &point) const override;
     Math::Vector3D getLightColor(const Math::Point3D &point) const;
     std::shared_ptr<ILight> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 }  // namespace RayTracer
 

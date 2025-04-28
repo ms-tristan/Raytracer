@@ -37,6 +37,7 @@ class Box : public IPrimitive {
         double tMin, double tMax) const override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 }  // namespace RayTracer
 

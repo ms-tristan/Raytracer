@@ -11,6 +11,7 @@
 #include <iostream>
 #include "SceneBuilder.hpp"
 #include "Primitive/PrimitiveFactory/PrimitiveFactory.hpp"
+#include "Primitive/Plugin/PluginLoader.hpp"
 
 namespace RayTracer {
 
@@ -56,9 +57,26 @@ SceneBuilder& SceneBuilder::addLight(const std::shared_ptr<ILight>& light) {
     return *this;
 }
 
+SceneBuilder& SceneBuilder::addShader(const std::shared_ptr<IShader>& shader) {
+    scene->addShader(shader);
+    return *this;
+}
+
 SceneBuilder& SceneBuilder::addPrimitive(const
 std::shared_ptr<IPrimitive>& primitive) {
     scene->addPrimitive(primitive);
+    return *this;
+}
+
+SceneBuilder& SceneBuilder::createPrimitive(const std::string& type,
+const std::map<std::string, double>& params,
+const std::shared_ptr<Material>& material) {
+    try {
+        auto primitive = PrimitiveFactory::createPrimitive(type, params, material);
+        scene->addPrimitive(primitive);
+    } catch (const std::exception& e) {
+        std::cerr << "Failed to create primitive of type " << type << ": " << e.what() << std::endl;
+    }
     return *this;
 }
 
@@ -71,13 +89,7 @@ double radius, const std::shared_ptr<Material>& material) {
         {"radius", radius}
     };
 
-    try {
-        auto sphere = PrimitiveFactory::createPrimitive("sphere", params, material);
-        scene->addPrimitive(sphere);
-    } catch (const std::exception& e) {
-        std::cerr << "Failed to create sphere: " << e.what() << std::endl;
-    }
-    return *this;
+    return createPrimitive("sphere", params, material);
 }
 
 SceneBuilder& SceneBuilder::addPlane(const Math::Point3D& position,
@@ -91,13 +103,7 @@ const Math::Vector3D& normal, const std::shared_ptr<Material>& material) {
         {"nz", normal.Z}
     };
 
-    try {
-        auto plane = PrimitiveFactory::createPrimitive("plane", params, material);
-        scene->addPrimitive(plane);
-    } catch (const std::exception& e) {
-        std::cerr << "Failed to create plane: " << e.what() << std::endl;
-    }
-    return *this;
+    return createPrimitive("plane", params, material);
 }
 
 SceneBuilder& SceneBuilder::addCylinder(const Math::Point3D& center,
@@ -114,13 +120,7 @@ const std::shared_ptr<Material>& material) {
         {"height", height}
     };
 
-    try {
-        auto cylinder = PrimitiveFactory::createPrimitive("cylinder", params, material);
-        scene->addPrimitive(cylinder);
-    } catch (const std::exception& e) {
-        std::cerr << "Failed to create cylinder: " << e.what() << std::endl;
-    }
-    return *this;
+    return createPrimitive("cylinder", params, material);
 }
 
 SceneBuilder& SceneBuilder::addCone(const Math::Point3D& apex,
@@ -137,13 +137,7 @@ const std::shared_ptr<Material>& material) {
         {"height", height}
     };
 
-    try {
-        auto cone = PrimitiveFactory::createPrimitive("cone", params, material);
-        scene->addPrimitive(cone);
-    } catch (const std::exception& e) {
-        std::cerr << "Failed to create cone: " << e.what() << std::endl;
-    }
-    return *this;
+    return createPrimitive("cone", params, material);
 }
 
 std::unique_ptr<Scene> SceneBuilder::build() {

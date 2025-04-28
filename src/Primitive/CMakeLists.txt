@@ -13,7 +13,7 @@ add_subdirectory(Box)
 set(PRIMITIVE_LOCAL_SOURCES "")
 file(GLOB PRIMITIVE_LOCAL_SOURCES "*.cpp")
 
-# Set core source files from each subdirectory
+# Only include core primitive infrastructure - not the actual primitive implementations
 set(PRIMITIVE_SOURCES
     ${PRIMITIVE_LOCAL_SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/PrimitiveFactory/PrimitiveFactory.cpp
@@ -22,10 +22,5 @@ set(PRIMITIVE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/APrimitive/APrimitive.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CompositePrimitive/CompositePrimitive.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PrimitiveDecorator/PrimitiveDecorator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Sphere/Sphere.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Plane/Plane.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Cylinder/Cylinder.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Cone/Cone.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Box/Box.cpp
     PARENT_SCOPE
 )

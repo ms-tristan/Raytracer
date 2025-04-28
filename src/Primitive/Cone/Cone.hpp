@@ -11,6 +11,7 @@
 #include <memory>
 #include "Primitive/IPrimitive.hpp"
 #include "Transformation/Rotate/Rotate.hpp"
+#include <libconfig.h++>
 
 namespace RayTracer {
 class Cone : public IPrimitive {
@@ -41,6 +42,7 @@ class Cone : public IPrimitive {
         double tMin, double tMax) const override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 }  // namespace RayTracer
 

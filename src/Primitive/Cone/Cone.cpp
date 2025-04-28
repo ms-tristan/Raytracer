@@ -162,4 +162,37 @@ std::shared_ptr<IPrimitive> Cone::clone() const {
     copy->rotationZ = rotationZ;
     return copy;
 }
+
+void Cone::getLibConfigParams(libconfig::Setting& setting) const {
+
+    libconfig::Setting& pos = setting.add("apex", libconfig::Setting::TypeGroup);
+    pos.add("x", libconfig::Setting::TypeFloat) = apex.X;
+    pos.add("y", libconfig::Setting::TypeFloat) = apex.Y;
+    pos.add("z", libconfig::Setting::TypeFloat) = apex.Z;
+
+    libconfig::Setting& dir = setting.add("direction", libconfig::Setting::TypeGroup);
+    dir.add("x", libconfig::Setting::TypeFloat) = axis.X;
+    dir.add("y", libconfig::Setting::TypeFloat) = axis.Y;
+    dir.add("z", libconfig::Setting::TypeFloat) = axis.Z;
+
+    setting.add("radius", libconfig::Setting::TypeFloat) = radius;
+    setting.add("height", libconfig::Setting::TypeFloat) = height;
+
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
+        libconfig::Setting& rotation = setting.add("rotation", libconfig::Setting::TypeGroup);
+        rotation.add("x", libconfig::Setting::TypeFloat) = rotationX;
+        rotation.add("y", libconfig::Setting::TypeFloat) = rotationY;
+        rotation.add("z", libconfig::Setting::TypeFloat) = rotationZ;
+    }
+
+    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
+    color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
+    color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
+    color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
+
+    mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
+    mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+}
 }  // namespace RayTracer

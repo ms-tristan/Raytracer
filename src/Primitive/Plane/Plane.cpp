@@ -105,4 +105,27 @@ std::shared_ptr<IPrimitive> Plane::clone() const {
     copy->rotationZ = rotationZ;
     return copy;
 }
-}  // namespace RayTracer
+
+void Plane::getLibConfigParams(libconfig::Setting& setting) const {
+
+    libconfig::Setting& pos = setting.add("position", libconfig::Setting::TypeGroup);
+    pos.add("x", libconfig::Setting::TypeFloat) = position.X;
+    pos.add("y", libconfig::Setting::TypeFloat) = position.Y;
+    pos.add("z", libconfig::Setting::TypeFloat) = position.Z;
+
+    libconfig::Setting& norm = setting.add("normal", libconfig::Setting::TypeGroup);
+    norm.add("x", libconfig::Setting::TypeFloat) = normal.X;
+    norm.add("y", libconfig::Setting::TypeFloat) = normal.Y;
+    norm.add("z", libconfig::Setting::TypeFloat) = normal.Z;
+
+    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
+    color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
+    color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
+    color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
+
+    mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
+    mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+}
+} // namespace RayTracer

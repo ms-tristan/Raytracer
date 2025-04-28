@@ -10,6 +10,12 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 
 file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
 
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system sfml-audio)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBCONFIG REQUIRED IMPORTED_TARGET libconfig++)
+
 add_subdirectory(src)
 
 list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX ".*/build/.*")

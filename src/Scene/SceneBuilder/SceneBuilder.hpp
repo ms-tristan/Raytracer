@@ -10,6 +10,7 @@
 #define SRC_SCENE_SCENEBUILDER_SCENEBUILDER_HPP_
 #include <memory>
 #include <string>
+#include <map>
 #include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
 #include "Light/AmbientLight/AmbientLight.hpp"
@@ -17,6 +18,7 @@
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
 #include "Material/Material.hpp"
+#include "Shader/IShader.hpp"
 
 
 namespace RayTracer {
@@ -33,6 +35,12 @@ class SceneBuilder {
     SceneBuilder& setAmbientLight(const Math::Vector3D& color);
 
     SceneBuilder& addLight(const std::shared_ptr<ILight>& light);
+    SceneBuilder& addShader(const std::shared_ptr<IShader>& shader);
+    SceneBuilder& addPrimitive(const std::shared_ptr<IPrimitive>& primitive);
+
+    SceneBuilder& createPrimitive(const std::string& type,
+        const std::map<std::string, double>& params,
+        const std::shared_ptr<Material>& material);
 
     SceneBuilder& addSphere(const Math::Point3D& center, double radius,
                           const std::shared_ptr<Material>& material);
@@ -42,11 +50,9 @@ class SceneBuilder {
     SceneBuilder& addCylinder(const Math::Point3D& center,
         const Math::Vector3D& axis, double radius, double height,
         const std::shared_ptr<Material>& material);
-    SceneBuilder& addCone(const Math::Point3D& apex, const Math::Vector3D& axis,
-        double radius, double height,
+    SceneBuilder& addCone(const Math::Point3D& apex,
+        const Math::Vector3D& axis, double radius, double height,
         const std::shared_ptr<Material>& material);
-
-    SceneBuilder& addPrimitive(const std::shared_ptr<IPrimitive>& primitive);
 
     std::unique_ptr<Scene> build();
 };

@@ -125,4 +125,23 @@ std::shared_ptr<IPrimitive> Sphere::clone() const {
     copy->rotationZ = rotationZ;
     return copy;
 }
-}  // namespace RayTracer
+
+void Sphere::getLibConfigParams(libconfig::Setting& setting) const {
+    libconfig::Setting& pos = setting.add("position", libconfig::Setting::TypeGroup);
+    pos.add("x", libconfig::Setting::TypeFloat) = center.X;
+    pos.add("y", libconfig::Setting::TypeFloat) = center.Y;
+    pos.add("z", libconfig::Setting::TypeFloat) = center.Z;
+
+    setting.add("radius", libconfig::Setting::TypeFloat) = radius;
+
+    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
+    color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
+    color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
+    color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
+
+    mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;  // Default ambient
+    mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;  // Default diffuse
+}
+} // namespace RayTracer

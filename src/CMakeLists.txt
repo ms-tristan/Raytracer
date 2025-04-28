@@ -3,6 +3,9 @@ set(CMAKE_CXX_CLANG_TIDY "" CACHE STRING "" FORCE) # Disable clang-tidy for rayt
 # Define include directories
 set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
+# Make the include directories available to all targets
+include_directories(${INCLUDE_DIRS})
+
 # Add subdirectories for each component
 add_subdirectory(Camera)
 add_subdirectory(IObserver)
@@ -14,8 +17,10 @@ add_subdirectory(Ray)
 add_subdirectory(Rectangle3D)
 add_subdirectory(Scene)
 add_subdirectory(Transformation)
+add_subdirectory(Renderer)
+add_subdirectory(EventsManager)
+add_subdirectory(Shader)
 
-# Create a list of all source files for the main executable
 file(GLOB MAIN_SOURCES "*.cpp")
 
 # Core library sources - explicitly exclude primitive implementations
@@ -53,13 +58,25 @@ set_target_properties(raytracer_core PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 target_include_directories(raytracer_core PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(raytracer_core PRIVATE dl)
+target_link_libraries(raytracer_core PRIVATE dl shader)
+
 
 # Create the main raytracer executable
 add_executable(raytracer ${MAIN_SOURCES})
 target_include_directories(raytracer PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(raytracer PRIVATE raytracer_core dl)
+
+target_link_libraries(raytracer PRIVATE
+    raytracer_core dl
+    ${SFML_LIBRARIES}
+    renderer
+    eventsmanager
+    scenedirector
+    shader
+    PkgConfig::LIBCONFIG
+)
+
 
 # Copy executable to root directory
 add_custom_command(TARGET raytracer POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:raytracer> ${CMAKE_SOURCE_DIR}/raytracer)
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:raytracer> ${CMAKE_SOURCE_DIR}/raytracer
+)

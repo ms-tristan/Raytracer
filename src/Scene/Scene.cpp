@@ -9,8 +9,12 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <typeinfo>
 #include "Scene/Scene.hpp"
 #include "Light/PointLight/PointLight.hpp"
+#include "Light/DirectionalLight/DirectionalLight.hpp"
+#include "Shader/BasicShader.hpp"
+
 namespace RayTracer {
 
 void Scene::setCamera(const Camera &cam) { camera = cam; }
@@ -24,7 +28,12 @@ void Scene::addPrimitive(const std::shared_ptr<IPrimitive> &primitive) {
 }
 
 void Scene::addLight(const std::shared_ptr<ILight> &light) {
-lights.push_back(light); }
+    lights.push_back(light);
+}
+
+void Scene::addShader(const std::shared_ptr<IShader> &shader) {
+    shaders.push_back(shader);
+}
 
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
     double closest = std::numeric_limits<double>::infinity();
@@ -93,6 +102,11 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     pixelColor.Y = std::min(1.0, pixelColor.Y);
     pixelColor.Z = std::min(1.0, pixelColor.Z);
 
+    // Apply all registered shaders sequentially to the calculated color
+    for (const auto& shader : shaders) {
+        pixelColor = shader->apply(pixelColor, *hit, ray);
+    }
+
     return pixelColor;
 }
 
@@ -106,6 +120,66 @@ void Scene::writeColor(const Math::Vector3D &color) {
     int ib = static_cast<int>(255.999 * b);
 
     std::cout << ir << " " << ig << " " << ib << std::endl;
+}
+
+void Scene::getLibConfigParams(libconfig::Setting& setting) const {
+    libconfig::Setting& cameraSettings = setting.add("camera", libconfig::Setting::TypeGroup);
+    camera.getLibConfigParams(cameraSettings);
+
+    libconfig::Setting& primitives = setting.add("primitives", libconfig::Setting::TypeGroup);
+
+    libconfig::Setting& spheres = primitives.add("spheres", libconfig::Setting::TypeList);
+    libconfig::Setting& planes = primitives.add("planes", libconfig::Setting::TypeList);
+    libconfig::Setting& cylinders = primitives.add("cylinders", libconfig::Setting::TypeList);
+    libconfig::Setting& cones = primitives.add("cones", libconfig::Setting::TypeList);
+
+    for (const auto& primitive : getPrimitives()) {
+        const std::type_info& type = typeid(*primitive);
+
+        // if (type == typeid(Sphere)) {
+        //     libconfig::Setting& sphere = spheres.add(libconfig::Setting::TypeGroup);
+        //     primitive->getLibConfigParams(sphere);
+        // } else if (type == typeid(Plane)) {
+        //     libconfig::Setting& plane = planes.add(libconfig::Setting::TypeGroup);
+        //     primitive->getLibConfigParams(plane);
+        // } else if (type == typeid(Cylinder)) {
+        //     libconfig::Setting& cylinder = cylinders.add(libconfig::Setting::TypeGroup);
+        //     primitive->getLibConfigParams(cylinder);
+        // } else if (type == typeid(Cone)) {
+        //     libconfig::Setting& cone = cones.add(libconfig::Setting::TypeGroup);
+        //     primitive->getLibConfigParams(cone);
+        // }
+    }
+
+    libconfig::Setting& lights = setting.add("lights", libconfig::Setting::TypeGroup);
+
+    lights.add("ambient", libconfig::Setting::TypeFloat) = ambientLight.getLightColor().X;
+    lights.add("diffuse", libconfig::Setting::TypeFloat) = 0.6; // Default diffuse value
+
+    libconfig::Setting& pointLights = lights.add("point", libconfig::Setting::TypeList);
+    libconfig::Setting& directionalLights = lights.add("directional", libconfig::Setting::TypeList);
+
+    for (const auto& light : getLights()) {
+        const std::type_info& type = typeid(*light);
+
+        if (type == typeid(PointLight)) {
+            libconfig::Setting& pointLight = pointLights.add(libconfig::Setting::TypeGroup);
+            light->getLibConfigParams(pointLight);
+        } else if (type == typeid(DirectionalLight)) {
+            libconfig::Setting& directionalLight = directionalLights.add(libconfig::Setting::TypeGroup);
+            light->getLibConfigParams(directionalLight);
+        }
+    }
+
+    // Add shaders section
+    if (!shaders.empty()) {
+        libconfig::Setting& shadersSettings = setting.add("shaders", libconfig::Setting::TypeList);
+        
+        for (const auto& shader : shaders) {
+            libconfig::Setting& shaderSetting = shadersSettings.add(libconfig::Setting::TypeGroup);
+            shader->getLibConfigParams(shaderSetting);
+        }
+    }
 }
 
 }  // namespace RayTracer

@@ -9,6 +9,7 @@
 #ifndef SRC_MATERIAL_MATERIALDECORATOR_MATERIALDECORATOR_HPP_
     #define SRC_MATERIAL_MATERIALDECORATOR_MATERIALDECORATOR_HPP_
     #include <memory>
+    #include <libconfig.h++>
     #include "Primitive/PrimitiveDecorator/PrimitiveDecorator.hpp"
 
 namespace RayTracer {
@@ -23,6 +24,7 @@ class MaterialDecorator : public PrimitiveDecorator {
 
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 }  // namespace RayTracer
 

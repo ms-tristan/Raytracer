@@ -24,7 +24,6 @@ class PrimitiveFactory {
         const std::shared_ptr<Material>&)>;
     static std::map<std::string, CreatorFunc> creators;
 
-    static void registerBuiltInPrimitives();
     static bool isInitialized;
 
  public:

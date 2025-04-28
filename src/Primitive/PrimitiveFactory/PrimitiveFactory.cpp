@@ -42,10 +42,4 @@ std::vector<std::string> PrimitiveFactory::getAvailablePrimitiveTypes() {
     return types;
 }
 
-// Remove the built-in primitives registration as these will be handled by plugins
-void PrimitiveFactory::registerBuiltInPrimitives() {
-    // This function is now empty as we'll rely on plugins
-    // The primitive implementations will be registered by the plugin system
-}
-
 }  // namespace RayTracer

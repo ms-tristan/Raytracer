@@ -22,6 +22,7 @@
 
 // Events Manager
 #include "./EventsManager/SFMLEventsManager.hpp"
+#include "./EventsManager/InputManager/InputManager.hpp"
 
 // Scene components
 #include "Scene/Scene.hpp"
@@ -76,116 +77,13 @@ int main(int argc, char **argv) {
 
     RayTracer::Renderer renderer(displayManager);
 
-    bool mouseWasPressed = false;
-    bool rightMouseWasPressed = false;
-    sf::Vector2i lastMousePos;
-
-    bool isDragging = false;
-    const RayTracer::IPrimitive* selectedPrimitive = nullptr;
-    sf::Vector2i dragStartPos;
-    Math::Point3D objectOriginalPos;
+    RayTracer::InputManager inputManager(eventsManager, image_width, image_height);
 
     while (displayManager.isWindowOpen()) {
 
         renderer.drawScene(*scene, camera);
-        eventsManager.processEvents();
+        inputManager.processInput(*scene, camera);
 
-        Math::Point3D screenCenter = camera.screen.origin +
-            camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
-        Math::Vector3D forwardDir = (screenCenter - camera.origin).normalize();
-
-        Math::Vector3D upDir = camera.screen.left_side.normalize();
-        Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
-
-        const double moveSpeed = 0.4;
-        const double rotateSpeed = 4.0;
-        const double mouseRotateSensitivity = 0.3;
-
-        bool mouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-        auto currentMousePos = eventsManager.getMousePos();
-
-        if (mouseIsPressed && !mouseWasPressed) {
-            double u = static_cast<double>(currentMousePos.x) / (image_width - 1);
-            double v = static_cast<double>((image_height - 1) - currentMousePos.y) / (image_height - 1);
-
-            RayTracer::Ray ray = camera.ray(u, v);
-            auto hit = scene->trace(ray);
-
-            if (hit && hit->primitive) {
-                isDragging = true;
-                selectedPrimitive = hit->primitive;
-                dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
-            }
-        }
-        else if (mouseIsPressed && isDragging && selectedPrimitive) {
-            int deltaX = currentMousePos.x - dragStartPos.x;
-            int deltaY = currentMousePos.y - dragStartPos.y;
-
-            if (deltaX != 0 || deltaY != 0) {
-                Math::Vector3D moveVec = rightDir * (deltaX * 0.01) + upDir * (-deltaY * 0.01);
-                const_cast<RayTracer::IPrimitive*>(selectedPrimitive)->translate(moveVec);
-                dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
-            }
-        }
-        else if (!mouseIsPressed && isDragging) {
-            isDragging = false;
-            selectedPrimitive = nullptr;
-        }
-
-        mouseWasPressed = mouseIsPressed;
-
-        bool rightMouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Right);
-        if (rightMouseIsPressed) {
-            sf::Vector2i currentPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
-
-            if (rightMouseWasPressed) {
-
-                int deltaX = currentPos.x - lastMousePos.x;
-                int deltaY = currentPos.y - lastMousePos.y;
-
-                if (deltaX != 0) {
-                    camera.rotateY(-deltaX * mouseRotateSensitivity);
-                }
-                if (deltaY != 0) {
-                    camera.rotateX(-deltaY * mouseRotateSensitivity);
-                }
-            }
-            lastMousePos = currentPos;
-        }
-        rightMouseWasPressed = rightMouseIsPressed;
-
-        if (eventsManager.isKeyPressed("Z")) {
-            camera.translate(forwardDir * moveSpeed);
-        }
-        if (eventsManager.isKeyPressed("S")) {
-            camera.translate(forwardDir * -moveSpeed);
-        }
-        if (eventsManager.isKeyPressed("Q")) {
-            camera.translate(rightDir * -moveSpeed);
-        }
-        if (eventsManager.isKeyPressed("D")) {
-            camera.translate(rightDir * moveSpeed);
-        }
-
-        if (eventsManager.isKeyPressed("SPACE")) {
-            camera.translate(upDir * moveSpeed);
-        }
-        if (eventsManager.isKeyPressed("LCONTROL")) {
-            camera.translate(upDir * -moveSpeed);
-        }
-
-        if (eventsManager.isKeyPressed("LEFT")) {
-            camera.rotateY(rotateSpeed);
-        }
-        if (eventsManager.isKeyPressed("RIGHT")) {
-            camera.rotateY(-rotateSpeed);
-        }
-        if (eventsManager.isKeyPressed("UP")) {
-            camera.rotateX(rotateSpeed);
-        }
-        if (eventsManager.isKeyPressed("DOWN")) {
-            camera.rotateX(-rotateSpeed);
-        }
         if (eventsManager.isKeyPressed("ESCAPE")) {
             displayManager.closeWindow();
         }

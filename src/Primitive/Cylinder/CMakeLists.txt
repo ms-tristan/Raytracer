@@ -11,7 +11,7 @@ target_include_directories(cylinder_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(cylinder_plugin PRIVATE raytracer_core)
 set_target_properties(cylinder_plugin PROPERTIES 
     PREFIX "" 
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins")
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/primitives")
 
 # Add only core sources to the CYLINDER_SOURCES variable
 set(CYLINDER_SOURCES ${CYLINDER_CORE_SOURCES} PARENT_SCOPE)

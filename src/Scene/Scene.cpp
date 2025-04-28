@@ -166,7 +166,7 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
     // Add shaders section
     if (!shaders.empty()) {
         libconfig::Setting& shadersSettings = setting.add("shaders", libconfig::Setting::TypeList);
-        
+
         for (const auto& shader : shaders) {
             libconfig::Setting& shaderSetting = shadersSettings.add(libconfig::Setting::TypeGroup);
             shader->getLibConfigParams(shaderSetting);

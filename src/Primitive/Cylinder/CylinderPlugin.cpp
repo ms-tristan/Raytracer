@@ -63,7 +63,7 @@ class CylinderPlugin : public IPrimitivePlugin {
 };
 
 extern "C" {
-    IPrimitivePlugin* createPlugin() {
+    IPrimitivePlugin* createPrimitivePlugin() {
         return new CylinderPlugin();
     }
 }

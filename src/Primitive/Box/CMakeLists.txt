@@ -11,7 +11,7 @@ target_include_directories(box_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(box_plugin PRIVATE raytracer_core)
 set_target_properties(box_plugin PROPERTIES 
     PREFIX "" 
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins")
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/primitives")
 
 # Add only core sources to the BOX_SOURCES variable
 set(BOX_SOURCES ${BOX_CORE_SOURCES} PARENT_SCOPE)

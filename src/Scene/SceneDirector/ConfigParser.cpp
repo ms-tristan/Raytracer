@@ -9,6 +9,8 @@
 #include "Shader/ShaderFactory.hpp"
 #include "Primitive/Plugin/PrimitivePluginManager.hpp"
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
+#include "Shader/Plugin/ShaderPluginManager.hpp"
+#include "Shader/Plugin/ShaderPluginLoader.hpp"
 
 namespace RayTracer {
 
@@ -153,24 +155,9 @@ void LightsParser::parseDirectionalLights(const libconfig::Setting& lights, Scen
     }
 }
 
-void ShadersParser::parseShader(const libconfig::Setting& shader, SceneBuilder& builder) {
-    static ShaderFactory shaderFactory;
-
-    try {
-        auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
-        if (shaderInstance) {
-            builder.addShader(shaderInstance);
-        }
-    } catch (const libconfig::SettingException& ex) {
-        std::cerr << "Error parsing shader: " << ex.what() << std::endl;
-    } catch (const std::exception& ex) {
-        std::cerr << "Error creating shader: " << ex.what() << std::endl;
-    }
-}
-
 void PrimitivesParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
     auto pluginManager = PrimitivePluginManager::getInstance();
-    if (!pluginManager->loadAllPlugins("plugins")) {
+    if (!pluginManager->loadAllPlugins("plugins/primitives")) {
         std::cerr << "Failed to load plugins." << std::endl;
         return;
     }
@@ -187,11 +174,20 @@ void PrimitivesParser::parse(const libconfig::Setting& setting, SceneBuilder& bu
 }
 
 void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
-    int count = setting.getLength();
+    auto pluginManager = ShaderPluginManager::getInstance();
+    if (!pluginManager->loadAllPlugins("plugins/shaders")) {
+        std::cerr << "Failed to load shader plugins." << std::endl;
+    } else {
+        auto loadedPluginNames = pluginManager->getLoadedPluginNames();
+        std::cout << "Loaded shader plugins: " << loadedPluginNames.size() << std::endl;
 
+        loadShaderPlugins();
+    }
+
+    int count = setting.getLength();
     for (int i = 0; i < count; ++i) {
         const libconfig::Setting& shader = setting[i];
-        parseShader(shader, builder);
+        parsePluginShader(shader, builder);
     }
 }
 
@@ -233,6 +229,23 @@ std::unique_ptr<Scene> SceneConfigParser::parseFile(const std::string& filename)
 
     return builder.build();
 }
+
+
+void ShadersParser::parsePluginShader(const libconfig::Setting& shader, SceneBuilder& builder) {
+    static ShaderFactory shaderFactory;
+
+    try {
+        auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
+        if (shaderInstance) {
+            builder.addShader(shaderInstance);
+        }
+    } catch (const libconfig::SettingException& ex) {
+        std::cerr << "Error parsing shader: " << ex.what() << std::endl;
+    } catch (const std::exception& ex) {
+        std::cerr << "Error creating shader: " << ex.what() << std::endl;
+    }
+}
+
 
 void PrimitivesParser::parsePluginPrimitives(const std::string& typeName,
                                     const libconfig::Setting& primitives,
@@ -279,14 +292,12 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
 
     std::map<std::string, double> params;
 
-    // Process direct parameters in the setting
     for (int i = 0; i < setting.getLength(); ++i) {
         const std::string& name = setting[i].getName();
         if (setting[i].getType() == libconfig::Setting::TypeFloat ||
             setting[i].getType() == libconfig::Setting::TypeInt) {
             params[name] = static_cast<double>(setting[i]);
         } else if (setting[i].getType() == libconfig::Setting::TypeGroup) {
-            // Handle nested groups like position, direction, etc.
             if (name == "position" || name == "apex" || name == "center") {
                 if (setting[i].exists("x")) params["x"] = static_cast<double>(setting[i]["x"]);
                 if (setting[i].exists("y")) params["y"] = static_cast<double>(setting[i]["y"]);
@@ -299,7 +310,6 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
         }
     }
 
-    // Handle direct x, y, z coordinates
     if (setting.exists("x") && !params.count("x"))
         params["x"] = static_cast<double>(setting["x"]);
     if (setting.exists("y") && !params.count("y"))
@@ -307,14 +317,11 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
     if (setting.exists("z") && !params.count("z"))
         params["z"] = static_cast<double>(setting["z"]);
 
-    // Handle radius with alternate name 'r'
     if (setting.exists("r") && !params.count("radius"))
         params["radius"] = static_cast<double>(setting["r"]);
 
-    // Check that all required parameters are present
     for (const auto& param : requiredParams) {
         if (params.find(param) == params.end()) {
-            // Try to use sensible defaults for missing parameters
             if (param == "ax" || param == "nx") params[param] = 0.0;
             else if (param == "ay" || param == "ny") params[param] = 1.0;
             else if (param == "az" || param == "nz") params[param] = 0.0;

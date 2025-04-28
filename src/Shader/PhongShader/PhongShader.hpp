@@ -3,24 +3,24 @@
 ** EPITECH PROJECT, 2025
 ** Raytracer
 ** File description:
-** ToonShader - non-photorealistic cel-shading
+** PhongShader - advanced lighting with specular highlights
 */
 
-#ifndef SRC_SHADER_TOONSHADER_HPP_
-#define SRC_SHADER_TOONSHADER_HPP_
+#ifndef SRC_SHADER_PHONGSHADER_HPP_
+#define SRC_SHADER_PHONGSHADER_HPP_
 
-#include "AShader.hpp"
+#include "../AShader.hpp"
 
 namespace RayTracer {
 
-class ToonShader : public AShader {
+class PhongShader : public AShader {
  private:
-    int levels;
-    double edgeThreshold;
-
+    double specularStrength;
+    double shininess;
+ 
  public:
-    ToonShader(int levels = 4, double edgeThreshold = 0.2);
-    ~ToonShader() override = default;
+    PhongShader(double specularStrength = 0.5, double shininess = 32.0);
+    ~PhongShader() override = default;
 
     Math::Vector3D apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const override;
     std::shared_ptr<IShader> clone() const override;
@@ -29,4 +29,4 @@ class ToonShader : public AShader {
 
 }  // namespace RayTracer
 
-#endif  // SRC_SHADER_TOONSHADER_HPP_
+#endif  // SRC_SHADER_PHONGSHADER_HPP_

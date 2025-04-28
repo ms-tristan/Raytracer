@@ -7,9 +7,9 @@
 */
 #include "ShaderFactory.hpp"
 #include "BasicShader.hpp"
-#include "PhongShader.hpp"
-#include "ToonShader.hpp"
-#include "FresnelShader.hpp"
+#include "Shader/PhongShader/PhongShader.hpp"
+#include "Shader/ToonShader/ToonShader.hpp"
+#include "Shader/FresnelShader/FresnelShader.hpp"
 #include "ShaderDecorator/FresnelDecorator.hpp"
 #include <iostream>
 

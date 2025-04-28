@@ -59,7 +59,7 @@ class BoxPlugin : public IPrimitivePlugin {
 };
 
 extern "C" {
-    IPrimitivePlugin* createPlugin() {
+    IPrimitivePlugin* createPrimitivePlugin() {
         return new BoxPlugin();
     }
 }

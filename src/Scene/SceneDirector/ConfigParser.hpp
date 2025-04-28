@@ -64,7 +64,7 @@ class ShadersParser : public ConfigParser {
    void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
 
  private:
-   void parseShader(const libconfig::Setting& shader, SceneBuilder& builder);
+   void parsePluginShader(const libconfig::Setting& shader, SceneBuilder& builder);
 };
 
 class SceneConfigParser {

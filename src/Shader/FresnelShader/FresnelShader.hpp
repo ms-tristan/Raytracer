@@ -1,4 +1,3 @@
-
 // Copyright <2025> Epitech
 /*
 ** EPITECH PROJECT, 2025
@@ -10,7 +9,7 @@
 #ifndef SRC_SHADER_FRESNELSHADER_HPP_
 #define SRC_SHADER_FRESNELSHADER_HPP_
 
-#include "AShader.hpp"
+#include "../AShader.hpp"
 
 namespace RayTracer {
 

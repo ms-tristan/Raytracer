@@ -32,7 +32,7 @@ class IPrimitivePlugin {
 };
 
 extern "C" {
-    IPrimitivePlugin* createPlugin();
+    IPrimitivePlugin* createPrimitivePlugin();
 }
 
 }  // namespace RayTracer

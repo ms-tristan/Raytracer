@@ -17,6 +17,7 @@
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
 #include "Material/Material.hpp"
+#include "Shader/IShader.hpp"
 
 
 namespace RayTracer {
@@ -33,6 +34,7 @@ class SceneBuilder {
     SceneBuilder& setAmbientLight(const Math::Vector3D& color);
 
     SceneBuilder& addLight(const std::shared_ptr<ILight>& light);
+    SceneBuilder& addShader(const std::shared_ptr<IShader>& shader);
 
     SceneBuilder& addSphere(const Math::Point3D& center, double radius,
                           const std::shared_ptr<Material>& material);

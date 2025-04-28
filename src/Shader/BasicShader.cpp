@@ -1,0 +1,23 @@
+// Copyright <2025> Epitech
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** BasicShader implementation
+*/
+#include "BasicShader.hpp"
+
+namespace RayTracer {
+
+BasicShader::BasicShader() : AShader("basic") {}
+
+Math::Vector3D BasicShader::apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const {
+    // Basic shader simply returns the original color with no modifications
+    return color;
+}
+
+std::shared_ptr<IShader> BasicShader::clone() const {
+    return std::make_shared<BasicShader>();
+}
+
+}  // namespace RayTracer

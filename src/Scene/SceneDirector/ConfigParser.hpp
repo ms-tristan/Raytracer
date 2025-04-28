@@ -58,6 +58,14 @@ class PrimitivesParser : public ConfigParser {
     void parseCones(const libconfig::Setting& primitives, SceneBuilder& builder);
 };
 
+class ShadersParser : public ConfigParser {
+ public:
+    void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+
+ private:
+    void parseShader(const libconfig::Setting& shader, SceneBuilder& builder);
+};
+
 class SceneConfigParser {
  public:
     SceneConfigParser();

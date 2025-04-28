@@ -21,6 +21,7 @@ add_subdirectory(Transformation)
 add_subdirectory(Rectangle3D)
 add_subdirectory(Renderer)
 add_subdirectory(EventsManager)
+add_subdirectory(Shader)
 
 # Collect all source files
 file(GLOB_RECURSE RAYTRACER_SOURCES

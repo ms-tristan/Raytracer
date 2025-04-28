@@ -6,6 +6,7 @@
 #include "Light/AmbientLight/AmbientLight.hpp"
 #include "Light/PointLight/PointLight.hpp"
 #include "Material/Material.hpp"
+#include "Shader/ShaderFactory.hpp"
 
 namespace RayTracer {
 
@@ -330,10 +331,37 @@ void PrimitivesParser::parseCones(const libconfig::Setting& cones, SceneBuilder&
     }
 }
 
+void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+    int count = setting.getLength();
+
+    ShaderFactory shaderFactory;
+
+    for (int i = 0; i < count; ++i) {
+        const libconfig::Setting& shader = setting[i];
+        parseShader(shader, builder);
+    }
+}
+
+void ShadersParser::parseShader(const libconfig::Setting& shader, SceneBuilder& builder) {
+    ShaderFactory shaderFactory;
+
+    try {
+        auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
+        if (shaderInstance) {
+            builder.addShader(shaderInstance);
+        }
+    } catch (const libconfig::SettingException& ex) {
+        std::cerr << "Error parsing shader: " << ex.what() << std::endl;
+    } catch (const std::exception& ex) {
+        std::cerr << "Error creating shader: " << ex.what() << std::endl;
+    }
+}
+
 SceneConfigParser::SceneConfigParser() {
     sectionParsers["camera"] = std::make_unique<CameraParser>();
     sectionParsers["lights"] = std::make_unique<LightsParser>();
     sectionParsers["primitives"] = std::make_unique<PrimitivesParser>();
+    sectionParsers["shaders"] = std::make_unique<ShadersParser>();
 }
 
 std::unique_ptr<Scene> SceneConfigParser::parseFile(const std::string& filename) {

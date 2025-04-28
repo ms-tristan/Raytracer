@@ -17,6 +17,8 @@
 #include "Primitive/Plane/Plane.hpp"
 #include "Primitive/Cylinder/Cylinder.hpp"
 #include "Primitive/Cone/Cone.hpp"
+#include "Shader/BasicShader.hpp"
+
 namespace RayTracer {
 
 void Scene::setCamera(const Camera &cam) { camera = cam; }
@@ -30,7 +32,12 @@ void Scene::addPrimitive(const std::shared_ptr<IPrimitive> &primitive) {
 }
 
 void Scene::addLight(const std::shared_ptr<ILight> &light) {
-lights.push_back(light); }
+    lights.push_back(light);
+}
+
+void Scene::addShader(const std::shared_ptr<IShader> &shader) {
+    shaders.push_back(shader);
+}
 
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
     double closest = std::numeric_limits<double>::infinity();
@@ -99,6 +106,11 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     pixelColor.Y = std::min(1.0, pixelColor.Y);
     pixelColor.Z = std::min(1.0, pixelColor.Z);
 
+    // Apply all registered shaders sequentially to the calculated color
+    for (const auto& shader : shaders) {
+        pixelColor = shader->apply(pixelColor, *hit, ray);
+    }
+
     return pixelColor;
 }
 
@@ -160,6 +172,16 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
         } else if (type == typeid(DirectionalLight)) {
             libconfig::Setting& directionalLight = directionalLights.add(libconfig::Setting::TypeGroup);
             light->getLibConfigParams(directionalLight);
+        }
+    }
+
+    // Add shaders section
+    if (!shaders.empty()) {
+        libconfig::Setting& shadersSettings = setting.add("shaders", libconfig::Setting::TypeList);
+        
+        for (const auto& shader : shaders) {
+            libconfig::Setting& shaderSetting = shadersSettings.add(libconfig::Setting::TypeGroup);
+            shader->getLibConfigParams(shaderSetting);
         }
     }
 }

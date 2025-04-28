@@ -15,6 +15,7 @@
   #include "Light/ILight.hpp"
   #include "Primitive/IPrimitive.hpp"
   #include "Ray/Ray.hpp"
+  #include "Shader/IShader.hpp"
 
   #include <algorithm>
   #include <limits>
@@ -27,6 +28,7 @@ class Scene {
  private:
     std::vector<std::shared_ptr<IPrimitive>> primitives;
     std::vector<std::shared_ptr<ILight>> lights;
+    std::vector<std::shared_ptr<IShader>> shaders;
     AmbientLight ambientLight;
     Camera camera;
 
@@ -38,6 +40,7 @@ class Scene {
     void setAmbientLight(const AmbientLight &light);
     void addPrimitive(const std::shared_ptr<IPrimitive> &primitive);
     void addLight(const std::shared_ptr<ILight> &light);
+    void addShader(const std::shared_ptr<IShader> &shader);
     std::optional<HitInfo> trace(const Ray &ray) const;
     bool isInShadow(const Math::Point3D &hitPoint,
       const Math::Vector3D &lightDir,
@@ -48,6 +51,7 @@ class Scene {
 
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
     const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }
+    const std::vector<std::shared_ptr<IShader>>& getShaders() const { return shaders; }
     const AmbientLight& getAmbientLight() const { return ambientLight; }
 };
 }  // namespace RayTracer

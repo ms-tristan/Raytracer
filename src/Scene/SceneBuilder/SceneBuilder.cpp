@@ -57,6 +57,11 @@ SceneBuilder& SceneBuilder::addLight(const std::shared_ptr<ILight>& light) {
     return *this;
 }
 
+SceneBuilder& SceneBuilder::addShader(const std::shared_ptr<IShader>& shader) {
+    scene->addShader(shader);
+    return *this;
+}
+
 SceneBuilder& SceneBuilder::addPrimitive(const
 std::shared_ptr<IPrimitive>& primitive) {
     scene->addPrimitive(primitive);

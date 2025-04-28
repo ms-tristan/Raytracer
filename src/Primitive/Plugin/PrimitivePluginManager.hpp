@@ -44,6 +44,8 @@ class PrimitivePluginManager {
         const std::string& typeName,
         const std::map<std::string, double>& params,
         const std::shared_ptr<Material>& material);
+
+    bool loadAllPlugins(const std::string& directory);
 };
 
 }  // namespace RayTracer

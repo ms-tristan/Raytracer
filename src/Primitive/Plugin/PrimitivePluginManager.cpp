@@ -7,6 +7,7 @@
 */
 #include <sys/stat.h>
 #include <dlfcn.h>
+#include <dirent.h>
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -85,7 +86,6 @@ bool PrimitivePluginManager::loadPlugin(const std::string& path) {
     info.plugin = plugin;
     loadedPlugins[typeName] = info;
 
-    std::cout << "Successfully loaded plugin: " << typeName << std::endl;
     return true;
 }
 
@@ -136,6 +136,35 @@ const std::shared_ptr<Material>& material) {
         std::cerr << "Error creating primitive: " << e.what() << std::endl;
         return nullptr;
     }
+}
+
+bool PrimitivePluginManager::loadAllPlugins(const std::string& directory) {
+    DIR* dir = opendir(directory.c_str());
+    if (!dir) {
+        std::cerr << "Failed to open plugin directory: "
+            << directory << std::endl;
+        return false;
+    }
+
+    bool success = true;
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != nullptr) {
+        std::string filename = entry->d_name;
+
+        if (filename == "." || filename == ".." ||
+            filename.find(".so") == std::string::npos) {
+            continue;
+        }
+
+        std::string fullPath = directory + "/" + filename;
+        if (!loadPlugin(fullPath)) {
+            std::cerr << "Failed to load plugin: " << fullPath << std::endl;
+            success = false;
+        }
+    }
+
+    closedir(dir);
+    return success;
 }
 
 }  // namespace RayTracer

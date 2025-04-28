@@ -6,7 +6,7 @@ set(CYLINDER_CORE_SOURCES
 )
 
 # Create a shared library for the Cylinder plugin
-add_library(cylinder_plugin SHARED CylinderPlugin.cpp)
+add_library(cylinder_plugin SHARED CylinderPlugin.cpp Cylinder.cpp)
 target_include_directories(cylinder_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(cylinder_plugin PRIVATE raytracer_core)
 set_target_properties(cylinder_plugin PROPERTIES 

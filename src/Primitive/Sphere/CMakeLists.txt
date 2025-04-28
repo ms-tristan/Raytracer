@@ -6,7 +6,7 @@ set(SPHERE_CORE_SOURCES
 )
 
 # Create a shared library for the Sphere plugin
-add_library(sphere_plugin SHARED SpherePlugin.cpp)
+add_library(sphere_plugin SHARED SpherePlugin.cpp Sphere.cpp)
 target_include_directories(sphere_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(sphere_plugin PRIVATE raytracer_core)
 set_target_properties(sphere_plugin PROPERTIES 

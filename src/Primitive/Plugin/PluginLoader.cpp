@@ -56,24 +56,12 @@ void loadPrimitivePlugins() {
         std::string filePath = pluginDir + "/" + fileName;
 
         if (isRegularFile(filePath) && hasExtension(fileName, ".so")) {
-            std::cout << "Loading plugin: " << filePath << std::endl;
-
-            if (pluginManager->loadPlugin(filePath))
-                std::cout << "Successfully loaded plugin from "
-                    << filePath << std::endl;
-            else
-                std::cerr << "Failed to load plugin from "
-                    << filePath << std::endl;
+            pluginManager->loadPlugin(filePath);
         }
     }
     closedir(dir);
 
     auto loadedPlugins = pluginManager->getLoadedPluginNames();
-    std::cout << "Loaded plugins: ";
-    for (const auto& name : loadedPlugins) {
-        std::cout << name << " ";
-    }
-    std::cout << std::endl;
 
     for (const auto& typeName : loadedPlugins) {
         PrimitiveFactory::registerPrimitive(typeName,

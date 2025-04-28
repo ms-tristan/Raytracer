@@ -6,7 +6,7 @@ set(BOX_CORE_SOURCES
 )
 
 # Create a shared library for the Box plugin
-add_library(box_plugin SHARED BoxPlugin.cpp)
+add_library(box_plugin SHARED BoxPlugin.cpp Box.cpp)
 target_include_directories(box_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(box_plugin PRIVATE raytracer_core)
 set_target_properties(box_plugin PROPERTIES 

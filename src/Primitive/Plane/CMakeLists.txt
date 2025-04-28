@@ -6,7 +6,7 @@ set(PLANE_CORE_SOURCES
 )
 
 # Create a shared library for the Plane plugin
-add_library(plane_plugin SHARED PlanePlugin.cpp)
+add_library(plane_plugin SHARED PlanePlugin.cpp Plane.cpp)
 target_include_directories(plane_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(plane_plugin PRIVATE raytracer_core)
 set_target_properties(plane_plugin PROPERTIES 

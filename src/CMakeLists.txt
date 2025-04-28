@@ -18,9 +18,8 @@ add_subdirectory(Transformation)
 # Create a list of all source files for the main executable
 file(GLOB MAIN_SOURCES "*.cpp")
 
-# Explicitly list all source files
-set(ALL_SOURCES
-    ${MAIN_SOURCES}
+# Core library sources - explicitly exclude primitive implementations
+set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Material/Material.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Ray/Ray.cpp
@@ -37,11 +36,15 @@ set(ALL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Transformation/Rotate/Rotate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Transformation/Translate/Translate.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Transformation/Scale/Scale.cpp
-    ${PRIMITIVE_SOURCES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/Plugin/PluginLoader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/Plugin/PrimitivePluginManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/PrimitiveDecorator/PrimitiveDecorator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/APrimitive/APrimitive.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/PrimitiveFactory/PrimitiveFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/CompositePrimitive/CompositePrimitive.cpp
 )
 
-# Core library sources (exclude main.cpp which is for the executable only)
-set(CORE_SOURCES ${ALL_SOURCES})
+# Explicitly exclude main.cpp from the core library
 list(FILTER CORE_SOURCES EXCLUDE REGEX ".*main\.cpp$")
 
 # Create a shared core library with position-independent code

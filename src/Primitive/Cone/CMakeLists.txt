@@ -6,7 +6,7 @@ set(CONE_CORE_SOURCES
 )
 
 # Create a shared library for the Cone plugin
-add_library(cone_plugin SHARED ConePlugin.cpp)
+add_library(cone_plugin SHARED ConePlugin.cpp Cone.cpp)
 target_include_directories(cone_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(cone_plugin PRIVATE raytracer_core)
 set_target_properties(cone_plugin PROPERTIES 

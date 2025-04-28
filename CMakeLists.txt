@@ -6,13 +6,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_DOCS "Enable documentation" OFF)
 
-# Create plugins directory if it doesn't exist
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 
-# First, create a core library that will be used by both the main app and plugins
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
+
 add_subdirectory(src)
 
-# Exclude plugin implementation files from main build
 list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX ".*/build/.*")
 list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX ".*Plugin\.cpp$")
 
@@ -24,3 +23,11 @@ if (ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+add_custom_target(copy_plugins ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_BINARY_DIR}/plugins/
+    ${CMAKE_SOURCE_DIR}/plugins/
+    COMMENT "Copying plugins to root directory"
+    DEPENDS raytracer
+)

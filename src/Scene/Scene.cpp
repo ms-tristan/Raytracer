@@ -10,6 +10,7 @@
 #include <limits>
 #include <memory>
 #include <typeinfo>
+#include <map>
 #include "Scene/Scene.hpp"
 #include "Light/PointLight/PointLight.hpp"
 #include "Light/DirectionalLight/DirectionalLight.hpp"
@@ -128,27 +129,18 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
 
     libconfig::Setting& primitives = setting.add("primitives", libconfig::Setting::TypeGroup);
 
-    libconfig::Setting& spheres = primitives.add("spheres", libconfig::Setting::TypeList);
-    libconfig::Setting& planes = primitives.add("planes", libconfig::Setting::TypeList);
-    libconfig::Setting& cylinders = primitives.add("cylinders", libconfig::Setting::TypeList);
-    libconfig::Setting& cones = primitives.add("cones", libconfig::Setting::TypeList);
+    std::map<std::string, libconfig::Setting*> primitiveTypes;
 
     for (const auto& primitive : getPrimitives()) {
-        const std::type_info& type = typeid(*primitive);
 
-        // if (type == typeid(Sphere)) {
-        //     libconfig::Setting& sphere = spheres.add(libconfig::Setting::TypeGroup);
-        //     primitive->getLibConfigParams(sphere);
-        // } else if (type == typeid(Plane)) {
-        //     libconfig::Setting& plane = planes.add(libconfig::Setting::TypeGroup);
-        //     primitive->getLibConfigParams(plane);
-        // } else if (type == typeid(Cylinder)) {
-        //     libconfig::Setting& cylinder = cylinders.add(libconfig::Setting::TypeGroup);
-        //     primitive->getLibConfigParams(cylinder);
-        // } else if (type == typeid(Cone)) {
-        //     libconfig::Setting& cone = cones.add(libconfig::Setting::TypeGroup);
-        //     primitive->getLibConfigParams(cone);
-        // }
+        if (primitiveTypes.find(primitive->getTypeName()) == primitiveTypes.end()) {
+            primitiveTypes[primitive->getTypeName()] = &primitives.add(
+                primitive->getTypeName(), libconfig::Setting::TypeList);
+        }
+
+        libconfig::Setting& primitiveSetting = *primitiveTypes[primitive->getTypeName()];
+        libconfig::Setting& primitiveGroup = primitiveSetting.add(libconfig::Setting::TypeGroup);
+        primitive->getLibConfigParams(primitiveGroup);
     }
 
     libconfig::Setting& lights = setting.add("lights", libconfig::Setting::TypeGroup);

@@ -70,7 +70,7 @@ void InputManager::handleCameraMovement(Camera& camera) {
     // if (_eventsManager.isKeyPressed("LCONTROL")) {
     //     camera.translate(upDir * -_moveSpeed);
     // }
- 
+
     if (_eventsManager.isKeyPressed("LEFT")) {
         camera.rotateY(_rotateSpeed);
     }

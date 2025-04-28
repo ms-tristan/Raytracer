@@ -23,7 +23,7 @@ class PlanePlugin : public IPrimitivePlugin {
     ~PlanePlugin() override = default;
 
     std::string getTypeName() const override {
-        return "plane";
+        return Plane::getTypeNameStatic();
     }
 
     std::shared_ptr<IPrimitive> createPrimitive(

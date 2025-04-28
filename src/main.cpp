@@ -328,6 +328,15 @@ int main(int argc, char **argv) {
 
         RayTracer::InputManager inputManager(eventsManager, image_width, image_height);
 
+        auto prims = scene->getPrimitives();
+
+        std::cout << "Loaded " << prims.size() << " primitives." << std::endl;
+
+        for (const auto& primitive : prims) {
+            std::cout << "Primitive: " << primitive->getTypeName() << std::endl;
+        }
+
+
         while (displayManager.isWindowOpen()) {
 
             renderer.drawScene(*scene, camera);

@@ -23,7 +23,7 @@ class ConePlugin : public IPrimitivePlugin {
     ~ConePlugin() override = default;
 
     std::string getTypeName() const override {
-        return "cone";
+        return Cone::getTypeNameStatic();
     }
 
     std::shared_ptr<IPrimitive> createPrimitive(

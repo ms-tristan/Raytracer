@@ -29,6 +29,14 @@ class Box : public IPrimitive {
         const std::shared_ptr<Material> &material);
     ~Box() override = default;
 
+    static std::string getTypeNameStatic() {
+        return "boxes";
+    }
+
+    std::string getTypeName() const override {
+        return Box::getTypeNameStatic();
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

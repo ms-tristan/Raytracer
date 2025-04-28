@@ -20,55 +20,56 @@ Rotate::Rotate(const std::string& axis, double angle)
         throw std::invalid_argument("Rotation axis must be x, y, or z");
 }
 
-Math::Vector3D Rotate::applyToVector(const Math::Vector3D& vector) const {
+Math::Vector3D Rotate::applyToVector(const Math::Vector3D& v) const {
     double radians = angle * M_PI / 180.0;
     double cosA = std::cos(radians);
     double sinA = std::sin(radians);
 
     if (axis == "x") {
-        return Math::Vector3D(Math::Coords{
-            vector.X,
-            vector.Y * cosA - vector.Z * sinA,
-            vector.Y * sinA + vector.Z * cosA
-        });
+        double rad = toRadians(angle);
+        double cosA = std::cos(rad);
+        double sinA = std::sin(rad);
+        const Math::Coords coords{v.X, v.Y * cosA - v.Z * sinA, v.Y * sinA + v.Z * cosA};
+
+        return Math::Vector3D(coords);
+
     } else if (axis == "y") {
-        return Math::Vector3D(Math::Coords{
-            vector.X * cosA + vector.Z * sinA,
-            vector.Y,
-            -vector.X * sinA + vector.Z * cosA
-        });
+        double rad = toRadians(angle);
+        double cosA = std::cos(rad);
+        double sinA = std::sin(rad);
+        const Math::Coords coords{v.X * cosA + v.Z * sinA, v.Y, v.Z * cosA - v.X * sinA};
+
+        return Math::Vector3D(coords);
     } else {
-        return Math::Vector3D(Math::Coords{
-            vector.X * cosA - vector.Y * sinA,
-            vector.X * sinA + vector.Y * cosA,
-            vector.Z
-        });
+        double rad = toRadians(angle);
+        double cosA = std::cos(rad);
+        double sinA = std::sin(rad);
+        const Math::Coords coords{v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA, v.Z};
+
+        return Math::Vector3D(coords);
     }
 }
 
-Math::Point3D Rotate::applyToPoint(const Math::Point3D& point) const {
+Math::Point3D Rotate::applyToPoint(const Math::Point3D& p) const {
     double radians = angle * M_PI / 180.0;
     double cosA = std::cos(radians);
     double sinA = std::sin(radians);
 
     if (axis == "x") {
-        return Math::Point3D(Math::Coords{
-            point.X,
-            point.Y * cosA - point.Z * sinA,
-            point.Y * sinA + point.Z * cosA
-        });
+        const Math::Coords coords_vec{p.X, p.Y, p.Z};
+        Math::Vector3D v = Rotate("x", angle).applyToVector(Math::Vector3D(coords_vec));
+        const Math::Coords coords_point{v.X, v.Y, v.Z};
+        return Math::Point3D(coords_point);
     } else if (axis == "y") {
-        return Math::Point3D(Math::Coords{
-            point.X * cosA + point.Z * sinA,
-            point.Y,
-            -point.X * sinA + point.Z * cosA
-        });
+        const Math::Coords coords_vec{p.X, p.Y, p.Z};
+        Math::Vector3D v = Rotate("y", angle).applyToVector(Math::Vector3D(coords_vec));
+        const Math::Coords coords_point{v.X, v.Y, v.Z};
+        return Math::Point3D(coords_point);
     } else {
-        return Math::Point3D(Math::Coords{
-            point.X * cosA - point.Y * sinA,
-            point.X * sinA + point.Y * cosA,
-            point.Z
-        });
+        const Math::Coords coords_vec{p.X, p.Y, p.Z};
+        Math::Vector3D v = Rotate("z", angle).applyToVector(Math::Vector3D(coords_vec));
+        const Math::Coords coords_point{v.X, v.Y, v.Z};
+        return Math::Point3D(coords_point);
     }
 }
 

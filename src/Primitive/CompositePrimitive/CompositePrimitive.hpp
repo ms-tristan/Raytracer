@@ -27,6 +27,15 @@ class CompositePrimitive : public IPrimitive {
  public:
     explicit CompositePrimitive(std::shared_ptr<Material> material);
     ~CompositePrimitive() override = default;
+
+    static std::string getTypeNameStatic() {
+        return "composites";
+    }
+
+    std::string getTypeName() const override {
+        return CompositePrimitive::getTypeNameStatic();
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

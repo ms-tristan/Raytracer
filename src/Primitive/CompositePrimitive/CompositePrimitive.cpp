@@ -16,6 +16,7 @@
 
 namespace RayTracer {
 
+
 CompositePrimitive::CompositePrimitive(std::shared_ptr<Material> material)
 : material(std::move(material)) {}
 

@@ -22,7 +22,7 @@ class SpherePlugin : public IPrimitivePlugin {
     ~SpherePlugin() override = default;
 
     std::string getTypeName() const override {
-        return "sphere";
+        return Sphere::getTypeNameStatic();
     }
 
     std::shared_ptr<IPrimitive> createPrimitive(

@@ -30,6 +30,15 @@ class Sphere : public IPrimitive {
         const std::shared_ptr<Material> &material);
     ~Sphere() override = default;
 
+    static std::string getTypeNameStatic() {
+        return "spheres";
+    }
+
+    std::string getTypeName() const override {
+        return Sphere::getTypeNameStatic();
+    }
+
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

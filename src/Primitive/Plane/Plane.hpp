@@ -30,6 +30,14 @@ class Plane : public IPrimitive {
           const std::shared_ptr<Material> &material);
     ~Plane() override = default;
 
+    static std::string getTypeNameStatic() {
+        return "planes";
+    }
+
+    std::string getTypeName() const override {
+        return Plane::getTypeNameStatic();
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

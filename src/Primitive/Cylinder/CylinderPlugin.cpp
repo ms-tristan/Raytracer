@@ -23,7 +23,7 @@ class CylinderPlugin : public IPrimitivePlugin {
     ~CylinderPlugin() override = default;
 
     std::string getTypeName() const override {
-        return "cylinder";
+        return Cylinder::getTypeNameStatic();
     }
 
     std::shared_ptr<IPrimitive> createPrimitive(

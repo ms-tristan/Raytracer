@@ -34,6 +34,14 @@ class Cone : public IPrimitive {
         const std::shared_ptr<Material> &material);
     ~Cone() override = default;
 
+    static std::string getTypeNameStatic() {
+        return "cones";
+    }
+
+    std::string getTypeName() const override {
+        return Cone::getTypeNameStatic();
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

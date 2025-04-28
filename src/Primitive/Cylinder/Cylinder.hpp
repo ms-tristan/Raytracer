@@ -34,6 +34,14 @@ class Cylinder : public IPrimitive {
         const std::shared_ptr<Material> &material);
     ~Cylinder() override = default;
 
+    static std::string getTypeNameStatic() {
+        return "cylinders";
+    }
+
+    std::string getTypeName() const override {
+        return Cylinder::getTypeNameStatic();
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

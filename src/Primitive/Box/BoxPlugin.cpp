@@ -23,7 +23,7 @@ class BoxPlugin : public IPrimitivePlugin {
     ~BoxPlugin() override = default;
 
     std::string getTypeName() const override {
-        return "box";
+        return Box::getTypeNameStatic();
     }
 
     std::shared_ptr<IPrimitive> createPrimitive(

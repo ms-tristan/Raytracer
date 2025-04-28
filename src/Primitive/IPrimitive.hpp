@@ -22,6 +22,8 @@ class IPrimitive {
  public:
     virtual ~IPrimitive() = default;
 
+    virtual std::string getTypeName() const = 0;
+
     virtual void translate(const Math::Vector3D &translation) = 0;
     virtual void rotateX(double degrees) = 0;
     virtual void rotateY(double degrees) = 0;

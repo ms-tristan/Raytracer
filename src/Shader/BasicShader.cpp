@@ -12,7 +12,6 @@ namespace RayTracer {
 BasicShader::BasicShader() : AShader("basic") {}
 
 Math::Vector3D BasicShader::apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const {
-    // Basic shader simply returns the original color with no modifications
     return color;
 }
 

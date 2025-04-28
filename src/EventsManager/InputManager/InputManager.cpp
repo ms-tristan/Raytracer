@@ -64,13 +64,13 @@ void InputManager::handleCameraMovement(Camera& camera) {
         camera.translate(rightDir * _moveSpeed);
     }
 
-    if (_eventsManager.isKeyPressed("SPACE")) {
-        camera.translate(upDir * _moveSpeed);
-    }
-    if (_eventsManager.isKeyPressed("LCONTROL")) {
-        camera.translate(upDir * -_moveSpeed);
-    }
-
+    // if (_eventsManager.isKeyPressed("SPACE")) {
+    //     camera.translate(upDir * _moveSpeed);
+    // }
+    // if (_eventsManager.isKeyPressed("LCONTROL")) {
+    //     camera.translate(upDir * -_moveSpeed);
+    // }
+ 
     if (_eventsManager.isKeyPressed("LEFT")) {
         camera.rotateY(_rotateSpeed);
     }

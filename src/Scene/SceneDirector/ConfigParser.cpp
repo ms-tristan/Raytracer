@@ -217,6 +217,87 @@ void PrimitivesParser::parseSpheres(const libconfig::Setting& spheres, SceneBuil
     }
 }
 
+void PrimitivesParser::parseCylinders(const libconfig::Setting& cylinders, SceneBuilder& builder) {
+    int count = cylinders.getLength();
+    for (int i = 0; i < count; ++i) {
+        const libconfig::Setting& cylinder = cylinders[i];
+        Math::Point3D center = parsePoint3D(cylinder);
+
+
+        double radius = cylinder.exists("radius") ?
+            static_cast<double>(cylinder["radius"]) : 1.0;
+        double height = cylinder.exists("height") ?
+            static_cast<double>(cylinder["height"]) : 2.0;
+
+
+            Math::Vector3D direction;
+        if (cylinder.exists("direction")) {
+            direction = parseVector3D(cylinder["direction"]);
+        } else {
+            direction = Math::Vector3D(Math::Coords{0, 1, 0});
+        }
+
+        auto material = std::make_shared<Material>();
+        if (cylinder.exists("material") && cylinder["material"].exists("color")) {
+            material->color = parseColor(cylinder["material"]["color"]);
+        } else if (cylinder.exists("color")) {
+            material->color = parseColor(cylinder["color"]);
+        } else {
+            material->color = Math::Vector3D(Math::Coords{1.0, 1.0, 1.0});
+        }
+
+        builder.addCylinder(center, direction, radius, height, material);
+    }
+}
+
+void PrimitivesParser::parseCones(const libconfig::Setting& cones, SceneBuilder& builder) {
+    int count = cones.getLength();
+    for (int i = 0; i < count; ++i) {
+        const libconfig::Setting& cone = cones[i];
+        Math::Point3D apex = parsePoint3D(cone);
+
+
+        double radius = cone.exists("radius") ?
+            static_cast<double>(cone["radius"]) : 1.0;
+        double height = cone.exists("height") ?
+            static_cast<double>(cone["height"]) : 2.0;
+
+
+            Math::Vector3D direction;
+        if (cone.exists("direction")) {
+            direction = parseVector3D(cone["direction"]);
+        } else {
+            direction = Math::Vector3D(Math::Coords{0, 1, 0});
+        }
+
+        auto material = std::make_shared<Material>();
+        if (cone.exists("material") && cone["material"].exists("color")) {
+            material->color = parseColor(cone["material"]["color"]);
+        } else if (cone.exists("color")) {
+            material->color = parseColor(cone["color"]);
+        } else {
+            material->color = Math::Vector3D(Math::Coords{1.0, 1.0, 1.0});
+        }
+
+        builder.addCone(apex, direction, radius, height, material);
+    }
+}
+
+void ShadersParser::parseShader(const libconfig::Setting& shader, SceneBuilder& builder) {
+    ShaderFactory shaderFactory;
+
+    try {
+        auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
+        if (shaderInstance) {
+            builder.addShader(shaderInstance);
+        }
+    } catch (const libconfig::SettingException& ex) {
+        std::cerr << "Error parsing shader: " << ex.what() << std::endl;
+    } catch (const std::exception& ex) {
+        std::cerr << "Error creating shader: " << ex.what() << std::endl;
+    }
+}
+
 void PrimitivesParser::parsePlanes(const libconfig::Setting& planes, SceneBuilder& builder) {
     int count = planes.getLength();
     for (int i = 0; i < count; ++i) {
@@ -228,14 +309,14 @@ void PrimitivesParser::parsePlanes(const libconfig::Setting& planes, SceneBuilde
         } else {
 
             try {
-                std::string axis = plane["axis"];
+                std::string direction = plane["direction"];
                 double pos = plane["position"];
 
-                if (axis == "X") {
+                if (direction == "X") {
                     position = Math::Point3D(Math::Coords{pos, 0, 0});
-                } else if (axis == "Y") {
+                } else if (direction == "Y") {
                     position = Math::Point3D(Math::Coords{0, pos, 0});
-                } else if (axis == "Z") {
+                } else if (direction == "Z") {
                     position = Math::Point3D(Math::Coords{0, 0, pos});
                 }
             } catch (const libconfig::SettingNotFoundException& ex) {
@@ -265,72 +346,6 @@ void PrimitivesParser::parsePlanes(const libconfig::Setting& planes, SceneBuilde
     }
 }
 
-void PrimitivesParser::parseCylinders(const libconfig::Setting& cylinders, SceneBuilder& builder) {
-    int count = cylinders.getLength();
-    for (int i = 0; i < count; ++i) {
-        const libconfig::Setting& cylinder = cylinders[i];
-        Math::Point3D center = parsePoint3D(cylinder);
-
-
-        double radius = cylinder.exists("radius") ?
-            static_cast<double>(cylinder["radius"]) : 1.0;
-        double height = cylinder.exists("height") ?
-            static_cast<double>(cylinder["height"]) : 2.0;
-
-
-            Math::Vector3D axis;
-        if (cylinder.exists("axis")) {
-            axis = parseVector3D(cylinder["axis"]);
-        } else {
-            axis = Math::Vector3D(Math::Coords{0, 1, 0});
-        }
-
-
-        auto material = std::make_shared<Material>();
-        if (cylinder.exists("color")) {
-            material->color = parseColor(cylinder["color"]);
-        } else {
-            material->color = Math::Vector3D(Math::Coords{1.0, 1.0, 1.0});
-        }
-
-
-        builder.addCylinder(center, axis, radius, height, material);
-    }
-}
-
-void PrimitivesParser::parseCones(const libconfig::Setting& cones, SceneBuilder& builder) {
-    int count = cones.getLength();
-    for (int i = 0; i < count; ++i) {
-        const libconfig::Setting& cone = cones[i];
-        Math::Point3D apex = parsePoint3D(cone);
-
-
-        double radius = cone.exists("radius") ?
-            static_cast<double>(cone["radius"]) : 1.0;
-        double height = cone.exists("height") ?
-            static_cast<double>(cone["height"]) : 2.0;
-
-
-            Math::Vector3D axis;
-        if (cone.exists("axis")) {
-            axis = parseVector3D(cone["axis"]);
-        } else {
-            axis = Math::Vector3D(Math::Coords{0, 1, 0});
-        }
-
-
-        auto material = std::make_shared<Material>();
-        if (cone.exists("color")) {
-            material->color = parseColor(cone["color"]);
-        } else {
-            material->color = Math::Vector3D(Math::Coords{1.0, 1.0, 1.0});
-        }
-
-
-        builder.addCone(apex, axis, radius, height, material);
-    }
-}
-
 void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
     int count = setting.getLength();
 
@@ -339,21 +354,6 @@ void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& build
     for (int i = 0; i < count; ++i) {
         const libconfig::Setting& shader = setting[i];
         parseShader(shader, builder);
-    }
-}
-
-void ShadersParser::parseShader(const libconfig::Setting& shader, SceneBuilder& builder) {
-    ShaderFactory shaderFactory;
-
-    try {
-        auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
-        if (shaderInstance) {
-            builder.addShader(shaderInstance);
-        }
-    } catch (const libconfig::SettingException& ex) {
-        std::cerr << "Error parsing shader: " << ex.what() << std::endl;
-    } catch (const std::exception& ex) {
-        std::cerr << "Error creating shader: " << ex.what() << std::endl;
     }
 }
 

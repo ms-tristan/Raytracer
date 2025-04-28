@@ -10,7 +10,7 @@
   #define SRC_SCENE_SCENE_HPP_
 
   #include "Camera/Camera.hpp"
-  #include "HitInfo.hpp"
+  #include "defs.hpp"
   #include "Light/AmbientLight/AmbientLight.hpp"
   #include "Light/ILight.hpp"
   #include "Primitive/IPrimitive.hpp"

@@ -85,10 +85,11 @@ vector2f_t SFMLEventsManager::getMousePos() {
 bool SFMLEventsManager::processEvents() {
     _isWindowClosed = false;
     _isWindowResized = false;
-    
+
     while (_window.pollEvent(_event)) {
         switch (_event.type) {
             case sf::Event::Closed:
+                _window.close();
                 _isWindowClosed = true;
                 return false;
             case sf::Event::Resized:

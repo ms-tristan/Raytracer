@@ -8,7 +8,8 @@
 
 #ifndef SRC_MATERIAL_MATERIAL_HPP_
 #define SRC_MATERIAL_MATERIAL_HPP_
-#include "HitInfo.hpp"
+
+#include "defs.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
 #include <algorithm>
 

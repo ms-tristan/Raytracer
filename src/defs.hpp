@@ -8,6 +8,9 @@
 #ifndef RAYTRACER_DEFS_HPP_
 #define RAYTRACER_DEFS_HPP_
 
+#include "Math/Point3D/Point3D.hpp"
+#include "Math/Vector3D/Vector3D.hpp"
+
 namespace RayTracer {
 
 struct Color {
@@ -34,6 +37,15 @@ struct Recti {
   int x, y, width, height;
 };
 using recti_t = Recti;
+
+class IPrimitive;
+
+struct HitInfo {
+    double distance;
+    Math::Point3D hitPoint;
+    Math::Vector3D normal;
+    const IPrimitive *primitive;
+};
 
 } // namespace RayTracer
 

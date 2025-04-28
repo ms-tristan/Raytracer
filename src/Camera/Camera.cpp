@@ -59,14 +59,14 @@ Ray Camera::ray(double u, double v) const {
     return Ray(origin, direction);
 }
 
-void Camera::translate(const Math::Vector3D &translation) { 
-    origin += translation; 
-    screen.origin += translation; 
+void Camera::translate(const Math::Vector3D &translation) {
+    origin += translation;
+    screen.origin += translation;
 }
 
 void Camera::rotateX(double degrees) {
-    // Calculate current view direction and screen dimensions
-    Math::Point3D screenCenter = screen.origin + 
+
+    Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();
     Math::Vector3D rightDir = screen.bottom_side.normalize();
@@ -74,89 +74,75 @@ void Camera::rotateX(double degrees) {
     double screenDistance = (screenCenter - origin).length();
     double screenWidth = screen.bottom_side.length();
     double screenHeight = screen.left_side.length();
-    
-    // Rotate view direction around the right vector
+
     double angleRad = Math::toRadians(degrees);
     double cosAngle = cos(angleRad);
     double sinAngle = sin(angleRad);
-    
-    // Rodrigues rotation formula for rotation around arbitrary axis (rightDir)
-    Math::Vector3D newViewDir = viewDir * cosAngle + 
-                          rightDir.cross(viewDir) * sinAngle + 
+
+    Math::Vector3D newViewDir = viewDir * cosAngle +
+                          rightDir.cross(viewDir) * sinAngle +
                           rightDir * rightDir.dot(viewDir) * (1 - cosAngle);
     newViewDir = newViewDir.normalize();
-    
-    // Calculate new up vector perpendicular to right and new view direction
+
     Math::Vector3D newUpDir = rightDir.cross(newViewDir).normalize();
-    
-    // Reconstruct screen
+
     Math::Point3D newScreenCenter = origin + newViewDir * screenDistance;
     Math::Vector3D halfWidthVec = rightDir * (screenWidth/2);
     Math::Vector3D halfHeightVec = newUpDir * (screenHeight/2);
-    
+
     screen.origin = newScreenCenter - halfWidthVec - halfHeightVec;
     screen.bottom_side = rightDir * screenWidth;
     screen.left_side = newUpDir * screenHeight;
 }
 
 void Camera::rotateY(double degrees) {
-    // Calculate current view direction and screen dimensions
-    Math::Point3D screenCenter = screen.origin + 
+    Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();
     double screenDistance = (screenCenter - origin).length();
     double screenWidth = screen.bottom_side.length();
     double screenHeight = screen.left_side.length();
-    
-    // Rotate the view direction around the global Y axis
+
     Math::Vector3D newViewDir = Math::Rotation::rotateY(viewDir, degrees);
     newViewDir = newViewDir.normalize();
-    
-    // Calculate right vector perpendicular to newViewDir and global up (0,1,0)
+
     Math::Vector3D globalUp(Math::Coords{0.0, 1.0, 0.0});
     Math::Vector3D rightDir = newViewDir.cross(globalUp).normalize();
-    
-    // If view is too close to up/down, use different reference vector
+
     if (rightDir.length() < 0.001) {
         Math::Vector3D tempRef(Math::Coords{1.0, 0.0, 0.0});
         rightDir = newViewDir.cross(tempRef).normalize();
     }
-    
-    // Calculate camera's up vector from right and view direction
+
     Math::Vector3D upDir = rightDir.cross(newViewDir).normalize();
-    
-    // Reconstruct screen
+
     Math::Point3D newScreenCenter = origin + newViewDir * screenDistance;
     Math::Vector3D halfWidthVec = rightDir * (screenWidth/2);
     Math::Vector3D halfHeightVec = upDir * (screenHeight/2);
-    
+
     screen.origin = newScreenCenter - halfWidthVec - halfHeightVec;
     screen.bottom_side = rightDir * screenWidth;
     screen.left_side = upDir * screenHeight;
 }
 
 void Camera::rotateZ(double degrees) {
-    // Calculate current view direction and screen dimensions
-    Math::Point3D screenCenter = screen.origin + 
+    Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();
     double screenDistance = (screenCenter - origin).length();
     double screenWidth = screen.bottom_side.length();
     double screenHeight = screen.left_side.length();
-    
-    // Keep the view direction the same, but rotate the camera's local coordinate system
+
     Math::Vector3D rightDir = Math::Rotation::rotateZ(screen.bottom_side.normalize(), degrees);
     Math::Vector3D upDir = Math::Rotation::rotateZ(screen.left_side.normalize(), degrees);
-    
-    // Ensure orthogonality (view direction remains the same)
+
     rightDir = rightDir.normalize();
     upDir = upDir.normalize();
-    
-    // Reconstruct screen
+
     Math::Point3D newScreenCenter = origin + viewDir * screenDistance;
     Math::Vector3D halfWidthVec = rightDir * (screenWidth/2);
     Math::Vector3D halfHeightVec = upDir * (screenHeight/2);
-    
+
     screen.origin = newScreenCenter - halfWidthVec - halfHeightVec;
     screen.bottom_side = rightDir * screenWidth;
     screen.left_side = upDir * screenHeight;

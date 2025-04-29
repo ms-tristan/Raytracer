@@ -6,10 +6,10 @@
 ** PhongShader - advanced lighting with specular highlights
 */
 
-#ifndef SRC_SHADER_PHONGSHADER_HPP_
-#define SRC_SHADER_PHONGSHADER_HPP_
-
-#include "../AShader.hpp"
+#ifndef SRC_SHADER_PHONGSHADER_PHONGSHADER_HPP_
+    #define SRC_SHADER_PHONGSHADER_PHONGSHADER_HPP_
+    #include <memory>
+    #include "../AShader.hpp"
 
 namespace RayTracer {
 
@@ -17,7 +17,7 @@ class PhongShader : public AShader {
  private:
     double specularStrength;
     double shininess;
- 
+
  public:
     PhongShader(double specularStrength = 0.5, double shininess = 32.0);
     ~PhongShader() override = default;
@@ -29,4 +29,4 @@ class PhongShader : public AShader {
 
 }  // namespace RayTracer
 
-#endif  // SRC_SHADER_PHONGSHADER_HPP_
+#endif  // SRC_SHADER_PHONGSHADER_PHONGSHADER_HPP_

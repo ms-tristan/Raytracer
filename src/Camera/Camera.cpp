@@ -65,7 +65,6 @@ void Camera::translate(const Math::Vector3D &translation) {
 }
 
 void Camera::rotateX(double degrees) {
-
     Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();

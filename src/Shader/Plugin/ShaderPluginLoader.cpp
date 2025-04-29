@@ -63,27 +63,23 @@ void loadShaderPlugins() {
     auto loadedPlugins = pluginManager->getLoadedPluginNames();
     std::cout << "Loaded " << loadedPlugins.size() << " shader plugins" << std::endl;
 
-    // Register loaded plugins with ShaderFactory
     ShaderFactory shaderFactory;
     for (const auto& typeName : loadedPlugins) {
         std::cout << "Registering shader plugin: " << typeName << std::endl;
-        
-        shaderFactory.registerShader(typeName, 
+
+        shaderFactory.registerShader(typeName,
             [pluginManager, typeName](const libconfig::Setting& setting) {
-                // Extract parameters from setting and convert to double map
                 std::map<std::string, double> params;
-                
+
                 auto plugin = pluginManager->getPlugin(typeName);
                 if (plugin) {
                     auto requiredParams = plugin->getRequiredParameters();
                     for (const auto& param : requiredParams) {
-                        if (setting.exists(param.c_str())) {
+                        if (setting.exists(param.c_str()))
                             params[param] = static_cast<double>(setting[param.c_str()]);
-                        }
                     }
                 }
-                
-                // Create shader from plugin
+
                 return pluginManager->createShader(typeName, params);
             });
     }

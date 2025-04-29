@@ -7,13 +7,13 @@
 */
 
 #ifndef SRC_POSTPROCESS_IPOSTPROCESS_HPP_
-#define SRC_POSTPROCESS_IPOSTPROCESS_HPP_
-
-#include <memory>
-#include <vector>
-#include <optional>
-#include <libconfig.h++>
-#include "Math/Vector3D/Vector3D.hpp"
+    #define SRC_POSTPROCESS_IPOSTPROCESS_HPP_
+    #include <memory>
+    #include <vector>
+    #include <optional>
+    #include <string>
+    #include <libconfig.h++>
+    #include "Math/Vector3D/Vector3D.hpp"
 
 namespace RayTracer {
 

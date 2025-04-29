@@ -5,13 +5,15 @@
 ** File description:
 ** ShaderFactory implementation
 */
+#include <string>
+#include <memory>
+#include <iostream>
 #include "ShaderFactory.hpp"
 #include "BasicShader.hpp"
 #include "Shader/PhongShader/PhongShader.hpp"
 #include "Shader/ToonShader/ToonShader.hpp"
 #include "Shader/FresnelShader/FresnelShader.hpp"
 #include "ShaderDecorator/FresnelDecorator.hpp"
-#include <iostream>
 
 namespace RayTracer {
 

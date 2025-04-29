@@ -17,7 +17,6 @@ AmbientLight::AmbientLight() {
 AmbientLight::AmbientLight(const Math::Vector3D &colors) : color(colors) {}
 
 void AmbientLight::getLibConfigParams(libconfig::Setting& setting) const {
-
     libconfig::Setting& colorSetting = setting.add("color", libconfig::Setting::TypeGroup);
     colorSetting.add("r", libconfig::Setting::TypeFloat) = color.X;
     colorSetting.add("g", libconfig::Setting::TypeFloat) = color.Y;

@@ -5,19 +5,21 @@
 ** File description:
 ** FresnelDecorator implementation
 */
-#include "FresnelDecorator.hpp"
 #include <cmath>
+#include <utility>
+#include <memory>
+#include <string>
 #include <algorithm>
+#include "FresnelDecorator.hpp"
 
 namespace RayTracer {
 
-FresnelDecorator::FresnelDecorator(std::shared_ptr<IShader> shader,
-                                  double fresnelPower,
-                                  const Math::Vector3D& rimColor)
+FresnelDecorator::FresnelDecorator(std::shared_ptr<IShader> shader, double fresnelPower,
+    const Math::Vector3D& rimColor)
     : ShaderDecorator(std::move(shader)), fresnelPower(fresnelPower), rimColor(rimColor) {}
 
-Math::Vector3D FresnelDecorator::apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const {
-
+Math::Vector3D FresnelDecorator::apply(const Math::Vector3D& color, const HitInfo& hitInfo,
+    const Ray& ray) const {
     Math::Vector3D shaderResult = ShaderDecorator::apply(color, hitInfo, ray);
 
     Math::Vector3D viewDir = (ray.origin - hitInfo.hitPoint).normalize();
@@ -39,7 +41,6 @@ std::shared_ptr<IShader> FresnelDecorator::clone() const {
 }
 
 void FresnelDecorator::getLibConfigParams(libconfig::Setting& setting) const {
-
     ShaderDecorator::getLibConfigParams(setting);
 
     setting.add("fresnelPower", libconfig::Setting::TypeFloat) = fresnelPower;

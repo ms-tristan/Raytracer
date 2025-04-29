@@ -7,11 +7,11 @@
 */
 
 #ifndef SRC_POSTPROCESS_NEGATIVEPOSTPROCESS_NEGATIVEPOSTPROCESS_HPP_
-#define SRC_POSTPROCESS_NEGATIVEPOSTPROCESS_NEGATIVEPOSTPROCESS_HPP_
-
-#include <memory>
-#include <vector>
-#include "PostProcess/IPostProcess.hpp"
+    #define SRC_POSTPROCESS_NEGATIVEPOSTPROCESS_NEGATIVEPOSTPROCESS_HPP_
+    #include <memory>
+    #include <vector>
+    #include <string>
+    #include "PostProcess/IPostProcess.hpp"
 
 namespace RayTracer {
 

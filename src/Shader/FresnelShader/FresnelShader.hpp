@@ -6,10 +6,10 @@
 ** FresnelShader
 */
 
-#ifndef SRC_SHADER_FRESNELSHADER_HPP_
-#define SRC_SHADER_FRESNELSHADER_HPP_
-
-#include "../AShader.hpp"
+#ifndef SRC_SHADER_FRESNELSHADER_FRESNELSHADER_HPP_
+   #define SRC_SHADER_FRESNELSHADER_FRESNELSHADER_HPP_
+   #include <memory>
+   #include "../AShader.hpp"
 
 namespace RayTracer {
 
@@ -33,4 +33,4 @@ class FresnelShader : public AShader {
 
 }  // namespace RayTracer
 
-#endif  // SRC_SHADER_FRESNELSHADER_HPP_
+#endif  // SRC_SHADER_FRESNELSHADER_FRESNELSHADER_HPP_

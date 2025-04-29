@@ -5,7 +5,7 @@
 ** File description:
 ** AShader
 */
-
+#include <string>
 #include "AShader.hpp"
 
 namespace RayTracer {

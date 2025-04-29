@@ -155,7 +155,6 @@ std::shared_ptr<IPrimitive> Cylinder::clone() const {
 
 
 void Cylinder::getLibConfigParams(libconfig::Setting& setting) const {
-
     libconfig::Setting& pos = setting.add("position", libconfig::Setting::TypeGroup);
     pos.add("x", libconfig::Setting::TypeFloat) = center.X;
     pos.add("y", libconfig::Setting::TypeFloat) = center.Y;
@@ -186,4 +185,4 @@ void Cylinder::getLibConfigParams(libconfig::Setting& setting) const {
     mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
     mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
 }
-} // namespace RayTracer
+}  // namespace RayTracer

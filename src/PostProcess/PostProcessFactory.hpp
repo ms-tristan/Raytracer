@@ -22,7 +22,7 @@ class PostProcessFactory {
  private:
     using CreatorFunc = std::function<std::shared_ptr<IPostProcess>(
         const std::map<std::string, double>&)>;
-    
+
     static std::map<std::string, CreatorFunc> creators;
     static bool isInitialized;
 

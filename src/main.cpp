@@ -338,7 +338,6 @@ int main(int argc, char **argv) {
 
 
         while (displayManager.isWindowOpen()) {
-
             renderer.drawScene(*scene, camera);
             inputManager.processInput(*scene, camera);
 

@@ -8,11 +8,9 @@
 
 #ifndef SRC_PRIMITIVE_PRIMITIVEDECORATOR_PRIMITIVEDECORATOR_HPP_
     #define SRC_PRIMITIVE_PRIMITIVEDECORATOR_PRIMITIVEDECORATOR_HPP_
-
-    #include "Primitive/IPrimitive.hpp"
-
     #include <memory>
     #include <libconfig.h++>
+    #include "Primitive/IPrimitive.hpp"
 
 namespace RayTracer {
 class PrimitiveDecorator : public IPrimitive {

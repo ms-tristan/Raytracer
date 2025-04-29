@@ -5,27 +5,25 @@
 ** IEventsManager
 */
 
-#ifndef SOURCES_SHARED_CLASSES_INTERFACES_IEVENTSMANAGER_HPP_
-#define SOURCES_SHARED_CLASSES_INTERFACES_IEVENTSMANAGER_HPP_
-
-#include "../defs.hpp"
-
-#include <vector>
-#include <string>
+#ifndef SRC_EVENTSMANAGER_IEVENTSMANAGER_HPP_
+    #define SRC_EVENTSMANAGER_IEVENTSMANAGER_HPP_
+    #include <vector>
+    #include <string>
+    #include "../defs.hpp"
 
 namespace RayTracer {
 
 class IEventsManager {
  public:
-  virtual ~IEventsManager() = default;
-  virtual bool isKeyPressed(std::string key) const = 0;
-  virtual vector2f_t getMousePos() = 0;
+    virtual ~IEventsManager() = default;
+    virtual bool isKeyPressed(std::string key) const = 0;
+    virtual vector2f_t getMousePos() = 0;
 
-  virtual bool processEvents() = 0;
-  virtual bool isWindowClosed() const = 0;
-  virtual bool isWindowResized() const = 0;
-  virtual vector2i_t getResizedDimensions() const = 0;
+    virtual bool processEvents() = 0;
+    virtual bool isWindowClosed() const = 0;
+    virtual bool isWindowResized() const = 0;
+    virtual vector2i_t getResizedDimensions() const = 0;
 };
 }  // namespace RayTracer
 
-#endif  // SOURCES_SHARED_CLASSES_INTERFACES_IEVENTSMANAGER_HPP_
+#endif  // SRC_EVENTSMANAGER_IEVENTSMANAGER_HPP_

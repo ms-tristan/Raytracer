@@ -7,14 +7,13 @@
 */
 
 #ifndef SRC_SHADER_SHADERFACTORY_HPP_
-#define SRC_SHADER_SHADERFACTORY_HPP_
-
-#include "IShader.hpp"
-#include <functional>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <libconfig.h++>
+   #define SRC_SHADER_SHADERFACTORY_HPP_
+   #include <functional>
+   #include <memory>
+   #include <string>
+   #include <unordered_map>
+   #include <libconfig.h++>
+   #include "IShader.hpp"
 
 namespace RayTracer {
 

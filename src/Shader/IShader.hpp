@@ -7,13 +7,13 @@
 */
 
 #ifndef SRC_SHADER_ISHADER_HPP_
-#define SRC_SHADER_ISHADER_HPP_
-
-#include <memory>
-#include <libconfig.h++>
-#include "../Math/Vector3D/Vector3D.hpp"
-#include "../Ray/Ray.hpp"
-#include "../defs.hpp"
+    #define SRC_SHADER_ISHADER_HPP_
+    #include <string>
+    #include <memory>
+    #include <libconfig.h++>
+    #include "../Math/Vector3D/Vector3D.hpp"
+    #include "../Ray/Ray.hpp"
+    #include "../defs.hpp"
 
 namespace RayTracer {
 

@@ -8,11 +8,9 @@
 
 #ifndef SRC_LIGHT_POINTLIGHT_POINTLIGHT_HPP_
     #define SRC_LIGHT_POINTLIGHT_POINTLIGHT_HPP_
-
-    #include "Light/ALight/ALight.hpp"
-
     #include <memory>
     #include <libconfig.h++>
+    #include "Light/ALight/ALight.hpp"
 
 namespace RayTracer {
 class PointLight : public ALight {

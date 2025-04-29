@@ -5,6 +5,7 @@
 ** File description:
 ** SceneBuilder
 */
+#include <string>
 #include <utility>
 #include <memory>
 #include <map>

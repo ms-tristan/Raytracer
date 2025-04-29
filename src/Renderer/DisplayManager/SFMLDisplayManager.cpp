@@ -399,34 +399,29 @@ void SFMLDisplayManager::drawImage(const std::vector<color_t>& pixelData,
                                     unsigned int height,
                                     const vector2f_t& position,
                                     const vector2f_t& scale) {
-    // Create a texture from the pixel data
     sf::Texture texture;
-    
+
     if (pixelData.size() != width * height) {
         std::cerr << "Invalid pixel data size for drawImage" << std::endl;
         return;
     }
-    
-    // Create texture and load raw pixel data
+
     texture.create(width, height);
-    
-    // Convert our color_t format to SFML's format (RGBA)
+
     std::vector<sf::Uint8> sfmlPixels(width * height * 4);
     for (size_t i = 0; i < pixelData.size(); ++i) {
-        sfmlPixels[i * 4] = pixelData[i].r;     // R
-        sfmlPixels[i * 4 + 1] = pixelData[i].g; // G
-        sfmlPixels[i * 4 + 2] = pixelData[i].b; // B
-        sfmlPixels[i * 4 + 3] = pixelData[i].a; // A
+        sfmlPixels[i * 4] = pixelData[i].r;
+        sfmlPixels[i * 4 + 1] = pixelData[i].g;
+        sfmlPixels[i * 4 + 2] = pixelData[i].b;
+        sfmlPixels[i * 4 + 3] = pixelData[i].a;
     }
-    
-    // Update texture with pixel data
+
     texture.update(sfmlPixels.data());
-    
-    // Create and draw sprite with the texture
+
     sf::Sprite sprite(texture);
     sprite.setPosition(toSFVector(position));
     sprite.setScale(toSFVector(scale));
-    
+
     _window.draw(sprite);
 }
 

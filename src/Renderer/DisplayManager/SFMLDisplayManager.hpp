@@ -5,15 +5,14 @@
 ** SFML implementation of IDisplayManager
 */
 
-#ifndef SOURCES_CLIENT_CLASSES_RENDERER_SFMLDISPLAYMANAGER_HPP_
-#define SOURCES_CLIENT_CLASSES_RENDERER_SFMLDISPLAYMANAGER_HPP_
-
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include "./IDisplayManager.hpp"
+#ifndef SRC_RENDERER_DISPLAYMANAGER_SFMLDISPLAYMANAGER_HPP_
+   #define SRC_RENDERER_DISPLAYMANAGER_SFMLDISPLAYMANAGER_HPP_
+   #include <unordered_map>
+   #include <string>
+   #include <vector>
+   #include <SFML/Graphics.hpp>
+   #include <SFML/Audio.hpp>
+   #include "./IDisplayManager.hpp"
 
 namespace RayTracer {
 
@@ -126,4 +125,4 @@ class SFMLDisplayManager : public IDisplayManager {
 
 }  // namespace RayTracer
 
-#endif  // SOURCES_CLIENT_CLASSES_RENDERER_SFMLDISPLAYMANAGER_HPP_
+#endif  // SRC_RENDERER_DISPLAYMANAGER_SFMLDISPLAYMANAGER_HPP_

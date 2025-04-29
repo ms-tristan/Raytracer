@@ -6,10 +6,10 @@
 ** ToonShader - non-photorealistic cel-shading
 */
 
-#ifndef SRC_SHADER_TOONSHADER_HPP_
-#define SRC_SHADER_TOONSHADER_HPP_
-
-#include "../AShader.hpp"
+#ifndef SRC_SHADER_TOONSHADER_TOONSHADER_HPP_
+   #define SRC_SHADER_TOONSHADER_TOONSHADER_HPP_
+   #include <memory>
+   #include "../AShader.hpp"
 
 namespace RayTracer {
 
@@ -29,4 +29,4 @@ class ToonShader : public AShader {
 
 }  // namespace RayTracer
 
-#endif  // SRC_SHADER_TOONSHADER_HPP_
+#endif  // SRC_SHADER_TOONSHADER_TOONSHADER_HPP_

@@ -164,7 +164,6 @@ std::shared_ptr<IPrimitive> Cone::clone() const {
 }
 
 void Cone::getLibConfigParams(libconfig::Setting& setting) const {
-
     libconfig::Setting& pos = setting.add("apex", libconfig::Setting::TypeGroup);
     pos.add("x", libconfig::Setting::TypeFloat) = apex.X;
     pos.add("y", libconfig::Setting::TypeFloat) = apex.Y;

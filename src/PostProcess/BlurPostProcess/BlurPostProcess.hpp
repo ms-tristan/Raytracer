@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <mutex>
+#include <string>
 #include <atomic>
 #include "PostProcess/IPostProcess.hpp"
 

@@ -8,7 +8,11 @@
 
 #ifndef SRC_SCENE_SCENE_HPP_
   #define SRC_SCENE_SCENE_HPP_
-
+  #include <algorithm>
+  #include <limits>
+  #include <memory>
+  #include <vector>
+  #include <libconfig.h++>
   #include "Camera/Camera.hpp"
   #include "defs.hpp"
   #include "Light/AmbientLight/AmbientLight.hpp"
@@ -17,12 +21,6 @@
   #include "Ray/Ray.hpp"
   #include "Shader/IShader.hpp"
   #include "PostProcess/IPostProcess.hpp"
-
-  #include <algorithm>
-  #include <limits>
-  #include <memory>
-  #include <vector>
-  #include <libconfig.h++>
 
 namespace RayTracer {
 class Scene {

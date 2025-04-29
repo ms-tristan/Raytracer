@@ -1,8 +1,16 @@
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** ConfigParser
+*/
+
 #ifndef SRC_SCENE_SCENEDIRECTOR_CONFIGPARSER_HPP_
 #define SRC_SCENE_SCENEDIRECTOR_CONFIGPARSER_HPP_
 
 #include <memory>
 #include <string>
+#include <map>
 #include <unordered_map>
 #include <vector>
 #include <libconfig.h++>

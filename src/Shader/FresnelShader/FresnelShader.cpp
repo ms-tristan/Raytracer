@@ -7,6 +7,7 @@
 */
 #include "FresnelShader.hpp"
 #include <cmath>
+#include <memory>
 #include <algorithm>
 
 namespace RayTracer {

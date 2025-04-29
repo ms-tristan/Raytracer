@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <cmath>
 #include <algorithm>
 #include "ChromaticAberrationPostProcess.hpp"

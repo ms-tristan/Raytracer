@@ -5,9 +5,10 @@
 ** File description:
 ** PhongShader
 */
-#include "PhongShader.hpp"
+#include <memory>
 #include <cmath>
 #include <algorithm>
+#include "PhongShader.hpp"
 
 namespace RayTracer {
 

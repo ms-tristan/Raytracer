@@ -7,9 +7,9 @@
 */
 
 #ifndef SRC_SHADER_BASICSHADER_HPP_
-#define SRC_SHADER_BASICSHADER_HPP_
-
-#include "AShader.hpp"
+    #define SRC_SHADER_BASICSHADER_HPP_
+    #include <memory>
+    #include "AShader.hpp"
 
 namespace RayTracer {
 

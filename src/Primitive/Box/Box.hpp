@@ -7,10 +7,11 @@
 */
 
 #ifndef SRC_PRIMITIVE_BOX_BOX_HPP_
-#define SRC_PRIMITIVE_BOX_BOX_HPP_
-#include <memory>
-#include "Primitive/IPrimitive.hpp"
-#include "Transformation/Rotate/Rotate.hpp"
+    #define SRC_PRIMITIVE_BOX_BOX_HPP_
+    #include <string>
+    #include <memory>
+    #include "Primitive/IPrimitive.hpp"
+    #include "Transformation/Rotate/Rotate.hpp"
 
 namespace RayTracer {
 class Box : public IPrimitive {

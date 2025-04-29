@@ -4,8 +4,8 @@
 ** File description:
 ** SFML implementation of IEventsManager
 */
-
-#include "./SFMLEventsManager.hpp"
+#include <string>
+#include "SFMLEventsManager.hpp"
 
 namespace RayTracer {
 

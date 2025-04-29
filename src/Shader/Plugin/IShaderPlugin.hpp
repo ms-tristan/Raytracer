@@ -21,14 +21,11 @@ class IShaderPlugin {
  public:
     virtual ~IShaderPlugin() = default;
 
-    // Get the type name of this shader
     virtual std::string getTypeName() const = 0;
 
-    // Create a shader with the given parameters
     virtual std::shared_ptr<IShader> createShader(
         const std::map<std::string, double>& params) = 0;
 
-    // Get the list of required parameters for this shader
     virtual std::vector<std::string> getRequiredParameters() const = 0;
 };
 

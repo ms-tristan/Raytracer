@@ -7,16 +7,15 @@
 */
 
 #ifndef SRC_PRIMITIVE_IPRIMITIVE_HPP_
-#define SRC_PRIMITIVE_IPRIMITIVE_HPP_
-
-#include "defs.hpp"
-#include "Material/Material.hpp"
-#include "Math/Vector3D/Vector3D.hpp"
-#include "Ray/Ray.hpp"
-#include <memory>
-#include <optional>
-#include <libconfig.h++>
-
+  #define SRC_PRIMITIVE_IPRIMITIVE_HPP_
+  #include <string>
+  #include <memory>
+  #include <optional>
+  #include <libconfig.h++>
+  #include "defs.hpp"
+  #include "Material/Material.hpp"
+  #include "Math/Vector3D/Vector3D.hpp"
+  #include "Ray/Ray.hpp"
 namespace RayTracer {
 class IPrimitive {
  public:

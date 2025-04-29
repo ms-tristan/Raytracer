@@ -16,6 +16,7 @@
   #include "Primitive/IPrimitive.hpp"
   #include "Ray/Ray.hpp"
   #include "Shader/IShader.hpp"
+  #include "PostProcess/IPostProcess.hpp"
 
   #include <algorithm>
   #include <limits>
@@ -29,6 +30,7 @@ class Scene {
     std::vector<std::shared_ptr<IPrimitive>> primitives;
     std::vector<std::shared_ptr<ILight>> lights;
     std::vector<std::shared_ptr<IShader>> shaders;
+    std::vector<std::shared_ptr<IPostProcess>> postProcessEffects;
     AmbientLight ambientLight;
     Camera camera;
 
@@ -41,16 +43,22 @@ class Scene {
     void addPrimitive(const std::shared_ptr<IPrimitive> &primitive);
     void addLight(const std::shared_ptr<ILight> &light);
     void addShader(const std::shared_ptr<IShader> &shader);
+    void addPostProcess(const std::shared_ptr<IPostProcess> &postProcess);
     std::optional<HitInfo> trace(const Ray &ray) const;
     bool isInShadow(const Math::Point3D &hitPoint,
       const Math::Vector3D &lightDir,
       const std::shared_ptr<ILight> &light) const;
     Math::Vector3D computeColor(const Ray &ray) const;
-    void writeColor(const Math::Vector3D &color);
+
+    std::vector<Math::Vector3D> applyPostProcessingToFrameBuffer(
+        const std::vector<Math::Vector3D>& frameBuffer, int width, int height) const;
+
+        void writeColor(const Math::Vector3D &color);
     void getLibConfigParams(libconfig::Setting& setting) const;
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
     const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }
     const std::vector<std::shared_ptr<IShader>>& getShaders() const { return shaders; }
+    const std::vector<std::shared_ptr<IPostProcess>>& getPostProcessEffects() const { return postProcessEffects; }
     const AmbientLight& getAmbientLight() const { return ambientLight; }
 };
 }  // namespace RayTracer

@@ -28,6 +28,7 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
     int imageWidth = windowSize.x;
     int imageHeight = windowSize.y;
 
+    std::vector<Math::Vector3D> rawColorBuffer(imageWidth * imageHeight);
     std::vector<color_t> pixelBuffer(imageWidth * imageHeight);
 
     const int tileSize = 32;
@@ -61,11 +62,7 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
                     Ray ray = camera.ray(u, v);
                     Math::Vector3D pixelColor = scene.computeColor(ray);
 
-                    uint8_t r = static_cast<uint8_t>(255.999 * std::sqrt(std::max(0.0, std::min(1.0, pixelColor.X))));
-                    uint8_t g = static_cast<uint8_t>(255.999 * std::sqrt(std::max(0.0, std::min(1.0, pixelColor.Y))));
-                    uint8_t b = static_cast<uint8_t>(255.999 * std::sqrt(std::max(0.0, std::min(1.0, pixelColor.Z))));
-
-                    pixelBuffer[y * imageWidth + x] = {r, g, b, 255};
+                    rawColorBuffer[y * imageWidth + x] = pixelColor;
                 }
             }
         }
@@ -82,6 +79,22 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
 
     for (auto& thread : threads) {
         thread.join();
+    }
+
+    std::vector<Math::Vector3D> processedColorBuffer =
+        scene.applyPostProcessingToFrameBuffer(rawColorBuffer, imageWidth, imageHeight);
+
+    for (int y = 0; y < imageHeight; ++y) {
+        for (int x = 0; x < imageWidth; ++x) {
+            int index = y * imageWidth + x;
+            const Math::Vector3D& color = processedColorBuffer[index];
+
+            uint8_t r = static_cast<uint8_t>(255.999 * std::sqrt(std::max(0.0, std::min(1.0, color.X))));
+            uint8_t g = static_cast<uint8_t>(255.999 * std::sqrt(std::max(0.0, std::min(1.0, color.Y))));
+            uint8_t b = static_cast<uint8_t>(255.999 * std::sqrt(std::max(0.0, std::min(1.0, color.Z))));
+
+            pixelBuffer[index] = {r, g, b, 255};
+        }
     }
 
     _displayManager.beginFrame();

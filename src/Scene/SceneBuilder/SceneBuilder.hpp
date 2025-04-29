@@ -19,6 +19,7 @@
 #include "Math/Vector3D/Vector3D.hpp"
 #include "Material/Material.hpp"
 #include "Shader/IShader.hpp"
+#include "PostProcess/IPostProcess.hpp"
 
 
 namespace RayTracer {
@@ -36,6 +37,7 @@ class SceneBuilder {
 
     SceneBuilder& addLight(const std::shared_ptr<ILight>& light);
     SceneBuilder& addShader(const std::shared_ptr<IShader>& shader);
+    SceneBuilder& addPostProcess(const std::shared_ptr<IPostProcess>& postProcess);
     SceneBuilder& addPrimitive(const std::shared_ptr<IPrimitive>& primitive);
 
     SceneBuilder& createPrimitive(const std::string& type,

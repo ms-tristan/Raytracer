@@ -67,6 +67,17 @@ class ShadersParser : public ConfigParser {
    void parsePluginShader(const libconfig::Setting& shader, SceneBuilder& builder);
 };
 
+class PostProcessParser : public ConfigParser {
+ public:
+   void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+
+ private:
+   void parsePluginPostProcess(const libconfig::Setting& postProcess, SceneBuilder& builder);
+   std::map<std::string, double> extractParametersFromSetting(
+         const libconfig::Setting& setting,
+         const std::vector<std::string>& requiredParams);
+};
+
 class SceneConfigParser {
  public:
    SceneConfigParser();

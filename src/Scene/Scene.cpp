@@ -36,6 +36,10 @@ void Scene::addShader(const std::shared_ptr<IShader> &shader) {
     shaders.push_back(shader);
 }
 
+void Scene::addPostProcess(const std::shared_ptr<IPostProcess> &postProcess) {
+    postProcessEffects.push_back(postProcess);
+}
+
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
     double closest = std::numeric_limits<double>::infinity();
     std::optional<HitInfo> closestHit;
@@ -111,6 +115,18 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     return pixelColor;
 }
 
+std::vector<Math::Vector3D> Scene::applyPostProcessingToFrameBuffer(
+    const std::vector<Math::Vector3D>& frameBuffer, int width, int height) const {
+
+        std::vector<Math::Vector3D> processedBuffer = frameBuffer;
+
+    for (const auto& effect : postProcessEffects) {
+        processedBuffer = effect->processFrameBuffer(processedBuffer, width, height);
+    }
+
+    return processedBuffer;
+}
+
 void Scene::writeColor(const Math::Vector3D &color) {
     double r = std::sqrt(std::max(0.0, std::min(1.0, color.X)));
     double g = std::sqrt(std::max(0.0, std::min(1.0, color.Y)));
@@ -163,13 +179,21 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
         }
     }
 
-    // Add shaders section
     if (!shaders.empty()) {
         libconfig::Setting& shadersSettings = setting.add("shaders", libconfig::Setting::TypeList);
 
         for (const auto& shader : shaders) {
             libconfig::Setting& shaderSetting = shadersSettings.add(libconfig::Setting::TypeGroup);
             shader->getLibConfigParams(shaderSetting);
+        }
+    }
+    
+    if (!postProcessEffects.empty()) {
+        libconfig::Setting& postProcessSettings = setting.add("postprocess", libconfig::Setting::TypeList);
+
+        for (const auto& effect : postProcessEffects) {
+            libconfig::Setting& effectSetting = postProcessSettings.add(libconfig::Setting::TypeGroup);
+            effect->getLibConfigParams(effectSetting);
         }
     }
 }

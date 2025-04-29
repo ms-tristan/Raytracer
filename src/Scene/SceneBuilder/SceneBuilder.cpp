@@ -140,6 +140,11 @@ const std::shared_ptr<Material>& material) {
     return createPrimitive("cone", params, material);
 }
 
+SceneBuilder& SceneBuilder::addPostProcess(const std::shared_ptr<IPostProcess>& postProcess) {
+    scene->addPostProcess(postProcess);
+    return *this;
+}
+
 std::unique_ptr<Scene> SceneBuilder::build() {
     return std::move(scene);
 }

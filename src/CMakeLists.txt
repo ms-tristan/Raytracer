@@ -20,10 +20,11 @@ add_subdirectory(Transformation)
 add_subdirectory(Renderer)
 add_subdirectory(EventsManager)
 add_subdirectory(Shader)
+add_subdirectory(PostProcess)
 
 file(GLOB MAIN_SOURCES "*.cpp")
 
-# Core library sources - explicitly exclude primitive implementations
+# Core library sources - explicitly exclude primitive, shaders and postprocessing implementations
 set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Camera/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Material/Material.cpp
@@ -47,6 +48,9 @@ set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/APrimitive/APrimitive.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/PrimitiveFactory/PrimitiveFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/CompositePrimitive/CompositePrimitive.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/PostProcessFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginLoader.cpp
 )
 
 # Explicitly exclude main.cpp from the core library
@@ -58,7 +62,7 @@ set_target_properties(raytracer_core PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 target_include_directories(raytracer_core PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(raytracer_core PRIVATE dl shader)
+target_link_libraries(raytracer_core PRIVATE dl shader postprocess)
 
 
 # Create the main raytracer executable

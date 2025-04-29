@@ -11,6 +11,10 @@
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
 #include "Shader/Plugin/ShaderPluginManager.hpp"
 #include "Shader/Plugin/ShaderPluginLoader.hpp"
+#include "PostProcess/Plugin/PostProcessPluginManager.hpp"
+#include "PostProcess/Plugin/IPostProcessPlugin.hpp"
+#include "PostProcess/Plugin/PostProcessPluginLoader.hpp"
+#include "PostProcess/PostProcessFactory.hpp"
 
 namespace RayTracer {
 
@@ -191,11 +195,104 @@ void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& build
     }
 }
 
+void PostProcessParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+    auto pluginManager = PostProcessPluginManager::getInstance();
+    if (!pluginManager->loadAllPlugins("plugins/postprocess")) {
+        std::cerr << "Failed to load PostProcess plugins." << std::endl;
+    } else {
+        auto loadedPluginNames = pluginManager->getLoadedPluginNames();
+        std::cout << "Loaded PostProcess plugins: " << loadedPluginNames.size() << std::endl;
+
+        loadPostProcessPlugins();
+    }
+
+    int count = setting.getLength();
+    for (int i = 0; i < count; ++i) {
+        const libconfig::Setting& postProcess = setting[i];
+        parsePluginPostProcess(postProcess, builder);
+    }
+}
+
+void PostProcessParser::parsePluginPostProcess(const libconfig::Setting& postProcess, SceneBuilder& builder) {
+    static PostProcessFactory postProcessFactory;
+
+    try {
+        std::string typeName;
+        if (postProcess.exists("type")) {
+            typeName = static_cast<const char*>(postProcess["type"]);
+        } else {
+            std::cerr << "Missing 'type' field in PostProcess definition" << std::endl;
+            return;
+        }
+
+        // Get the plugin
+        auto pluginManager = PostProcessPluginManager::getInstance();
+        auto plugin = pluginManager->getPlugin(typeName);
+        
+        if (!plugin) {
+            std::cerr << "PostProcess plugin not found for type: " << typeName << std::endl;
+            return;
+        }
+
+        // Extract parameters
+        std::vector<std::string> requiredParams = plugin->getRequiredParameters();
+        std::map<std::string, double> params = extractParametersFromSetting(postProcess, requiredParams);
+
+        // Create post-process effect
+        try {
+            auto postProcessObj = pluginManager->createPostProcess(typeName, params);
+            if (postProcessObj) {
+                builder.addPostProcess(postProcessObj);
+                std::cout << "Successfully created PostProcess effect of type: " << typeName << std::endl;
+            } else {
+                std::cerr << "Failed to create PostProcess effect of type: " << typeName << std::endl;
+            }
+        } catch (const std::exception& ex) {
+            std::cerr << "Error creating PostProcess effect: " << ex.what() << std::endl;
+        }
+    } catch (const libconfig::SettingException& ex) {
+        std::cerr << "Error parsing PostProcess effect: " << ex.what() << std::endl;
+    } catch (const std::exception& ex) {
+        std::cerr << "Error creating PostProcess effect: " << ex.what() << std::endl;
+    }
+}
+
+std::map<std::string, double> PostProcessParser::extractParametersFromSetting(
+    const libconfig::Setting& setting,
+    const std::vector<std::string>& requiredParams) {
+
+    std::map<std::string, double> params;
+
+    for (int i = 0; i < setting.getLength(); ++i) {
+        const std::string& name = setting[i].getName();
+
+        if (name == "type") {
+            continue;
+        }
+
+        if (setting[i].getType() == libconfig::Setting::TypeFloat ||
+            setting[i].getType() == libconfig::Setting::TypeInt) {
+            params[name] = static_cast<double>(setting[i]);
+        }
+    }
+
+    // Set default values for any missing required parameters
+    for (const auto& param : requiredParams) {
+        if (params.find(param) == params.end()) {
+            std::cerr << "Warning: Missing required parameter '" << param << "' for PostProcess" << std::endl;
+            params[param] = 0.0; // Default fallback
+        }
+    }
+
+    return params;
+}
+
 SceneConfigParser::SceneConfigParser() {
     sectionParsers["camera"] = std::make_unique<CameraParser>();
     sectionParsers["lights"] = std::make_unique<LightsParser>();
     sectionParsers["primitives"] = std::make_unique<PrimitivesParser>();
     sectionParsers["shaders"] = std::make_unique<ShadersParser>();
+    sectionParsers["postprocess"] = std::make_unique<PostProcessParser>();
 }
 
 std::unique_ptr<Scene> SceneConfigParser::parseFile(const std::string& filename) {

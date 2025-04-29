@@ -28,7 +28,7 @@ class IPrimitive {
     virtual void rotateY(double degrees) = 0;
     virtual void rotateZ(double degrees) = 0;
     virtual std::optional<HitInfo> hit(const Ray &ray,
-      double tMin, double tMax) const = 0;
+      double tMin, double tMax) = 0;
     virtual std::shared_ptr<Material> getMaterial() const = 0;
     virtual std::shared_ptr<IPrimitive> clone() const = 0;
     virtual void getLibConfigParams(libconfig::Setting& setting) const = 0;

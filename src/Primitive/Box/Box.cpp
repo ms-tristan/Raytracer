@@ -46,7 +46,7 @@ std::shared_ptr<Material> Box::getMaterial() const {
 }
 
 std::optional<HitInfo> Box::hit(const Ray &ray,
-double tMin, double tMax) const {
+double tMin, double tMax) {
     Ray transformedRay = ray;
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
@@ -139,7 +139,7 @@ double tMin, double tMax) const {
     }
 
     info.normal = normal.normalize();
-    info.primitive = this;
+    info.primitive = std::shared_ptr<IPrimitive>(this);
     return info;
 }
 

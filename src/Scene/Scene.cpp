@@ -48,7 +48,7 @@ std::optional<HitInfo> Scene::trace(const Ray &ray) const {
 
     for (const auto &primitive : primitives) {
         auto hit = primitive->hit(ray, 0.001, closest);
-        if (hit) {
+        if (hit && hit->primitive) {
             closest = hit->distance;
             closestHit = hit;
         }

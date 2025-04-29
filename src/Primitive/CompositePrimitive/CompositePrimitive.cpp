@@ -49,7 +49,7 @@ void CompositePrimitive::rotateZ(double degrees) {
 }
 
 std::optional<HitInfo> CompositePrimitive::hit(const Ray &ray, double tMin,
-double tMax) const {
+double tMax) {
     std::optional<HitInfo> closestHit;
     double closest = tMax;
 

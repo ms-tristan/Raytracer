@@ -48,7 +48,7 @@ std::shared_ptr<Material> Plane::getMaterial() const {
 }
 
 std::optional<HitInfo> Plane::hit(const Ray &ray, double tMin,
-double tMax) const {
+double tMax) {
     Ray transformedRay = ray;
     Math::Vector3D transformedNormal = normal;
 
@@ -94,7 +94,7 @@ double tMax) const {
     if (denominator > 0)
         info.normal = info.normal * -1.0;
 
-    info.primitive = this;
+    info.primitive = std::shared_ptr<IPrimitive>(this);
     return info;
 }
 

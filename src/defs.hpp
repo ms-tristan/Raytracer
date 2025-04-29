@@ -7,8 +7,11 @@
 
 #ifndef SRC_DEFS_HPP_
     #define SRC_DEFS_HPP_
+
     #include "Math/Point3D/Point3D.hpp"
     #include "Math/Vector3D/Vector3D.hpp"
+
+    #include <memory>
 
 namespace RayTracer {
 
@@ -43,7 +46,7 @@ struct HitInfo {
     double distance;
     Math::Point3D hitPoint;
     Math::Vector3D normal;
-    const IPrimitive *primitive;
+    std::shared_ptr<IPrimitive> primitive;
 };
 
 }  // namespace RayTracer

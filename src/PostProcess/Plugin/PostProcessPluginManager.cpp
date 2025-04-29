@@ -89,7 +89,6 @@ bool PostProcessPluginManager::loadPlugin(const std::string& path) {
     info.plugin = plugin;
     loadedPlugins[typeName] = info;
 
-    std::cout << "Successfully loaded PostProcess plugin: " << typeName << std::endl;
     return true;
 }
 

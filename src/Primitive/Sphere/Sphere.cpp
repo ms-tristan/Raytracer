@@ -48,7 +48,7 @@ std::shared_ptr<Material> Sphere::getMaterial() const {
 }
 
 std::optional<HitInfo> Sphere::hit(const Ray &ray, double tMin,
-double tMax) const {
+double tMax) {
     Ray transformedRay = ray;
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
@@ -114,7 +114,7 @@ double tMax) const {
     }
 
     info.normal = normal;
-    info.primitive = this;
+    info.primitive = std::shared_ptr<IPrimitive>(this);
     return info;
 }
 

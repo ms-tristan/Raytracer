@@ -51,7 +51,7 @@ std::shared_ptr<Material> Cylinder::getMaterial() const {
 }
 
 std::optional<HitInfo> Cylinder::hit(const Ray &ray,
-double tMin, double tMax) const {
+double tMin, double tMax) {
     Ray transformedRay = ray;
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         Math::Point3D newOrigin = ray.origin;
@@ -140,7 +140,7 @@ double tMin, double tMax) const {
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
-    info.primitive = this;
+    info.primitive = std::shared_ptr<IPrimitive>(this);
     return info;
 }
 

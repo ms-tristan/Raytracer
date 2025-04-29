@@ -139,7 +139,7 @@ void InputManager::handleObjectDragging(Camera& camera) {
         Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
         Math::Vector3D moveVec = rightDir * (deltaX * 0.01) + upDir * (-deltaY * 0.01);
-        const_cast<IPrimitive*>(_selectedPrimitive)->translate(moveVec);
+        _selectedPrimitive->translate(moveVec);
         _dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
     }
 }

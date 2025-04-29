@@ -61,7 +61,6 @@ void loadShaderPlugins() {
     closedir(dir);
 
     auto loadedPlugins = pluginManager->getLoadedPluginNames();
-    std::cout << "Loaded " << loadedPlugins.size() << " shader plugins" << std::endl;
 
     ShaderFactory shaderFactory;
     for (const auto& typeName : loadedPlugins) {

@@ -23,7 +23,7 @@ namespace RayTracer {
 class ConfigParser {
  public:
    virtual ~ConfigParser() = default;
-   virtual void parse(const libconfig::Setting& setting, SceneBuilder& builder) = 0;
+   virtual void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) = 0;
 
  protected:
    template<typename T>
@@ -42,25 +42,25 @@ class ConfigParser {
 
 class CameraParser : public ConfigParser {
  public:
-   void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+   void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
 };
 
 class LightsParser : public ConfigParser {
  public:
-   void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+   void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
 
  private:
-   void parsePointLights(const libconfig::Setting& lights, SceneBuilder& builder);
-   void parseDirectionalLights(const libconfig::Setting& lights, SceneBuilder& builder);
+   void parsePointLights(const libconfig::Setting& lights, std::shared_ptr<SceneBuilder> builder);
+   void parseDirectionalLights(const libconfig::Setting& lights, std::shared_ptr<SceneBuilder> builder);
 };
 
 class PrimitivesParser : public ConfigParser {
  public:
-   void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+   void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
 
  private:
    void parsePluginPrimitives(const std::string& typeName, const libconfig::Setting& primitives,
-                              SceneBuilder& builder);
+                              std::shared_ptr<SceneBuilder> builder);
    std::map<std::string, double> extractParametersFromSetting(
          const libconfig::Setting& setting,
          const std::vector<std::string>& requiredParams);
@@ -69,18 +69,18 @@ class PrimitivesParser : public ConfigParser {
 
 class ShadersParser : public ConfigParser {
  public:
-   void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+   void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
 
  private:
-   void parsePluginShader(const libconfig::Setting& shader, SceneBuilder& builder);
+   void parsePluginShader(const libconfig::Setting& shader, std::shared_ptr<SceneBuilder> builder);
 };
 
 class PostProcessParser : public ConfigParser {
  public:
-   void parse(const libconfig::Setting& setting, SceneBuilder& builder) override;
+   void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
 
  private:
-   void parsePluginPostProcess(const libconfig::Setting& postProcess, SceneBuilder& builder);
+   void parsePluginPostProcess(const libconfig::Setting& postProcess, std::shared_ptr<SceneBuilder> builder);
    std::map<std::string, double> extractParametersFromSetting(
          const libconfig::Setting& setting,
          const std::vector<std::string>& requiredParams);
@@ -92,7 +92,7 @@ class SceneConfigParser {
    std::unique_ptr<Scene> parseFile(const std::string& filename);
 
  private:
-   SceneBuilder builder;
+   std::shared_ptr<SceneBuilder> builder;
    std::unordered_map<std::string, std::unique_ptr<ConfigParser>> sectionParsers;
 };
 

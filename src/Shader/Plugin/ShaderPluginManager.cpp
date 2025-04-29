@@ -86,7 +86,6 @@ bool ShaderPluginManager::loadPlugin(const std::string& path) {
     info.plugin = plugin;
     loadedPlugins[typeName] = info;
 
-    std::cout << "Successfully loaded shader plugin: " << typeName << std::endl;
     return true;
 }
 

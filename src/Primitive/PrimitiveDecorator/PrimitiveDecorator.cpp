@@ -31,7 +31,7 @@ void PrimitiveDecorator::rotateZ(double degrees) {
 }
 
 std::optional<HitInfo> PrimitiveDecorator::hit(const Ray &ray,
-double tMin, double tMax) const {
+double tMin, double tMax) {
     return wrappedPrimitive->hit(ray, tMin, tMax);
 }
 

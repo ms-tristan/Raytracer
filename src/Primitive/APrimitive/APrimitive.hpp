@@ -30,7 +30,7 @@ class APrimitive : public IPrimitive {
     void rotateZ(double degrees) override;
     virtual void translate(const Math::Vector3D &translation) = 0;
     virtual std::optional<HitInfo> hit(const Ray &ray,
-        double tMin, double tMax) const = 0;
+        double tMin, double tMax) = 0;
 };
 }   // namespace RayTracer
 

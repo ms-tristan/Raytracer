@@ -45,7 +45,7 @@ class Sphere : public IPrimitive {
     void rotateY(double degrees) override;
     void rotateZ(double degrees) override;
     std::optional<HitInfo> hit(const Ray &ray, double tMin,
-        double tMax) const override;
+        double tMax) override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
     void getLibConfigParams(libconfig::Setting& setting) const override;

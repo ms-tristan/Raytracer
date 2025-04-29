@@ -71,7 +71,7 @@ Math::Vector3D ConfigParser::parseColor(const libconfig::Setting& setting) {
     return Math::Vector3D(Math::Coords{r, g, b});
 }
 
-void CameraParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     Math::Point3D position;
     if (setting.exists("position")) {
         position = parsePoint3D(setting["position"]);
@@ -87,12 +87,12 @@ void CameraParser::parse(const libconfig::Setting& setting, SceneBuilder& builde
         lookAt = Math::Point3D(Math::Coords{0, 0, 0});
     }
 
-    builder.setCamera(position, lookAt);
+    builder->setCamera(position, lookAt);
 }
 
-void LightsParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+void LightsParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     double ambientIntensity = getValueOrDefault<double>(setting, "ambient", 0.4);
-    builder.setAmbientLight(Math::Vector3D(Math::Coords{
+    builder->setAmbientLight(Math::Vector3D(Math::Coords{
         ambientIntensity, ambientIntensity, ambientIntensity
     }));
 
@@ -105,7 +105,7 @@ void LightsParser::parse(const libconfig::Setting& setting, SceneBuilder& builde
     }
 }
 
-void LightsParser::parsePointLights(const libconfig::Setting& lights, SceneBuilder& builder) {
+void LightsParser::parsePointLights(const libconfig::Setting& lights, std::shared_ptr<SceneBuilder> builder) {
     int count = lights.getLength();
     for (int i = 0; i < count; ++i) {
         const libconfig::Setting& light = lights[i];
@@ -141,11 +141,11 @@ void LightsParser::parsePointLights(const libconfig::Setting& lights, SceneBuild
             quadratic
         );
 
-        builder.addLight(pointLight);
+        builder->addLight(pointLight);
     }
 }
 
-void LightsParser::parseDirectionalLights(const libconfig::Setting& lights, SceneBuilder& builder) {
+void LightsParser::parseDirectionalLights(const libconfig::Setting& lights, std::shared_ptr<SceneBuilder> builder) {
     int count = lights.getLength();
     for (int i = 0; i < count; ++i) {
         const libconfig::Setting& light = lights[i];
@@ -163,11 +163,11 @@ void LightsParser::parseDirectionalLights(const libconfig::Setting& lights, Scen
         }
 
         auto dirLight = std::make_shared<DirectionalLight>(direction, color);
-        builder.addLight(dirLight);
+        builder->addLight(dirLight);
     }
 }
 
-void PrimitivesParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+void PrimitivesParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     auto pluginManager = PrimitivePluginManager::getInstance();
     if (!pluginManager->loadAllPlugins("plugins/primitives")) {
         std::cerr << "Failed to load plugins." << std::endl;
@@ -175,24 +175,19 @@ void PrimitivesParser::parse(const libconfig::Setting& setting, SceneBuilder& bu
     }
     auto loadedPluginNames = pluginManager->getLoadedPluginNames();
 
-    std::cout << "Loaded plugin names: " << std::endl;
     for (const auto& typeName : loadedPluginNames) {
-        std::cout << "Parsing plugin primitive: " << typeName << std::endl;
         if (setting.exists(typeName)) {
-            std::cout << "Found setting for plugin primitive: " << typeName << " in parameter " << setting.getName() << std::endl;
             parsePluginPrimitives(typeName, setting[typeName], builder);
         }
     }
 }
 
-void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+void ShadersParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     auto pluginManager = ShaderPluginManager::getInstance();
     if (!pluginManager->loadAllPlugins("plugins/shaders")) {
         std::cerr << "Failed to load shader plugins." << std::endl;
     } else {
         auto loadedPluginNames = pluginManager->getLoadedPluginNames();
-        std::cout << "Loaded shader plugins: " << loadedPluginNames.size() << std::endl;
-
         loadShaderPlugins();
     }
 
@@ -203,14 +198,12 @@ void ShadersParser::parse(const libconfig::Setting& setting, SceneBuilder& build
     }
 }
 
-void PostProcessParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
+void PostProcessParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     auto pluginManager = PostProcessPluginManager::getInstance();
     if (!pluginManager->loadAllPlugins("plugins/postprocess")) {
         std::cerr << "Failed to load PostProcess plugins." << std::endl;
     } else {
         auto loadedPluginNames = pluginManager->getLoadedPluginNames();
-        std::cout << "Loaded PostProcess plugins: " << loadedPluginNames.size() << std::endl;
-
         loadPostProcessPlugins();
     }
 
@@ -221,7 +214,7 @@ void PostProcessParser::parse(const libconfig::Setting& setting, SceneBuilder& b
     }
 }
 
-void PostProcessParser::parsePluginPostProcess(const libconfig::Setting& postProcess, SceneBuilder& builder) {
+void PostProcessParser::parsePluginPostProcess(const libconfig::Setting& postProcess, std::shared_ptr<SceneBuilder> builder) {
     static PostProcessFactory postProcessFactory;
 
     try {
@@ -247,8 +240,7 @@ void PostProcessParser::parsePluginPostProcess(const libconfig::Setting& postPro
         try {
             auto postProcessObj = pluginManager->createPostProcess(typeName, params);
             if (postProcessObj) {
-                builder.addPostProcess(postProcessObj);
-                std::cout << "Successfully created PostProcess effect of type: " << typeName << std::endl;
+                builder->addPostProcess(postProcessObj);
             } else {
                 std::cerr << "Failed to create PostProcess effect of type: " << typeName << std::endl;
             }
@@ -292,6 +284,7 @@ std::map<std::string, double> PostProcessParser::extractParametersFromSetting(
 }
 
 SceneConfigParser::SceneConfigParser() {
+    builder = std::make_shared<SceneBuilder>();
     sectionParsers["camera"] = std::make_unique<CameraParser>();
     sectionParsers["lights"] = std::make_unique<LightsParser>();
     sectionParsers["primitives"] = std::make_unique<PrimitivesParser>();
@@ -300,19 +293,17 @@ SceneConfigParser::SceneConfigParser() {
 }
 
 std::unique_ptr<Scene> SceneConfigParser::parseFile(const std::string& filename) {
-    builder.reset();
+    builder->reset();
 
     try {
         libconfig::Config cfg;
         cfg.readFile(filename.c_str());
 
-
         for (const auto& [section, parser] : sectionParsers) {
             if (cfg.exists(section))
-                parser->parse(cfg.lookup(section), builder);
-        }
+                parser->parse(cfg.lookup(section), builder);        }
 
-        return builder.build();
+        return builder->build();
     } catch (const libconfig::FileIOException& ex) {
         std::cerr << "Error reading scene file: " << filename << std::endl;
     } catch (const libconfig::ParseException& ex) {
@@ -326,17 +317,17 @@ std::unique_ptr<Scene> SceneConfigParser::parseFile(const std::string& filename)
         std::cerr << "Error parsing scene file: " << ex.what() << std::endl;
     }
 
-    return builder.build();
+    return builder->build();
 }
 
 
-void ShadersParser::parsePluginShader(const libconfig::Setting& shader, SceneBuilder& builder) {
+void ShadersParser::parsePluginShader(const libconfig::Setting& shader, std::shared_ptr<SceneBuilder> builder) {
     static ShaderFactory shaderFactory;
 
     try {
         auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
         if (shaderInstance)
-            builder.addShader(shaderInstance);
+            builder->addShader(shaderInstance);
     } catch (const libconfig::SettingException& ex) {
         std::cerr << "Error parsing shader: " << ex.what() << std::endl;
     } catch (const std::exception& ex) {
@@ -347,7 +338,7 @@ void ShadersParser::parsePluginShader(const libconfig::Setting& shader, SceneBui
 
 void PrimitivesParser::parsePluginPrimitives(const std::string& typeName,
                                     const libconfig::Setting& primitives,
-                                    SceneBuilder& builder) {
+                                    std::shared_ptr<SceneBuilder> builder) {
     auto pluginManager = PrimitivePluginManager::getInstance();
     auto plugin = pluginManager->getPlugin(typeName);
 
@@ -359,7 +350,6 @@ void PrimitivesParser::parsePluginPrimitives(const std::string& typeName,
     std::vector<std::string> requiredParams = plugin->getRequiredParameters();
 
     int count = primitives.getLength();
-    std::cout << "Found " << count << " primitives of type: " << typeName << std::endl;
 
     for (int i = 0; i < count; ++i) {
         const libconfig::Setting& primitive = primitives[i];
@@ -368,13 +358,10 @@ void PrimitivesParser::parsePluginPrimitives(const std::string& typeName,
 
         auto material = extractMaterialFromSetting(primitive);
 
-        std::cout << "Creating primitive of type: " << typeName << std::endl;
-
         try {
             auto primitiveObj = pluginManager->createPrimitive(typeName, params, material);
             if (primitiveObj) {
-                builder.addPrimitive(primitiveObj);
-                std::cout << "Successfully created primitive of type: " << typeName << std::endl;
+                builder->addPrimitive(primitiveObj);
             } else {
                 std::cerr << "Failed to create primitive of type: " << typeName << std::endl;
             }

@@ -63,12 +63,9 @@ void loadPostProcessPlugins() {
     closedir(dir);
 
     auto loadedPlugins = pluginManager->getLoadedPluginNames();
-    std::cout << "Loaded " << loadedPlugins.size() << " PostProcess plugins" << std::endl;
 
-    // Register loaded plugins with PostProcessFactory
     PostProcessFactory postProcessFactory;
     for (const auto& typeName : loadedPlugins) {
-        std::cout << "Registering PostProcess plugin: " << typeName << std::endl;
         postProcessFactory.registerPostProcess(typeName,
             [pluginManager, typeName](const std::map<std::string, double>& params) {
                 return pluginManager->createPostProcess(typeName, params);

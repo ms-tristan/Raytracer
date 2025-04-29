@@ -25,14 +25,14 @@ std::shared_ptr<IPrimitive> MaterialDecorator::clone() const {
     overrideMaterial);
 }
 
-void MaterialDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+void MaterialDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     PrimitiveDecorator::getLibConfigParams(setting);
 
-    if (setting.exists("material")) {
-        setting.remove("material");
+    if (setting->exists("material")) {
+        setting->remove("material");
     }
 
-    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+    libconfig::Setting& mat = setting->add("material", libconfig::Setting::TypeGroup);
 
     libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
     color.add("r", libconfig::Setting::TypeFloat) = overrideMaterial->color.X;

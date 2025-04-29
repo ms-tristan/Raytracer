@@ -13,7 +13,7 @@
     #include "Primitive/IPrimitive.hpp"
 
 namespace RayTracer {
-class PrimitiveDecorator : public IPrimitive {
+class PrimitiveDecorator : public IPrimitive, public std::enable_shared_from_this<PrimitiveDecorator> {
  protected:
     std::shared_ptr<IPrimitive> wrappedPrimitive;
 
@@ -29,7 +29,7 @@ class PrimitiveDecorator : public IPrimitive {
         double tMax) override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override = 0;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 }  // namespace RayTracer
 

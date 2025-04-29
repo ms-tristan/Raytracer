@@ -31,7 +31,7 @@ class IPrimitive {
       double tMin, double tMax) = 0;
     virtual std::shared_ptr<Material> getMaterial() const = 0;
     virtual std::shared_ptr<IPrimitive> clone() const = 0;
-    virtual void getLibConfigParams(libconfig::Setting& setting) const = 0;
+    virtual void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const = 0;
 };
 }  // namespace RayTracer
 

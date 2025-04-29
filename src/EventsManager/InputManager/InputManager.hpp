@@ -22,17 +22,17 @@ namespace RayTracer {
 
 class InputManager {
  public:
-    InputManager(IEventsManager& eventsManager, int windowWidth, int windowHeight);
+    InputManager(std::shared_ptr<IEventsManager> eventsManager, int windowWidth, int windowHeight);
     ~InputManager() = default;
 
-    void processInput(Scene& scene, Camera& camera);
+    void processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
 
  private:
-    void handleCameraMovement(Camera& camera);
-    void handleObjectSelection(Scene& scene, Camera& camera);
-    void handleObjectDragging(Camera& camera);
+    void handleCameraMovement(std::shared_ptr<Camera> camera);
+    void handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
+    void handleObjectDragging(std::shared_ptr<Camera> camera);
 
-    IEventsManager& _eventsManager;
+    std::shared_ptr<IEventsManager> _eventsManager;
     int _windowWidth;
     int _windowHeight;
 

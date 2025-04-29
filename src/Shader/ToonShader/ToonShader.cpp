@@ -35,10 +35,10 @@ std::shared_ptr<IShader> ToonShader::clone() const {
     return std::make_shared<ToonShader>(levels, edgeThreshold);
 }
 
-void ToonShader::getLibConfigParams(libconfig::Setting& setting) const {
+void ToonShader::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     AShader::getLibConfigParams(setting);
-    setting.add("levels", libconfig::Setting::TypeInt) = levels;
-    setting.add("edgeThreshold", libconfig::Setting::TypeFloat) = edgeThreshold;
+    setting->add("levels", libconfig::Setting::TypeInt) = levels;
+    setting->add("edgeThreshold", libconfig::Setting::TypeFloat) = edgeThreshold;
 }
 
 }  // namespace RayTracer

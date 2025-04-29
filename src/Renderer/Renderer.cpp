@@ -16,7 +16,7 @@
 
 namespace RayTracer {
 
-Renderer::Renderer(IDisplayManager& displayManager)
+Renderer::Renderer(std::shared_ptr<IDisplayManager> displayManager)
     : _displayManager(displayManager) {
 }
 
@@ -24,7 +24,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::drawScene(const Scene& scene, const Camera& camera) {
-    auto windowSize = _displayManager.getWindowSize();
+    auto windowSize = _displayManager->getWindowSize();
     int imageWidth = windowSize.x;
     int imageHeight = windowSize.y;
 
@@ -97,9 +97,9 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
         }
     }
 
-    _displayManager.beginFrame();
-    _displayManager.drawImage(pixelBuffer, imageWidth, imageHeight);
-    _displayManager.endFrame();
+    _displayManager->beginFrame();
+    _displayManager->drawImage(pixelBuffer, imageWidth, imageHeight);
+    _displayManager->endFrame();
 }
 
 }  // namespace RayTracer

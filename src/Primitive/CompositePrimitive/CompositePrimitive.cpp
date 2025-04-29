@@ -95,35 +95,36 @@ CompositePrimitive::getPrimitives() const {
     return primitives;
 }
 
-void CompositePrimitive::getLibConfigParams(libconfig::Setting& setting) const {
-    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+void CompositePrimitive::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    // libconfig::Setting& mat = setting->add("material", libconfig::Setting::TypeGroup);
 
-    libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
-    color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
-    color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
-    color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
+    // libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
+    // color.add("r", libconfig::Setting::TypeFloat) = material->color.X;
+    // color.add("g", libconfig::Setting::TypeFloat) = material->color.Y;
+    // color.add("b", libconfig::Setting::TypeFloat) = material->color.Z;
 
-    mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
-    mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+    // mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
+    // mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
 
-    libconfig::Setting& children = setting.add("children", libconfig::Setting::TypeList);
+    // libconfig::Setting& children = setting->add("children", libconfig::Setting::TypeList);
 
 
-    for (const auto& primitive : primitives) {
-        libconfig::Setting& child = children.add(libconfig::Setting::TypeGroup);
+    // for (const auto& primitive : primitives) {
+    //     libconfig::Setting& child = children.add(libconfig::Setting::TypeGroup);
 
-        const std::type_info& type = typeid(*primitive);
-        std::string primitiveType = "unknown";
+    //     const std::type_info& type = typeid(*primitive);
+    //     std::string primitiveType = "unknown";
 
-        // if (type == typeid(Sphere)) primitiveType = "sphere";
-        // else if (type == typeid(Plane)) primitiveType = "plane";
-        // else if (type == typeid(Cylinder)) primitiveType = "cylinder";
-        // else if (type == typeid(Cone)) primitiveType = "cone";
+    //     // if (type == typeid(Sphere)) primitiveType = "sphere";
+    //     // else if (type == typeid(Plane)) primitiveType = "plane";
+    //     // else if (type == typeid(Cylinder)) primitiveType = "cylinder";
+    //     // else if (type == typeid(Cone)) primitiveType = "cone";
 
-        child.add("type", libconfig::Setting::TypeString) = primitiveType;
+    //     child.add("type", libconfig::Setting::TypeString) = primitiveType;
 
-        primitive->getLibConfigParams(child);
-    }
+    //     auto childSettingPtr = std::make_shared<libconfig::Setting>(child);
+    //     primitive->getLibConfigParams(childSettingPtr);
+    // }
 }
 
 }  // namespace RayTracer

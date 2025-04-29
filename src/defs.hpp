@@ -8,10 +8,10 @@
 #ifndef SRC_DEFS_HPP_
     #define SRC_DEFS_HPP_
 
+    #include <memory>
+
     #include "Math/Point3D/Point3D.hpp"
     #include "Math/Vector3D/Vector3D.hpp"
-
-    #include <memory>
 
 namespace RayTracer {
 

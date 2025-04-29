@@ -24,7 +24,7 @@ class ALight : public ILight {
 
     Math::Vector3D getLightColor() const override;
     std::shared_ptr<ILight> clone() const override = 0;
-    void getLibConfigParams(libconfig::Setting& setting) const override = 0;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override = 0;
 };
 }  // namespace RayTracer
 

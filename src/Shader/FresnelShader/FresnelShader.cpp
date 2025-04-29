@@ -35,12 +35,12 @@ std::shared_ptr<IShader> FresnelShader::clone() const {
     return std::make_shared<FresnelShader>(fresnelPower, rimColor);
 }
 
-void FresnelShader::getLibConfigParams(libconfig::Setting& setting) const {
+void FresnelShader::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     AShader::getLibConfigParams(setting);
 
-    setting.add("fresnelPower", libconfig::Setting::TypeFloat) = fresnelPower;
+    setting->add("fresnelPower", libconfig::Setting::TypeFloat) = fresnelPower;
 
-    libconfig::Setting& color = setting.add("rimColor", libconfig::Setting::TypeGroup);
+    libconfig::Setting& color = setting->add("rimColor", libconfig::Setting::TypeGroup);
     color.add("r", libconfig::Setting::TypeFloat) = rimColor.X;
     color.add("g", libconfig::Setting::TypeFloat) = rimColor.Y;
     color.add("b", libconfig::Setting::TypeFloat) = rimColor.Z;

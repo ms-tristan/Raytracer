@@ -80,9 +80,9 @@ std::shared_ptr<IPostProcess> ChromaticAberrationPostProcess::clone() const {
     return std::make_shared<ChromaticAberrationPostProcess>(strength);
 }
 
-void ChromaticAberrationPostProcess::getLibConfigParams(libconfig::Setting& setting) const {
-    setting.add("type", libconfig::Setting::TypeString) = getTypeName();
-    setting.add("strength", libconfig::Setting::TypeFloat) = strength;
+void ChromaticAberrationPostProcess::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    setting->add("type", libconfig::Setting::TypeString) = getTypeName();
+    setting->add("strength", libconfig::Setting::TypeFloat) = strength;
 }
 
 }  // namespace RayTracer

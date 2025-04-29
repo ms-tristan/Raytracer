@@ -25,7 +25,7 @@ class AShader : public IShader {
     virtual ~AShader() = default;
 
     std::string getType() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 
 }  // namespace RayTracer

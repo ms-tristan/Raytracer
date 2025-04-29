@@ -22,10 +22,10 @@ std::string ShaderDecorator::getType() const {
     return "decorator(" + wrappedShader->getType() + ")";
 }
 
-void ShaderDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+void ShaderDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     wrappedShader->getLibConfigParams(setting);
 
-    setting.add("decorated", libconfig::Setting::TypeBoolean) = true;
+    setting->add("decorated", libconfig::Setting::TypeBoolean) = true;
 }
 
 }  // namespace RayTracer

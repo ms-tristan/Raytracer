@@ -42,7 +42,7 @@ class BlurPostProcess : public IPostProcess {
     static std::string getTypeNameStatic();
 
     std::shared_ptr<IPostProcess> clone() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 
 }  // namespace RayTracer

@@ -86,9 +86,9 @@ std::shared_ptr<IPostProcess> BlurPostProcess::clone() const {
     return std::make_shared<BlurPostProcess>(radius);
 }
 
-void BlurPostProcess::getLibConfigParams(libconfig::Setting& setting) const {
-    setting.add("type", libconfig::Setting::TypeString) = getTypeName();
-    setting.add("radius", libconfig::Setting::TypeFloat) = radius;
+void BlurPostProcess::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    setting->add("type", libconfig::Setting::TypeString) = getTypeName();
+    setting->add("radius", libconfig::Setting::TypeFloat) = radius;
 }
 
 }  // namespace RayTracer

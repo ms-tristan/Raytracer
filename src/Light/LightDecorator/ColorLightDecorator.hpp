@@ -25,7 +25,7 @@ class ColorLightDecorator : public LightDecorator {
 
     Math::Vector3D getLightColor() const override;
     std::shared_ptr<ILight> clone() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 
 }  // namespace RayTracer

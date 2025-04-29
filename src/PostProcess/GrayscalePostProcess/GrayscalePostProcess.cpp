@@ -50,9 +50,9 @@ std::shared_ptr<IPostProcess> GrayscalePostProcess::clone() const {
     return std::make_shared<GrayscalePostProcess>(intensity);
 }
 
-void GrayscalePostProcess::getLibConfigParams(libconfig::Setting& setting) const {
-    setting.add("type", libconfig::Setting::TypeString) = getTypeName();
-    setting.add("intensity", libconfig::Setting::TypeFloat) = intensity;
+void GrayscalePostProcess::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    setting->add("type", libconfig::Setting::TypeString) = getTypeName();
+    setting->add("intensity", libconfig::Setting::TypeFloat) = intensity;
 }
 
 }  // namespace RayTracer

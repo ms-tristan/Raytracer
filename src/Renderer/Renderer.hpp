@@ -14,13 +14,13 @@ namespace RayTracer {
 
 class Renderer : public IRenderer {
   public:
-    Renderer(IDisplayManager& displayManager);
+    Renderer(std::shared_ptr<IDisplayManager> displayManager);
     ~Renderer();
 
     void drawScene(const Scene& scene, const Camera& camera) override;
 
   private:
-    IDisplayManager& _displayManager;
+    std::shared_ptr<IDisplayManager> _displayManager;
 };
 
 }  // namespace RayTracer

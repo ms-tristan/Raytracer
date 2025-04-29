@@ -51,9 +51,9 @@ std::shared_ptr<IPostProcess> NegativePostProcess::clone() const {
     return std::make_shared<NegativePostProcess>(intensity);
 }
 
-void NegativePostProcess::getLibConfigParams(libconfig::Setting& setting) const {
-    setting.add("type", libconfig::Setting::TypeString) = getTypeName();
-    setting.add("intensity", libconfig::Setting::TypeFloat) = intensity;
+void NegativePostProcess::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    setting->add("type", libconfig::Setting::TypeString) = getTypeName();
+    setting->add("intensity", libconfig::Setting::TypeFloat) = intensity;
 }
 
 }  // namespace RayTracer

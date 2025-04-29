@@ -52,7 +52,7 @@ class Scene {
         const std::vector<Math::Vector3D>& frameBuffer, int width, int height) const;
 
         void writeColor(const Math::Vector3D &color);
-    void getLibConfigParams(libconfig::Setting& setting) const;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
     const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }
     const std::vector<std::shared_ptr<IShader>>& getShaders() const { return shaders; }

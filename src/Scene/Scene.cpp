@@ -140,11 +140,12 @@ void Scene::writeColor(const Math::Vector3D &color) {
     std::cout << ir << " " << ig << " " << ib << std::endl;
 }
 
-void Scene::getLibConfigParams(libconfig::Setting& setting) const {
-    libconfig::Setting& cameraSettings = setting.add("camera", libconfig::Setting::TypeGroup);
-    camera.getLibConfigParams(cameraSettings);
+void Scene::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    libconfig::Setting& cameraSettings = setting->add("camera", libconfig::Setting::TypeGroup);
+    std::shared_ptr<libconfig::Setting> cameraSettingsPtr(&cameraSettings, [](libconfig::Setting*){});
+    camera.getLibConfigParams(cameraSettingsPtr);
 
-    libconfig::Setting& primitives = setting.add("primitives", libconfig::Setting::TypeGroup);
+    libconfig::Setting& primitives = setting->add("primitives", libconfig::Setting::TypeGroup);
 
     std::map<std::string, libconfig::Setting*> primitiveTypes;
 
@@ -156,10 +157,11 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
 
         libconfig::Setting& primitiveSetting = *primitiveTypes[primitive->getTypeName()];
         libconfig::Setting& primitiveGroup = primitiveSetting.add(libconfig::Setting::TypeGroup);
-        primitive->getLibConfigParams(primitiveGroup);
+        std::shared_ptr<libconfig::Setting> primitiveGroupPtr(&primitiveGroup, [](libconfig::Setting*){});
+        primitive->getLibConfigParams(primitiveGroupPtr);
     }
 
-    libconfig::Setting& lights = setting.add("lights", libconfig::Setting::TypeGroup);
+    libconfig::Setting& lights = setting->add("lights", libconfig::Setting::TypeGroup);
 
     lights.add("ambient", libconfig::Setting::TypeFloat) = ambientLight.getLightColor().X;
     lights.add("diffuse", libconfig::Setting::TypeFloat) = 0.6;
@@ -172,28 +174,32 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
 
         if (type == typeid(PointLight)) {
             libconfig::Setting& pointLight = pointLights.add(libconfig::Setting::TypeGroup);
-            light->getLibConfigParams(pointLight);
+            std::shared_ptr<libconfig::Setting> pointLightPtr(&pointLight, [](libconfig::Setting*){});
+            light->getLibConfigParams(pointLightPtr);
         } else if (type == typeid(DirectionalLight)) {
             libconfig::Setting& directionalLight = directionalLights.add(libconfig::Setting::TypeGroup);
-            light->getLibConfigParams(directionalLight);
+            std::shared_ptr<libconfig::Setting> directionalLightPtr(&directionalLight, [](libconfig::Setting*){});
+            light->getLibConfigParams(directionalLightPtr);
         }
     }
 
     if (!shaders.empty()) {
-        libconfig::Setting& shadersSettings = setting.add("shaders", libconfig::Setting::TypeList);
+        libconfig::Setting& shadersSettings = setting->add("shaders", libconfig::Setting::TypeList);
 
         for (const auto& shader : shaders) {
             libconfig::Setting& shaderSetting = shadersSettings.add(libconfig::Setting::TypeGroup);
-            shader->getLibConfigParams(shaderSetting);
+            std::shared_ptr<libconfig::Setting> shaderSettingPtr(&shaderSetting, [](libconfig::Setting*){});
+            shader->getLibConfigParams(shaderSettingPtr);
         }
     }
 
     if (!postProcessEffects.empty()) {
-        libconfig::Setting& postProcessSettings = setting.add("postprocess", libconfig::Setting::TypeList);
+        libconfig::Setting& postProcessSettings = setting->add("postprocess", libconfig::Setting::TypeList);
 
         for (const auto& effect : postProcessEffects) {
             libconfig::Setting& effectSetting = postProcessSettings.add(libconfig::Setting::TypeGroup);
-            effect->getLibConfigParams(effectSetting);
+            std::shared_ptr<libconfig::Setting> effectSettingPtr(&effectSetting, [](libconfig::Setting*){});
+            effect->getLibConfigParams(effectSettingPtr);
         }
     }
 }

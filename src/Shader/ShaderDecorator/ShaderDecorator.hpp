@@ -24,7 +24,7 @@ class ShaderDecorator : public IShader {
 
     Math::Vector3D apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const override;
     std::string getType() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 
 }  // namespace RayTracer

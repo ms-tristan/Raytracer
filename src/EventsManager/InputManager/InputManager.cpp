@@ -11,7 +11,7 @@
 
 namespace RayTracer {
 
-InputManager::InputManager(IEventsManager& eventsManager, int windowWidth, int windowHeight)
+InputManager::InputManager(std::shared_ptr<IEventsManager> eventsManager, int windowWidth, int windowHeight)
     : _eventsManager(eventsManager),
       _windowWidth(windowWidth),
       _windowHeight(windowHeight),
@@ -24,13 +24,13 @@ InputManager::InputManager(IEventsManager& eventsManager, int windowWidth, int w
       _selectedPrimitive(nullptr) {
 }
 
-void InputManager::processInput(Scene& scene, Camera& camera) {
-    _eventsManager.processEvents();
+void InputManager::processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera) {
+    _eventsManager->processEvents();
 
-    Math::Point3D screenCenter = camera.screen.origin +
-        camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
-    Math::Vector3D forwardDir = (screenCenter - camera.origin).normalize();
-    Math::Vector3D upDir = camera.screen.left_side.normalize();
+    Math::Point3D screenCenter = camera->screen.origin +
+        camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
+    Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();
+    Math::Vector3D upDir = camera->screen.left_side.normalize();
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
     handleCameraMovement(camera);
@@ -41,49 +41,49 @@ void InputManager::processInput(Scene& scene, Camera& camera) {
     }
 }
 
-void InputManager::handleCameraMovement(Camera& camera) {
-    Math::Point3D screenCenter = camera.screen.origin +
-        camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
-    Math::Vector3D forwardDir = (screenCenter - camera.origin).normalize();
-    Math::Vector3D upDir = camera.screen.left_side.normalize();
+void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
+    Math::Point3D screenCenter = camera->screen.origin +
+        camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
+    Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();
+    Math::Vector3D upDir = camera->screen.left_side.normalize();
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
-    if (_eventsManager.isKeyPressed("Z")) {
-        camera.translate(forwardDir * _moveSpeed);
+    if (_eventsManager->isKeyPressed("Z")) {
+        camera->translate(forwardDir * _moveSpeed);
     }
-    if (_eventsManager.isKeyPressed("S")) {
-        camera.translate(forwardDir * -_moveSpeed);
+    if (_eventsManager->isKeyPressed("S")) {
+        camera->translate(forwardDir * -_moveSpeed);
     }
-    if (_eventsManager.isKeyPressed("Q")) {
-        camera.translate(rightDir * -_moveSpeed);
+    if (_eventsManager->isKeyPressed("Q")) {
+        camera->translate(rightDir * -_moveSpeed);
     }
-    if (_eventsManager.isKeyPressed("D")) {
-        camera.translate(rightDir * _moveSpeed);
+    if (_eventsManager->isKeyPressed("D")) {
+        camera->translate(rightDir * _moveSpeed);
     }
 
-    // if (_eventsManager.isKeyPressed("SPACE")) {
-    //     camera.translate(upDir * _moveSpeed);
+    // if (_eventsManager->isKeyPressed("SPACE")) {
+    //     camera->translate(upDir * _moveSpeed);
     // }
-    // if (_eventsManager.isKeyPressed("LCONTROL")) {
-    //     camera.translate(upDir * -_moveSpeed);
+    // if (_eventsManager->isKeyPressed("LCONTROL")) {
+    //     camera->translate(upDir * -_moveSpeed);
     // }
 
-    if (_eventsManager.isKeyPressed("LEFT")) {
-        camera.rotateY(_rotateSpeed);
+    if (_eventsManager->isKeyPressed("LEFT")) {
+        camera->rotateY(_rotateSpeed);
     }
-    if (_eventsManager.isKeyPressed("RIGHT")) {
-        camera.rotateY(-_rotateSpeed);
+    if (_eventsManager->isKeyPressed("RIGHT")) {
+        camera->rotateY(-_rotateSpeed);
     }
-    if (_eventsManager.isKeyPressed("UP")) {
-        camera.rotateX(_rotateSpeed);
+    if (_eventsManager->isKeyPressed("UP")) {
+        camera->rotateX(_rotateSpeed);
     }
-    if (_eventsManager.isKeyPressed("DOWN")) {
-        camera.rotateX(-_rotateSpeed);
+    if (_eventsManager->isKeyPressed("DOWN")) {
+        camera->rotateX(-_rotateSpeed);
     }
 
     bool rightMouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Right);
     if (rightMouseIsPressed) {
-        auto currentMousePos = _eventsManager.getMousePos();
+        auto currentMousePos = _eventsManager->getMousePos();
         sf::Vector2i currentPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
 
         if (_rightMouseWasPressed) {
@@ -91,10 +91,10 @@ void InputManager::handleCameraMovement(Camera& camera) {
             int deltaY = currentPos.y - _lastMousePos.y;
 
             if (deltaX != 0) {
-                camera.rotateY(-deltaX * _mouseRotateSensitivity);
+                camera->rotateY(-deltaX * _mouseRotateSensitivity);
             }
             if (deltaY != 0) {
-                camera.rotateX(-deltaY * _mouseRotateSensitivity);
+                camera->rotateX(-deltaY * _mouseRotateSensitivity);
             }
         }
         _lastMousePos = currentPos;
@@ -102,16 +102,16 @@ void InputManager::handleCameraMovement(Camera& camera) {
     _rightMouseWasPressed = rightMouseIsPressed;
 }
 
-void InputManager::handleObjectSelection(Scene& scene, Camera& camera) {
-    auto currentMousePos = _eventsManager.getMousePos();
+void InputManager::handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera) {
+    auto currentMousePos = _eventsManager->getMousePos();
     bool mouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
     if (mouseIsPressed && !_mouseWasPressed) {
         double u = static_cast<double>(currentMousePos.x) / (_windowWidth - 1);
         double v = static_cast<double>((_windowHeight - 1) - currentMousePos.y) / (_windowHeight - 1);
 
-        Ray ray = camera.ray(u, v);
-        auto hit = scene.trace(ray);
+        Ray ray = camera->ray(u, v);
+        auto hit = scene->trace(ray);
 
         if (hit && hit->primitive) {
             _isDragging = true;
@@ -126,16 +126,16 @@ void InputManager::handleObjectSelection(Scene& scene, Camera& camera) {
     _mouseWasPressed = mouseIsPressed;
 }
 
-void InputManager::handleObjectDragging(Camera& camera) {
-    auto currentMousePos = _eventsManager.getMousePos();
+void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
+    auto currentMousePos = _eventsManager->getMousePos();
     int deltaX = currentMousePos.x - _dragStartPos.x;
     int deltaY = currentMousePos.y - _dragStartPos.y;
 
     if (deltaX != 0 || deltaY != 0) {
-        Math::Point3D screenCenter = camera.screen.origin +
-            camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
-        Math::Vector3D forwardDir = (screenCenter - camera.origin).normalize();
-        Math::Vector3D upDir = camera.screen.left_side.normalize();
+        Math::Point3D screenCenter = camera->screen.origin +
+            camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
+        Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();
+        Math::Vector3D upDir = camera->screen.left_side.normalize();
         Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
         Math::Vector3D moveVec = rightDir * (deltaX * 0.01) + upDir * (-deltaY * 0.01);

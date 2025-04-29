@@ -22,13 +22,13 @@ std::shared_ptr<ILight> DirectionalLight::clone() const {
     return std::make_shared<DirectionalLight>(direction, color);
 }
 
-void DirectionalLight::getLibConfigParams(libconfig::Setting& setting) const {
-    libconfig::Setting& dir = setting.add("direction", libconfig::Setting::TypeGroup);
+void DirectionalLight::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    libconfig::Setting& dir = setting->add("direction", libconfig::Setting::TypeGroup);
     dir.add("x", libconfig::Setting::TypeFloat) = direction.X;
     dir.add("y", libconfig::Setting::TypeFloat) = direction.Y;
     dir.add("z", libconfig::Setting::TypeFloat) = direction.Z;
 
-    libconfig::Setting& colorSetting = setting.add("color", libconfig::Setting::TypeGroup);
+    libconfig::Setting& colorSetting = setting->add("color", libconfig::Setting::TypeGroup);
     colorSetting.add("r", libconfig::Setting::TypeFloat) = color.X;
     colorSetting.add("g", libconfig::Setting::TypeFloat) = color.Y;
     colorSetting.add("b", libconfig::Setting::TypeFloat) = color.Z;

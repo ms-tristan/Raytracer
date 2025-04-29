@@ -19,7 +19,10 @@ bool SceneSerializer::saveToFile(const Scene& scene, const std::string& filename
         libconfig::Config cfg;
         libconfig::Setting& root = cfg.getRoot();
 
-        scene.getLibConfigParams(root);
+        std::shared_ptr<libconfig::Setting> rootPtr(&root, [](libconfig::Setting*){});
+        scene.getLibConfigParams(rootPtr);
+
+        cfg.writeFile(filename.c_str());
 
         cfg.writeFile(filename.c_str());
         return true;

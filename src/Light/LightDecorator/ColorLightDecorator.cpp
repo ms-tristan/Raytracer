@@ -29,16 +29,16 @@ std::shared_ptr<ILight> ColorLightDecorator::clone() const {
         wrappedLight->clone(), colorFilter);
 }
 
-void ColorLightDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+void ColorLightDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     LightDecorator::getLibConfigParams(setting);
 
-    if (setting.exists("color")) {
-        libconfig::Setting& color = setting["color"];
+    if (setting->exists("color")) {
+        libconfig::Setting& color = (*setting)["color"];
         color["r"] = static_cast<double>(color["r"]) * colorFilter.X;
         color["g"] = static_cast<double>(color["g"]) * colorFilter.Y;
         color["b"] = static_cast<double>(color["b"]) * colorFilter.Z;
     } else {
-        libconfig::Setting& filter = setting.add("colorFilter", libconfig::Setting::TypeGroup);
+        libconfig::Setting& filter = setting->add("colorFilter", libconfig::Setting::TypeGroup);
         filter.add("r", libconfig::Setting::TypeFloat) = colorFilter.X;
         filter.add("g", libconfig::Setting::TypeFloat) = colorFilter.Y;
         filter.add("b", libconfig::Setting::TypeFloat) = colorFilter.Z;

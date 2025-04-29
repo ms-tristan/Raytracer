@@ -21,9 +21,9 @@ class SceneDirector {
  public:
     SceneDirector() = default;
 
-    std::unique_ptr<Scene> createDefaultScene();
-    std::unique_ptr<Scene> createSceneFromFile(const std::string& filename);
-    std::unique_ptr<Scene> createBasicSphereScene();
+    std::shared_ptr<Scene> createDefaultScene();
+    std::shared_ptr<Scene> createSceneFromFile(const std::string& filename);
+    std::shared_ptr<Scene> createBasicSphereScene();
 
     bool saveSceneToFile(const Scene& scene, const std::string& filename);
 

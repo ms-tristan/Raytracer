@@ -35,10 +35,10 @@ std::shared_ptr<IShader> PhongShader::clone() const {
     return std::make_shared<PhongShader>(specularStrength, shininess);
 }
 
-void PhongShader::getLibConfigParams(libconfig::Setting& setting) const {
+void PhongShader::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     AShader::getLibConfigParams(setting);
-    setting.add("specularStrength", libconfig::Setting::TypeFloat) = specularStrength;
-    setting.add("shininess", libconfig::Setting::TypeFloat) = shininess;
+    setting->add("specularStrength", libconfig::Setting::TypeFloat) = specularStrength;
+    setting->add("shininess", libconfig::Setting::TypeFloat) = shininess;
 }
 
 }  // namespace RayTracer

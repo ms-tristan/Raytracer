@@ -22,7 +22,7 @@ class ILight {
       const Math::Point3D &point) const = 0;
     virtual Math::Vector3D getLightColor() const = 0;
     virtual std::shared_ptr<ILight> clone() const = 0;
-    virtual void getLibConfigParams(libconfig::Setting& setting) const = 0;
+    virtual void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const = 0;
 };
 }  // namespace RayTracer
 

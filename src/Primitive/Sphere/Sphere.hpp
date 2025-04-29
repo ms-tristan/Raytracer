@@ -15,7 +15,7 @@
     #include <libconfig.h++>
 
 namespace RayTracer {
-class Sphere : public IPrimitive {
+class Sphere : public IPrimitive, public std::enable_shared_from_this<Sphere> {
  private:
     std::shared_ptr<Material> material;
     double rotationX = 0.0;
@@ -48,7 +48,7 @@ class Sphere : public IPrimitive {
         double tMax) override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 }  // namespace RayTracer
 

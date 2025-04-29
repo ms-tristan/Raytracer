@@ -94,7 +94,7 @@ double tMax) {
     if (denominator > 0)
         info.normal = info.normal * -1.0;
 
-    info.primitive = std::shared_ptr<IPrimitive>(this);
+    info.primitive = shared_from_this();
     return info;
 }
 
@@ -106,18 +106,18 @@ std::shared_ptr<IPrimitive> Plane::clone() const {
     return copy;
 }
 
-void Plane::getLibConfigParams(libconfig::Setting& setting) const {
-    libconfig::Setting& pos = setting.add("position", libconfig::Setting::TypeGroup);
+void Plane::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    libconfig::Setting& pos = setting->add("position", libconfig::Setting::TypeGroup);
     pos.add("x", libconfig::Setting::TypeFloat) = position.X;
     pos.add("y", libconfig::Setting::TypeFloat) = position.Y;
     pos.add("z", libconfig::Setting::TypeFloat) = position.Z;
 
-    libconfig::Setting& norm = setting.add("normal", libconfig::Setting::TypeGroup);
+    libconfig::Setting& norm = setting->add("normal", libconfig::Setting::TypeGroup);
     norm.add("x", libconfig::Setting::TypeFloat) = normal.X;
     norm.add("y", libconfig::Setting::TypeFloat) = normal.Y;
     norm.add("z", libconfig::Setting::TypeFloat) = normal.Z;
 
-    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+    libconfig::Setting& mat = setting->add("material", libconfig::Setting::TypeGroup);
 
     libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
     color.add("r", libconfig::Setting::TypeFloat) = material->color.X;

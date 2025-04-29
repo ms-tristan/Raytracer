@@ -147,8 +147,8 @@ void Camera::rotateZ(double degrees) {
     screen.left_side = upDir * screenHeight;
 }
 
-void Camera::getLibConfigParams(libconfig::Setting& setting) const {
-    libconfig::Setting& resolution = setting.add("resolution", libconfig::Setting::TypeGroup);
+void Camera::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    libconfig::Setting& resolution = setting->add("resolution", libconfig::Setting::TypeGroup);
 
     double width = screen.bottom_side.length();
     double height = screen.left_side.length();
@@ -159,12 +159,12 @@ void Camera::getLibConfigParams(libconfig::Setting& setting) const {
     resolution.add("width", libconfig::Setting::TypeInt) = screenWidth;
     resolution.add("height", libconfig::Setting::TypeInt) = screenHeight;
 
-    libconfig::Setting& position = setting.add("position", libconfig::Setting::TypeGroup);
+    libconfig::Setting& position = setting->add("position", libconfig::Setting::TypeGroup);
     position.add("x", libconfig::Setting::TypeFloat) = origin.X;
     position.add("y", libconfig::Setting::TypeFloat) = origin.Y;
     position.add("z", libconfig::Setting::TypeFloat) = origin.Z;
 
-    libconfig::Setting& rotation = setting.add("rotation", libconfig::Setting::TypeGroup);
+    libconfig::Setting& rotation = setting->add("rotation", libconfig::Setting::TypeGroup);
 
     double xRotation = 0.0;
     double yRotation = 0.0;
@@ -174,7 +174,7 @@ void Camera::getLibConfigParams(libconfig::Setting& setting) const {
     rotation.add("y", libconfig::Setting::TypeFloat) = yRotation;
     rotation.add("z", libconfig::Setting::TypeFloat) = zRotation;
 
-    setting.add("fieldOfView", libconfig::Setting::TypeFloat) = fov;
+    setting->add("fieldOfView", libconfig::Setting::TypeFloat) = fov;
 }
 
 }  // namespace RayTracer

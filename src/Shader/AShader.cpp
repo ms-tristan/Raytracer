@@ -16,8 +16,8 @@ std::string AShader::getType() const {
     return type;
 }
 
-void AShader::getLibConfigParams(libconfig::Setting& setting) const {
-    setting.add("type", libconfig::Setting::TypeString) = type;
+void AShader::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    setting->add("type", libconfig::Setting::TypeString) = type;
 }
 
 }  // namespace RayTracer

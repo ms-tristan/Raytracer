@@ -20,11 +20,11 @@
 
 namespace RayTracer {
 
-std::unique_ptr<Scene> SceneDirector::createDefaultScene() {
+std::shared_ptr<Scene> SceneDirector::createDefaultScene() {
     return createBasicSphereScene();
 }
 
-std::unique_ptr<Scene> SceneDirector::createBasicSphereScene() {
+std::shared_ptr<Scene> SceneDirector::createBasicSphereScene() {
     const Math::Coords red_color{0.9, 0.2, 0.2};
     auto redMaterial = std::make_shared<Material>();
     redMaterial->color = Math::Vector3D(red_color);
@@ -59,7 +59,7 @@ std::unique_ptr<Scene> SceneDirector::createBasicSphereScene() {
         .build();
 }
 
-std::unique_ptr<Scene> SceneDirector::createSceneFromFile(
+std::shared_ptr<Scene> SceneDirector::createSceneFromFile(
 const std::string& filename) {
     try {
         currentSceneFile = filename;

@@ -30,7 +30,7 @@ class PointLight : public ALight {
     Math::Vector3D getLightDirection(const Math::Point3D &point) const override;
     Math::Vector3D getLightColor(const Math::Point3D &point) const;
     std::shared_ptr<ILight> clone() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 }  // namespace RayTracer
 

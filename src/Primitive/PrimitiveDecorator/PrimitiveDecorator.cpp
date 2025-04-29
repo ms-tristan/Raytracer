@@ -39,7 +39,7 @@ std::shared_ptr<Material> PrimitiveDecorator::getMaterial() const {
     return wrappedPrimitive->getMaterial();
 }
 
-void PrimitiveDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+void PrimitiveDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     wrappedPrimitive->getLibConfigParams(setting);
 }
 

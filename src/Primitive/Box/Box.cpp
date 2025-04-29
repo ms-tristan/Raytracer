@@ -139,7 +139,7 @@ double tMin, double tMax) {
     }
 
     info.normal = normal.normalize();
-    info.primitive = std::shared_ptr<IPrimitive>(this);
+    info.primitive = shared_from_this();
     return info;
 }
 
@@ -151,27 +151,27 @@ std::shared_ptr<IPrimitive> Box::clone() const {
     return copy;
 }
 
-void Box::getLibConfigParams(libconfig::Setting& setting) const {
-    setting.add("type", libconfig::Setting::TypeString) = "box";
+void Box::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    setting->add("type", libconfig::Setting::TypeString) = "box";
 
-    libconfig::Setting& pos = setting.add("center", libconfig::Setting::TypeGroup);
+    libconfig::Setting& pos = setting->add("center", libconfig::Setting::TypeGroup);
     pos.add("x", libconfig::Setting::TypeFloat) = center.X;
     pos.add("y", libconfig::Setting::TypeFloat) = center.Y;
     pos.add("z", libconfig::Setting::TypeFloat) = center.Z;
 
-    libconfig::Setting& dim = setting.add("dimensions", libconfig::Setting::TypeGroup);
+    libconfig::Setting& dim = setting->add("dimensions", libconfig::Setting::TypeGroup);
     dim.add("x", libconfig::Setting::TypeFloat) = dimensions.X;
     dim.add("y", libconfig::Setting::TypeFloat) = dimensions.Y;
     dim.add("z", libconfig::Setting::TypeFloat) = dimensions.Z;
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
-        libconfig::Setting& rotation = setting.add("rotation", libconfig::Setting::TypeGroup);
+        libconfig::Setting& rotation = setting->add("rotation", libconfig::Setting::TypeGroup);
         rotation.add("x", libconfig::Setting::TypeFloat) = rotationX;
         rotation.add("y", libconfig::Setting::TypeFloat) = rotationY;
         rotation.add("z", libconfig::Setting::TypeFloat) = rotationZ;
     }
 
-    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+    libconfig::Setting& mat = setting->add("material", libconfig::Setting::TypeGroup);
 
     libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
     color.add("r", libconfig::Setting::TypeFloat) = material->color.X;

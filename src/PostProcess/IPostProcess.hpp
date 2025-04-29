@@ -28,7 +28,7 @@ class IPostProcess {
     virtual std::string getTypeName() const = 0;
 
     virtual std::shared_ptr<IPostProcess> clone() const = 0;
-    virtual void getLibConfigParams(libconfig::Setting& setting) const = 0;
+    virtual void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const = 0;
 };
 
 }  // namespace RayTracer

@@ -12,6 +12,7 @@
 #include "Math/Vector3D/Vector3D.hpp"
 
 #include <libconfig.h++>
+#include <memory>
 
 namespace RayTracer {
 class AmbientLight {
@@ -20,7 +21,7 @@ class AmbientLight {
 
     AmbientLight();
     explicit AmbientLight(const Math::Vector3D &color);
-    void getLibConfigParams(libconfig::Setting& setting) const;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
     Math::Vector3D getLightColor() const;
 };
 }  // namespace RayTracer

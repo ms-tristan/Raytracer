@@ -15,7 +15,7 @@
     #include <libconfig.h++>
 
 namespace RayTracer {
-class Plane : public IPrimitive {
+class Plane : public IPrimitive, public std::enable_shared_from_this<Plane> {
  private:
     std::shared_ptr<Material> material;
     double rotationX = 0.0;
@@ -47,7 +47,7 @@ class Plane : public IPrimitive {
         double tMin, double tMax) override;
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
-    void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 };
 }  // namespace RayTracer
 

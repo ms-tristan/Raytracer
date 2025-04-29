@@ -23,7 +23,7 @@ Math::Vector3D LightDecorator::getLightColor() const {
     return wrappedLight->getLightColor();
 }
 
-void LightDecorator::getLibConfigParams(libconfig::Setting& setting) const {
+void LightDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     wrappedLight->getLibConfigParams(setting);
 }
 

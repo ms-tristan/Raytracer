@@ -151,7 +151,7 @@ double tMax) {
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
-    info.primitive = std::shared_ptr<IPrimitive>(this);
+    info.primitive = shared_from_this();
     return info;
 }
 
@@ -163,28 +163,28 @@ std::shared_ptr<IPrimitive> Cone::clone() const {
     return copy;
 }
 
-void Cone::getLibConfigParams(libconfig::Setting& setting) const {
-    libconfig::Setting& pos = setting.add("apex", libconfig::Setting::TypeGroup);
+void Cone::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
+    libconfig::Setting& pos = setting->add("apex", libconfig::Setting::TypeGroup);
     pos.add("x", libconfig::Setting::TypeFloat) = apex.X;
     pos.add("y", libconfig::Setting::TypeFloat) = apex.Y;
     pos.add("z", libconfig::Setting::TypeFloat) = apex.Z;
 
-    libconfig::Setting& dir = setting.add("direction", libconfig::Setting::TypeGroup);
+    libconfig::Setting& dir = setting->add("direction", libconfig::Setting::TypeGroup);
     dir.add("x", libconfig::Setting::TypeFloat) = axis.X;
     dir.add("y", libconfig::Setting::TypeFloat) = axis.Y;
     dir.add("z", libconfig::Setting::TypeFloat) = axis.Z;
 
-    setting.add("radius", libconfig::Setting::TypeFloat) = radius;
-    setting.add("height", libconfig::Setting::TypeFloat) = height;
+    setting->add("radius", libconfig::Setting::TypeFloat) = radius;
+    setting->add("height", libconfig::Setting::TypeFloat) = height;
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
-        libconfig::Setting& rotation = setting.add("rotation", libconfig::Setting::TypeGroup);
+        libconfig::Setting& rotation = setting->add("rotation", libconfig::Setting::TypeGroup);
         rotation.add("x", libconfig::Setting::TypeFloat) = rotationX;
         rotation.add("y", libconfig::Setting::TypeFloat) = rotationY;
         rotation.add("z", libconfig::Setting::TypeFloat) = rotationZ;
     }
 
-    libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
+    libconfig::Setting& mat = setting->add("material", libconfig::Setting::TypeGroup);
 
     libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);
     color.add("r", libconfig::Setting::TypeFloat) = material->color.X;

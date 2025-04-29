@@ -8,11 +8,9 @@
 
 #ifndef SRC_LIGHT_LIGHTDECORATOR_COLORLIGHTDECORATOR_HPP_
     #define SRC_LIGHT_LIGHTDECORATOR_COLORLIGHTDECORATOR_HPP_
-
-    #include "LightDecorator.hpp"
-
     #include <memory>
     #include <libconfig.h++>
+    #include "LightDecorator.hpp"
 
 namespace RayTracer {
 

@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** SceneSerializer
+*/
+#include <string>
 #include <iostream>
 #include <libconfig.h++>
 #include "SceneSerializer.hpp"
@@ -16,7 +23,6 @@ bool SceneSerializer::saveToFile(const Scene& scene, const std::string& filename
 
         cfg.writeFile(filename.c_str());
         return true;
-
     } catch (const libconfig::FileIOException& ex) {
         std::cerr << "Error writing scene file: " << filename << std::endl;
         return false;

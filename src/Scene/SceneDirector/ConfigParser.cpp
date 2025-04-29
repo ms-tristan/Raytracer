@@ -1,5 +1,17 @@
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** ConfigParser
+*/
+
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
+#include <map>
+#include <utility>
+#include <algorithm>
 #include <libconfig.h++>
 #include "ConfigParser.hpp"
 #include "Light/DirectionalLight/DirectionalLight.hpp"
@@ -33,11 +45,9 @@ Math::Vector3D ConfigParser::parseVector3D(const libconfig::Setting& setting) {
 }
 
 Math::Vector3D ConfigParser::parseColor(const libconfig::Setting& setting) {
-
     double r, g, b;
 
     try {
-
         int ri = setting["r"];
         int gi = setting["g"];
         int bi = setting["b"];
@@ -46,7 +56,6 @@ Math::Vector3D ConfigParser::parseColor(const libconfig::Setting& setting) {
         g = gi / 255.0;
         b = bi / 255.0;
     } catch (const libconfig::SettingTypeException& ex) {
-
         try {
             r = static_cast<double>(setting["r"]);
             g = static_cast<double>(setting["g"]);
@@ -82,7 +91,6 @@ void CameraParser::parse(const libconfig::Setting& setting, SceneBuilder& builde
 }
 
 void LightsParser::parse(const libconfig::Setting& setting, SceneBuilder& builder) {
-
     double ambientIntensity = getValueOrDefault<double>(setting, "ambient", 0.4);
     builder.setAmbientLight(Math::Vector3D(Math::Coords{
         ambientIntensity, ambientIntensity, ambientIntensity
@@ -225,20 +233,17 @@ void PostProcessParser::parsePluginPostProcess(const libconfig::Setting& postPro
             return;
         }
 
-        // Get the plugin
         auto pluginManager = PostProcessPluginManager::getInstance();
         auto plugin = pluginManager->getPlugin(typeName);
-        
+
         if (!plugin) {
             std::cerr << "PostProcess plugin not found for type: " << typeName << std::endl;
             return;
         }
 
-        // Extract parameters
         std::vector<std::string> requiredParams = plugin->getRequiredParameters();
         std::map<std::string, double> params = extractParametersFromSetting(postProcess, requiredParams);
 
-        // Create post-process effect
         try {
             auto postProcessObj = pluginManager->createPostProcess(typeName, params);
             if (postProcessObj) {
@@ -276,11 +281,10 @@ std::map<std::string, double> PostProcessParser::extractParametersFromSetting(
         }
     }
 
-    // Set default values for any missing required parameters
     for (const auto& param : requiredParams) {
         if (params.find(param) == params.end()) {
             std::cerr << "Warning: Missing required parameter '" << param << "' for PostProcess" << std::endl;
-            params[param] = 0.0; // Default fallback
+            params[param] = 0.0;
         }
     }
 
@@ -304,13 +308,11 @@ std::unique_ptr<Scene> SceneConfigParser::parseFile(const std::string& filename)
 
 
         for (const auto& [section, parser] : sectionParsers) {
-            if (cfg.exists(section)) {
+            if (cfg.exists(section))
                 parser->parse(cfg.lookup(section), builder);
-            }
         }
 
         return builder.build();
-
     } catch (const libconfig::FileIOException& ex) {
         std::cerr << "Error reading scene file: " << filename << std::endl;
     } catch (const libconfig::ParseException& ex) {
@@ -333,9 +335,8 @@ void ShadersParser::parsePluginShader(const libconfig::Setting& shader, SceneBui
 
     try {
         auto shaderInstance = shaderFactory.createShaderFromSetting(shader);
-        if (shaderInstance) {
+        if (shaderInstance)
             builder.addShader(shaderInstance);
-        }
     } catch (const libconfig::SettingException& ex) {
         std::cerr << "Error parsing shader: " << ex.what() << std::endl;
     } catch (const std::exception& ex) {
@@ -386,7 +387,6 @@ void PrimitivesParser::parsePluginPrimitives(const std::string& typeName,
 std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
     const libconfig::Setting& setting,
     const std::vector<std::string>& requiredParams) {
-
     std::map<std::string, double> params;
 
     for (int i = 0; i < setting.getLength(); ++i) {
@@ -428,7 +428,7 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
             else if (param == "depth") params[param] = 1.0;
             else {
                 std::cerr << "Warning: Missing required parameter '" << param << "'" << std::endl;
-                params[param] = 0.0; // Default fallback
+                params[param] = 0.0;
             }
         }
     }

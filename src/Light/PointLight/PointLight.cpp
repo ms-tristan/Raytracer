@@ -38,7 +38,6 @@ std::shared_ptr<ILight> PointLight::clone() const {
 }
 
 void PointLight::getLibConfigParams(libconfig::Setting& setting) const {
-
     libconfig::Setting& pos = setting.add("position", libconfig::Setting::TypeGroup);
     pos.add("x", libconfig::Setting::TypeFloat) = position.X;
     pos.add("y", libconfig::Setting::TypeFloat) = position.Y;

@@ -5,19 +5,18 @@
 ** SFML implementation of IEventsManager
 */
 
-#ifndef SOURCES_CLIENT_CLASSES_EVENTS_SFMLEVENTSMANAGER_HPP_
-#define SOURCES_CLIENT_CLASSES_EVENTS_SFMLEVENTSMANAGER_HPP_
-
-#include <unordered_map>
-#include <string>
-#include <SFML/Graphics.hpp>
-#include "./IEventsManager.hpp"
+#ifndef SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
+   #define SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
+   #include <unordered_map>
+   #include <string>
+   #include <SFML/Graphics.hpp>
+   #include "./IEventsManager.hpp"
 
 namespace RayTracer {
 
 class SFMLEventsManager : public IEventsManager {
  public:
-    SFMLEventsManager(sf::RenderWindow& window);
+    explicit SFMLEventsManager(sf::RenderWindow& window);
     ~SFMLEventsManager() override = default;
 
     bool isKeyPressed(std::string key) const override;
@@ -42,4 +41,4 @@ class SFMLEventsManager : public IEventsManager {
 
 }  // namespace RayTracer
 
-#endif  // SOURCES_CLIENT_CLASSES_EVENTS_SFMLEVENTSMANAGER_HPP_
+#endif  // SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_

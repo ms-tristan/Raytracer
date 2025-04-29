@@ -10,6 +10,7 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 #include <numeric>
 #include "BlurPostProcess.hpp"
 
@@ -22,7 +23,6 @@ BlurPostProcess::BlurPostProcess(double radius)
 std::vector<Math::Vector3D> BlurPostProcess::processFrameBuffer(
   const std::vector<Math::Vector3D>& frameBuffer,
   int width, int height) const {
-
   std::vector<Math::Vector3D> result(frameBuffer.size());
 
   int kernelSize = static_cast<int>(radius * 2 + 1);

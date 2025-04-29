@@ -7,11 +7,12 @@
 */
 
 #ifndef SRC_PRIMITIVE_PLANE_PLANE_HPP_
-#define SRC_PRIMITIVE_PLANE_PLANE_HPP_
-#include <memory>
-#include "Primitive/IPrimitive.hpp"
-#include "Transformation/Rotate/Rotate.hpp"
-#include <libconfig.h++>
+    #define SRC_PRIMITIVE_PLANE_PLANE_HPP_
+    #include <string>
+    #include <memory>
+    #include "Primitive/IPrimitive.hpp"
+    #include "Transformation/Rotate/Rotate.hpp"
+    #include <libconfig.h++>
 
 namespace RayTracer {
 class Plane : public IPrimitive {

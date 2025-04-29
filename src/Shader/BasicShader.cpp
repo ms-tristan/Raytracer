@@ -5,6 +5,7 @@
 ** File description:
 ** BasicShader implementation
 */
+#include <memory>
 #include "BasicShader.hpp"
 
 namespace RayTracer {

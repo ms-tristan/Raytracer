@@ -8,12 +8,11 @@
 
 #ifndef SRC_PRIMITIVE_COMPOSITEPRIMITIVE_COMPOSITEPRIMITIVE_HPP_
     #define SRC_PRIMITIVE_COMPOSITEPRIMITIVE_COMPOSITEPRIMITIVE_HPP_
-
-    #include "Primitive/IPrimitive.hpp"
-
+    #include <string>
     #include <vector>
     #include <memory>
     #include <libconfig.h++>
+    #include "Primitive/IPrimitive.hpp"
 
 namespace RayTracer {
 class CompositePrimitive : public IPrimitive {

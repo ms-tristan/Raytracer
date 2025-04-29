@@ -5,8 +5,8 @@
 ** defs
 */
 
-#ifndef RAYTRACER_DEFS_HPP_
-    #define RAYTRACER_DEFS_HPP_
+#ifndef SRC_DEFS_HPP_
+    #define SRC_DEFS_HPP_
     #include "Math/Point3D/Point3D.hpp"
     #include "Math/Vector3D/Vector3D.hpp"
 
@@ -48,4 +48,4 @@ struct HitInfo {
 
 }  // namespace RayTracer
 
-#endif  // RAYTRACER_DEFS_HPP_
+#endif  // SRC_DEFS_HPP_

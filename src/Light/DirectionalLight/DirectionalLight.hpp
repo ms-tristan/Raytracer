@@ -7,11 +7,11 @@
 */
 
 #ifndef SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
-  #define SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
-  #include "Light/ALight/ALight.hpp"
+    #define SRC_LIGHT_DIRECTIONALLIGHT_DIRECTIONALLIGHT_HPP_
+    #include <memory>
+    #include <libconfig.h++>
+    #include "Light/ALight/ALight.hpp"
 
-  #include <memory>
-  #include <libconfig.h++>
 
 namespace RayTracer {
 class DirectionalLight : public ALight {

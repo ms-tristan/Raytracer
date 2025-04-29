@@ -36,17 +36,14 @@ class InputManager {
     int _windowWidth;
     int _windowHeight;
 
-    // Camera movement parameters
     double _moveSpeed;
     double _rotateSpeed;
     double _mouseRotateSensitivity;
 
-    // Mouse state
     bool _mouseWasPressed;
     bool _rightMouseWasPressed;
     sf::Vector2i _lastMousePos;
 
-    // Object dragging state
     bool _isDragging;
     const IPrimitive* _selectedPrimitive;
     sf::Vector2i _dragStartPos;

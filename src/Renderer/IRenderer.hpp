@@ -5,11 +5,10 @@
 ** Renderer interface
 */
 
-#ifndef RAYTRACER_IRENDERER_HPP_
-#define RAYTRACER_IRENDERER_HPP_
-
-#include "../Scene/Scene.hpp"
-#include "../Camera/Camera.hpp"
+#ifndef SRC_RENDERER_IRENDERER_HPP_
+    #define SRC_RENDERER_IRENDERER_HPP_
+    #include "../Scene/Scene.hpp"
+    #include "../Camera/Camera.hpp"
 
 namespace RayTracer {
 
@@ -18,9 +17,8 @@ class IRenderer {
     virtual ~IRenderer() = default;
 
     virtual void drawScene(const Scene& scene, const Camera& camera) = 0;
-
 };
 
-} // namespace RayTracer
+}  // namespace RayTracer
 
-#endif // RAYTRACER_IRENDERER_HPP_
+#endif  // SRC_RENDERER_IRENDERER_HPP_

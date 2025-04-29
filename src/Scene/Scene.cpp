@@ -5,6 +5,8 @@
 ** File description:
 ** Scene implementation
 */
+#include <string>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 #include <limits>
@@ -107,7 +109,6 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     pixelColor.Y = std::min(1.0, pixelColor.Y);
     pixelColor.Z = std::min(1.0, pixelColor.Z);
 
-    // Apply all registered shaders sequentially to the calculated color
     for (const auto& shader : shaders) {
         pixelColor = shader->apply(pixelColor, *hit, ray);
     }
@@ -148,7 +149,6 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
     std::map<std::string, libconfig::Setting*> primitiveTypes;
 
     for (const auto& primitive : getPrimitives()) {
-
         if (primitiveTypes.find(primitive->getTypeName()) == primitiveTypes.end()) {
             primitiveTypes[primitive->getTypeName()] = &primitives.add(
                 primitive->getTypeName(), libconfig::Setting::TypeList);
@@ -162,7 +162,7 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
     libconfig::Setting& lights = setting.add("lights", libconfig::Setting::TypeGroup);
 
     lights.add("ambient", libconfig::Setting::TypeFloat) = ambientLight.getLightColor().X;
-    lights.add("diffuse", libconfig::Setting::TypeFloat) = 0.6; // Default diffuse value
+    lights.add("diffuse", libconfig::Setting::TypeFloat) = 0.6;
 
     libconfig::Setting& pointLights = lights.add("point", libconfig::Setting::TypeList);
     libconfig::Setting& directionalLights = lights.add("directional", libconfig::Setting::TypeList);
@@ -187,7 +187,7 @@ void Scene::getLibConfigParams(libconfig::Setting& setting) const {
             shader->getLibConfigParams(shaderSetting);
         }
     }
-    
+
     if (!postProcessEffects.empty()) {
         libconfig::Setting& postProcessSettings = setting.add("postprocess", libconfig::Setting::TypeList);
 

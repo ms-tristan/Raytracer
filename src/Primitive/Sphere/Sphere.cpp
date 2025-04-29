@@ -144,4 +144,4 @@ void Sphere::getLibConfigParams(libconfig::Setting& setting) const {
     mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;  // Default ambient
     mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;  // Default diffuse
 }
-} // namespace RayTracer
+}  // namespace RayTracer

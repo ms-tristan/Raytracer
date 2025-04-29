@@ -19,7 +19,6 @@
 namespace RayTracer {
 
 namespace {
-    // Put helper functions in anonymous namespace to prevent linking conflicts
     bool isRegularFile(const std::string& path) {
         struct stat pathStat;
         if (stat(path.c_str(), &pathStat) != 0) {
@@ -33,7 +32,7 @@ namespace {
         const char* extension = strrchr(fileName, '.');
         return extension != nullptr && strcmp(extension, ext.c_str()) == 0;
     }
-}
+}  // namespace
 
 void loadPostProcessPlugins() {
     PostProcessPluginManager* pluginManager =
@@ -70,8 +69,7 @@ void loadPostProcessPlugins() {
     PostProcessFactory postProcessFactory;
     for (const auto& typeName : loadedPlugins) {
         std::cout << "Registering PostProcess plugin: " << typeName << std::endl;
-        
-        postProcessFactory.registerPostProcess(typeName, 
+        postProcessFactory.registerPostProcess(typeName,
             [pluginManager, typeName](const std::map<std::string, double>& params) {
                 return pluginManager->createPostProcess(typeName, params);
             });

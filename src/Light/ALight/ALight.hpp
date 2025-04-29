@@ -8,11 +8,9 @@
 
 #ifndef SRC_LIGHT_ALIGHT_ALIGHT_HPP_
     #define SRC_LIGHT_ALIGHT_ALIGHT_HPP_
-
-    #include "Light/ILight.hpp"
-
     #include <memory>
     #include <libconfig.h++>
+    #include "Light/ILight.hpp"
 
 namespace RayTracer {
 class ALight : public ILight {

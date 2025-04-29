@@ -5,10 +5,9 @@
 ** File description:
 ** InputManager implementation
 */
-
 #include "InputManager.hpp"
-#include "../../Ray/Ray.hpp"
 #include <iostream>
+#include "../../Ray/Ray.hpp"
 
 namespace RayTracer {
 
@@ -35,7 +34,6 @@ void InputManager::processInput(Scene& scene, Camera& camera) {
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
     handleCameraMovement(camera);
-
     handleObjectSelection(scene, camera);
 
     if (_isDragging && _selectedPrimitive) {
@@ -44,7 +42,6 @@ void InputManager::processInput(Scene& scene, Camera& camera) {
 }
 
 void InputManager::handleCameraMovement(Camera& camera) {
-
     Math::Point3D screenCenter = camera.screen.origin +
         camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
     Math::Vector3D forwardDir = (screenCenter - camera.origin).normalize();

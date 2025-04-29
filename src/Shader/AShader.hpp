@@ -9,10 +9,10 @@
 #ifndef SRC_SHADER_ASHADER_HPP_
 #define SRC_SHADER_ASHADER_HPP_
 
-#include "IShader.hpp"
 #include <memory>
 #include <string>
 #include <libconfig.h++>
+#include "IShader.hpp"
 
 namespace RayTracer {
 
@@ -21,11 +21,11 @@ class AShader : public IShader {
     std::string type;
 
  public:
-    AShader(const std::string& shaderType);
+    explicit AShader(const std::string& shaderType);
     virtual ~AShader() = default;
 
     std::string getType() const override;
-    virtual void getLibConfigParams(libconfig::Setting& setting) const override;
+    void getLibConfigParams(libconfig::Setting& setting) const override;
 };
 
 }  // namespace RayTracer

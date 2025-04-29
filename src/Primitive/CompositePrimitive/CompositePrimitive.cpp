@@ -5,6 +5,7 @@
 ** File description:
 ** CompositePrimitive
 */
+#include <string>
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -95,7 +96,6 @@ CompositePrimitive::getPrimitives() const {
 }
 
 void CompositePrimitive::getLibConfigParams(libconfig::Setting& setting) const {
-
     libconfig::Setting& mat = setting.add("material", libconfig::Setting::TypeGroup);
 
     libconfig::Setting& color = mat.add("color", libconfig::Setting::TypeGroup);

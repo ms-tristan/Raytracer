@@ -19,7 +19,7 @@ class ToonShader : public AShader {
     double edgeThreshold;
 
  public:
-    ToonShader(int levels = 4, double edgeThreshold = 0.2);
+    explicit ToonShader(int levels = 4, double edgeThreshold = 0.2);
     ~ToonShader() override = default;
 
     Math::Vector3D apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const override;

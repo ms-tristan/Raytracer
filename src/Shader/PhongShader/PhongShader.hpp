@@ -19,7 +19,7 @@ class PhongShader : public AShader {
     double shininess;
 
  public:
-    PhongShader(double specularStrength = 0.5, double shininess = 32.0);
+    explicit PhongShader(double specularStrength = 0.5, double shininess = 32.0);
     ~PhongShader() override = default;
 
     Math::Vector3D apply(const Math::Vector3D& color, const HitInfo& hitInfo, const Ray& ray) const override;

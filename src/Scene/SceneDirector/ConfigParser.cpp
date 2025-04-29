@@ -406,14 +406,21 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
 
     for (const auto& param : requiredParams) {
         if (params.find(param) == params.end()) {
-            if (param == "ax" || param == "nx") params[param] = 0.0;
-            else if (param == "ay" || param == "ny") params[param] = 1.0;
-            else if (param == "az" || param == "nz") params[param] = 0.0;
-            else if (param == "radius") params[param] = 1.0;
-            else if (param == "height") params[param] = 2.0;
-            else if (param == "width") params[param] = 1.0;
-            else if (param == "depth") params[param] = 1.0;
-            else {
+            if (param == "ax" || param == "nx") {
+                params[param] = 0.0;
+            } else if (param == "ay" || param == "ny") {
+                params[param] = 1.0;
+            } else if (param == "az" || param == "nz") {
+                params[param] = 0.0;
+            } else if (param == "radius") {
+                params[param] = 1.0;
+            } else if (param == "height") {
+                params[param] = 2.0;
+            } else if (param == "width") {
+                params[param] = 1.0;
+            } else if (param == "depth") {
+                params[param] = 1.0;
+            } else {
                 std::cerr << "Warning: Missing required parameter '" << param << "'" << std::endl;
                 params[param] = 0.0;
             }

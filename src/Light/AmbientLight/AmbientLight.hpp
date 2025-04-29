@@ -9,10 +9,10 @@
 #ifndef SRC_LIGHT_AMBIENTLIGHT_AMBIENTLIGHT_HPP_
 #define SRC_LIGHT_AMBIENTLIGHT_AMBIENTLIGHT_HPP_
 
-#include "Math/Vector3D/Vector3D.hpp"
-
-#include <libconfig.h++>
 #include <memory>
+#include <libconfig.h++>
+
+#include "Math/Vector3D/Vector3D.hpp"
 
 namespace RayTracer {
 class AmbientLight {

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "IRenderer.hpp"
 #include "../DisplayManager/IDisplayManager.hpp"
 
@@ -14,7 +16,7 @@ namespace RayTracer {
 
 class Renderer : public IRenderer {
   public:
-    Renderer(std::shared_ptr<IDisplayManager> displayManager);
+    explicit Renderer(std::shared_ptr<IDisplayManager> displayManager);
     ~Renderer();
 
     void drawScene(const Scene& scene, const Camera& camera) override;

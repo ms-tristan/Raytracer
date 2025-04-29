@@ -5,8 +5,9 @@
 ** File description:
 ** InputManager implementation
 */
-#include "InputManager.hpp"
 #include <iostream>
+#include <memory>
+#include "InputManager.hpp"
 #include "../../Ray/Ray.hpp"
 
 namespace RayTracer {

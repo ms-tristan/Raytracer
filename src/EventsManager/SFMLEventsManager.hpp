@@ -7,8 +7,10 @@
 
 #ifndef SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
    #define SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
+
    #include <unordered_map>
    #include <string>
+   #include <memory>
    #include <SFML/Graphics.hpp>
    #include "./IEventsManager.hpp"
 
@@ -16,7 +18,7 @@ namespace RayTracer {
 
 class SFMLEventsManager : public IEventsManager {
  public:
-    explicit SFMLEventsManager(sf::RenderWindow& window);
+    explicit SFMLEventsManager(std::shared_ptr<sf::RenderWindow> window);
     ~SFMLEventsManager() override = default;
 
     bool isKeyPressed(std::string key) const override;
@@ -28,7 +30,7 @@ class SFMLEventsManager : public IEventsManager {
     vector2i_t getResizedDimensions() const override;
 
  private:
-    sf::RenderWindow& _window;
+    std::shared_ptr<sf::RenderWindow> _window;
     bool _isWindowClosed;
     bool _isWindowResized;
     vector2i_t _resizedDimensions;

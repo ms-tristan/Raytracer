@@ -7,9 +7,11 @@
 
 #ifndef SRC_RENDERER_DISPLAYMANAGER_SFMLDISPLAYMANAGER_HPP_
    #define SRC_RENDERER_DISPLAYMANAGER_SFMLDISPLAYMANAGER_HPP_
+
    #include <unordered_map>
    #include <string>
    #include <vector>
+   #include <memory>
    #include <SFML/Graphics.hpp>
    #include <SFML/Audio.hpp>
    #include "./IDisplayManager.hpp"
@@ -98,7 +100,7 @@ class SFMLDisplayManager : public IDisplayManager {
     vector2f_t windowToWorld(const vector2f_t& windowPos) const override;
     vector2f_t worldToWindow(const vector2f_t& worldPos) const override;
 
-    sf::RenderWindow& getWindow();
+    std::shared_ptr<sf::RenderWindow> getWindow();
 
     void drawText(const sf::Text& text);
 
@@ -108,7 +110,7 @@ class SFMLDisplayManager : public IDisplayManager {
     sf::FloatRect toSFRect(const recti_t& rect) const;
     sf::IntRect toSFIntRect(const recti_t& rect) const;
 
-    sf::RenderWindow _window;
+    std::shared_ptr<sf::RenderWindow> _window;
     sf::Color _backgroundColor;
     bool _isFullscreen;
     sf::VideoMode _windowedVideoMode;

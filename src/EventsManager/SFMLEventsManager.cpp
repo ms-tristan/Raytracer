@@ -9,11 +9,11 @@
 
 namespace RayTracer {
 
-SFMLEventsManager::SFMLEventsManager(sf::RenderWindow& window)
-    : _window(window),
-      _isWindowClosed(false),
-      _isWindowResized(false),
-      _resizedDimensions({0, 0}) {
+SFMLEventsManager::SFMLEventsManager(std::shared_ptr<sf::RenderWindow> window)
+    : _window(window)
+    , _isWindowClosed(false)
+    , _isWindowResized(false)
+    , _resizedDimensions({0, 0}) {
     initKeyMap();
 }
 
@@ -78,7 +78,7 @@ bool SFMLEventsManager::isKeyPressed(std::string key) const {
 }
 
 vector2f_t SFMLEventsManager::getMousePos() {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(_window);
+    sf::Vector2i mousePos = sf::Mouse::getPosition(*_window);
     return {static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
 }
 
@@ -86,10 +86,10 @@ bool SFMLEventsManager::processEvents() {
     _isWindowClosed = false;
     _isWindowResized = false;
 
-    while (_window.pollEvent(_event)) {
+    while (_window->pollEvent(_event)) {
         switch (_event.type) {
             case sf::Event::Closed:
-                _window.close();
+                _window->close();
                 _isWindowClosed = true;
                 return false;
             case sf::Event::Resized:

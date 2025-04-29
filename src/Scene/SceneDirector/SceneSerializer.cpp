@@ -6,6 +6,7 @@
 */
 #include <string>
 #include <iostream>
+#include <memory>
 #include <libconfig.h++>
 #include "SceneSerializer.hpp"
 #include "Light/AmbientLight/AmbientLight.hpp"

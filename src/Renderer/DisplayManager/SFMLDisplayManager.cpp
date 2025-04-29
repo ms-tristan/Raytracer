@@ -9,6 +9,8 @@
 #include <complex>
 #include <vector>
 #include <string>
+#include <memory>
+
 #include "SFMLDisplayManager.hpp"
 
 namespace RayTracer {
@@ -18,12 +20,13 @@ SFMLDisplayManager::SFMLDisplayManager()
     , _isFullscreen(false)
     , _windowedVideoMode(800, 600)
     , _windowTitle("")
-    , _currentZoom(1.0f) {
+    , _currentZoom(1.0f)
+    , _window(std::make_shared<sf::RenderWindow>()) {
 }
 
 SFMLDisplayManager::~SFMLDisplayManager() {
-    if (_window.isOpen())
-        _window.close();
+    if (_window->isOpen())
+        _window->close();
 
     _textures.clear();
     _fonts.clear();
@@ -37,29 +40,29 @@ bool SFMLDisplayManager::initialize
     _isFullscreen = fullscreen;
 
     if (fullscreen) {
-        _window.create(sf::VideoMode::getFullscreenModes()[0],
+        _window->create(sf::VideoMode::getFullscreenModes()[0],
             title, sf::Style::Fullscreen);
     } else {
-        _window.create(_windowedVideoMode, title,
+        _window->create(_windowedVideoMode, title,
             sf::Style::Close | sf::Style::Titlebar);
     }
-    _defaultView = _window.getDefaultView();
+    _defaultView = _window->getDefaultView();
     _currentView = _defaultView;
-    return _window.isOpen();
+    return _window->isOpen();
 }
 
 bool SFMLDisplayManager::isWindowOpen() const {
-    return _window.isOpen();
+    return _window->isOpen();
 }
 
 void SFMLDisplayManager::closeWindow() {
-    _window.close();
+    _window->close();
 }
 
 bool SFMLDisplayManager::processEvents() {
-    while (_window.pollEvent(_event)) {
+    while (_window->pollEvent(_event)) {
         if (_event.type == sf::Event::Closed) {
-            _window.close();
+            _window->close();
             return false;
         }
     }
@@ -67,11 +70,11 @@ bool SFMLDisplayManager::processEvents() {
 }
 
 void SFMLDisplayManager::beginFrame() {
-    _window.clear(_backgroundColor);
+    _window->clear(_backgroundColor);
 }
 
 void SFMLDisplayManager::endFrame() {
-    _window.display();
+    _window->display();
 }
 
 void SFMLDisplayManager::setBackgroundColor(const color_t& color) {
@@ -167,7 +170,7 @@ void SFMLDisplayManager::drawSprite(const std::string& textureId,
     sprite.setColor(toSFColor(color));
     sprite.setOrigin(toSFVector(origin));
 
-    _window.draw(sprite);
+    _window->draw(sprite);
 }
 
 void SFMLDisplayManager::drawTextureRegion(
@@ -192,7 +195,7 @@ void SFMLDisplayManager::drawTextureRegion(
     sprite.setColor(toSFColor(color));
     sprite.setOrigin(toSFVector(origin));
 
-    _window.draw(sprite);
+    _window->draw(sprite);
 }
 
 void SFMLDisplayManager::drawText(const std::string& text,
@@ -226,11 +229,11 @@ void SFMLDisplayManager::drawText(const std::string& text,
     }
 
     sfText.setPosition(toSFVector(position));
-    _window.draw(sfText);
+    _window->draw(sfText);
 }
 
 void SFMLDisplayManager::drawText(const sf::Text& text) {
-    _window.draw(text);
+    _window->draw(text);
 }
 
 void SFMLDisplayManager::drawRectangle(const recti_t& rect,
@@ -243,7 +246,7 @@ void SFMLDisplayManager::drawRectangle(const recti_t& rect,
     shape.setOutlineColor(toSFColor(outlineColor));
     shape.setOutlineThickness(outlineThickness);
 
-    _window.draw(shape);
+    _window->draw(shape);
 }
 
 void SFMLDisplayManager::drawCircle(const vector2f_t& center,
@@ -257,7 +260,7 @@ void SFMLDisplayManager::drawCircle(const vector2f_t& center,
     shape.setOutlineColor(toSFColor(outlineColor));
     shape.setOutlineThickness(outlineThickness);
 
-    _window.draw(shape);
+    _window->draw(shape);
 }
 
 void SFMLDisplayManager::drawLine(const vector2f_t& start,
@@ -275,7 +278,7 @@ void SFMLDisplayManager::drawLine(const vector2f_t& start,
     line.setFillColor(toSFColor(color));
     line.setOrigin(0, thickness / 2.0f);
 
-    _window.draw(line);
+    _window->draw(line);
 }
 
 void SFMLDisplayManager::drawLines(
@@ -298,7 +301,7 @@ void SFMLDisplayManager::drawLines(
 
 void SFMLDisplayManager::setWindowTitle(const std::string& title) {
     _windowTitle = title;
-    _window.setTitle(title);
+    _window->setTitle(title);
 }
 
 void SFMLDisplayManager::setFullscreen(bool fullscreen) {
@@ -307,28 +310,28 @@ void SFMLDisplayManager::setFullscreen(bool fullscreen) {
     }
 
     _isFullscreen = fullscreen;
-    _window.close();
+    _window->close();
 
     if (_isFullscreen) {
-        _window.create(sf::VideoMode::getFullscreenModes()[0],
+        _window->create(sf::VideoMode::getFullscreenModes()[0],
             _windowTitle, sf::Style::Fullscreen);
     } else {
-        _window.create(_windowedVideoMode,
+        _window->create(_windowedVideoMode,
             _windowTitle, sf::Style::Close | sf::Style::Titlebar);
     }
 }
 
 vector2u_t SFMLDisplayManager::getWindowSize() const {
-    sf::Vector2u size = _window.getSize();
+    sf::Vector2u size = _window->getSize();
     return vector2u_t{size.x, size.y};
 }
 
 void SFMLDisplayManager::setVSync(bool enabled) {
-    _window.setVerticalSyncEnabled(enabled);
+    _window->setVerticalSyncEnabled(enabled);
 }
 
 void SFMLDisplayManager::setFrameRateLimit(unsigned int fps) {
-    _window.setFramerateLimit(fps);
+    _window->setFramerateLimit(fps);
 }
 
 sf::Color SFMLDisplayManager::toSFColor
@@ -351,7 +354,7 @@ sf::IntRect SFMLDisplayManager::toSFIntRect
     return sf::IntRect(rect.x, rect.y, rect.width, rect.height);
 }
 
-sf::RenderWindow& SFMLDisplayManager::getWindow() {
+std::shared_ptr<sf::RenderWindow> SFMLDisplayManager::getWindow() {
     return _window;
 }
 
@@ -361,11 +364,11 @@ void SFMLDisplayManager::setView
     _currentZoom = zoom;
     _currentView.setSize(_defaultView.getSize().x / zoom,
         _defaultView.getSize().y / zoom);
-    _window.setView(_currentView);
+    _window->setView(_currentView);
 }
 
 void SFMLDisplayManager::resetView() {
-    _window.setView(_defaultView);
+    _window->setView(_defaultView);
     _currentView = _defaultView;
     _currentZoom = 1.0f;
 }
@@ -383,14 +386,14 @@ vector2f_t SFMLDisplayManager::windowToWorld(
     const vector2f_t& windowPos) const {
     sf::Vector2i pixelPos(static_cast<int>(windowPos.x),
         static_cast<int>(windowPos.y));
-    sf::Vector2f worldPos = _window.mapPixelToCoords(pixelPos, _currentView);
+    sf::Vector2f worldPos = _window->mapPixelToCoords(pixelPos, _currentView);
     return {worldPos.x, worldPos.y};
 }
 
 vector2f_t SFMLDisplayManager::worldToWindow(
     const vector2f_t& worldPos) const {
     sf::Vector2f sfWorldPos(worldPos.x, worldPos.y);
-    sf::Vector2i pixelPos = _window.mapCoordsToPixel(sfWorldPos, _currentView);
+    sf::Vector2i pixelPos = _window->mapCoordsToPixel(sfWorldPos, _currentView);
     return {static_cast<float>(pixelPos.x), static_cast<float>(pixelPos.y)};
 }
 
@@ -422,7 +425,7 @@ void SFMLDisplayManager::drawImage(const std::vector<color_t>& pixelData,
     sprite.setPosition(toSFVector(position));
     sprite.setScale(toSFVector(scale));
 
-    _window.draw(sprite);
+    _window->draw(sprite);
 }
 
 }  // namespace RayTracer

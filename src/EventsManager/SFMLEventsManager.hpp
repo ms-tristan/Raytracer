@@ -6,13 +6,13 @@
 */
 
 #ifndef SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
-   #define SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
+    #define SRC_EVENTSMANAGER_SFMLEVENTSMANAGER_HPP_
 
-   #include <unordered_map>
-   #include <string>
-   #include <memory>
-   #include <SFML/Graphics.hpp>
-   #include "./IEventsManager.hpp"
+    #include <unordered_map>
+    #include <string>
+    #include <memory>
+    #include <SFML/Graphics.hpp>
+    #include "./IEventsManager.hpp"
 
 namespace RayTracer {
 
@@ -23,6 +23,7 @@ class SFMLEventsManager : public IEventsManager {
 
     bool isKeyPressed(std::string key) const override;
     vector2f_t getMousePos() override;
+    float getMouseWheelDelta() const override;
 
     bool processEvents() override;
     bool isWindowClosed() const override;
@@ -35,6 +36,7 @@ class SFMLEventsManager : public IEventsManager {
     bool _isWindowResized;
     vector2i_t _resizedDimensions;
     sf::Event _event;
+    float _mouseWheelDelta;
 
     std::unordered_map<std::string, sf::Keyboard::Key> _keyMap;
 

@@ -10,6 +10,7 @@
 #define SRC_CAMERA_CAMERA_HPP_
 
 #include <memory>
+#include <cmath>
 #include <libconfig.h++>
 
 #include "Math/Point3D/Point3D.hpp"
@@ -25,7 +26,7 @@ class Camera {
 
     Camera();
     Camera(const Math::Point3D &origin,
-      const Rectangle3D &screen, double fov = 90.0);
+    const Rectangle3D &screen, double fov = 90.0);
     void setFOV(double newFov);
     double getFOV() const;
     Ray ray(double u, double v) const;
@@ -36,6 +37,7 @@ class Camera {
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
  private:
     void updateScreenForFOV();
+    Math::Vector3D calculateRotationAngles() const;
 };
 }  // namespace RayTracer
 

@@ -73,7 +73,7 @@ jobs:
 
       - name: Create annotations for cpplint-check
         run: |
-          cpplint_log="Logs/cpplint-reports.log"
+          cpplint_log="logs/cpplint-reports.log"
           cat $cpplint_log
           error_found=false
           if [ -f $cpplint_log ]; then

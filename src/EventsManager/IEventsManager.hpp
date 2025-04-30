@@ -18,6 +18,7 @@ class IEventsManager {
     virtual ~IEventsManager() = default;
     virtual bool isKeyPressed(std::string key) const = 0;
     virtual vector2f_t getMousePos() = 0;
+    virtual float getMouseWheelDelta() const = 0;
 
     virtual bool processEvents() = 0;
     virtual bool isWindowClosed() const = 0;

@@ -25,7 +25,6 @@ bool SceneSerializer::saveToFile(const Scene& scene, const std::string& filename
 
         cfg.writeFile(filename.c_str());
 
-        cfg.writeFile(filename.c_str());
         return true;
     } catch (const libconfig::FileIOException& ex) {
         std::cerr << "Error writing scene file: " << filename << std::endl;

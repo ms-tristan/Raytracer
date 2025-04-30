@@ -147,6 +147,41 @@ void Camera::rotateZ(double degrees) {
     screen.left_side = upDir * screenHeight;
 }
 
+Math::Vector3D Camera::calculateRotationAngles() const {
+    Math::Point3D screenCenter = screen.origin +
+        screen.bottom_side * 0.5 + screen.left_side * 0.5;
+    Math::Vector3D viewDir = (screenCenter - origin).normalize();
+    Math::Vector3D rightDir = screen.bottom_side.normalize();
+    Math::Vector3D upDir = screen.left_side.normalize();
+
+    double yRotation = atan2(viewDir.X, viewDir.Z) * 180.0 / M_PI;
+
+    double xRotation = -asin(viewDir.Y) * 180.0 / M_PI;
+
+    Math::Vector3D initialViewDir(Math::Coords{0.0, 0.0, -1.0});
+    Math::Vector3D initialUpDir(Math::Coords{0.0, 1.0, 0.0});
+    Math::Vector3D initialRightDir(Math::Coords{1.0, 0.0, 0.0});
+
+    Math::Vector3D rotatedViewDir = Rotate("y", yRotation).applyToVector(initialViewDir);
+    Math::Vector3D rotatedUpDir = Rotate("y", yRotation).applyToVector(initialUpDir);
+    Math::Vector3D rotatedRightDir = Rotate("y", yRotation).applyToVector(initialRightDir);
+
+    rotatedViewDir = Rotate("x", xRotation).applyToVector(rotatedViewDir);
+    rotatedUpDir = Rotate("x", xRotation).applyToVector(rotatedUpDir);
+    rotatedRightDir = Rotate("x", xRotation).applyToVector(rotatedRightDir);
+
+    double dotProduct = upDir.dot(rotatedUpDir);
+    double crossLength = upDir.cross(rotatedUpDir).length();
+    double zRotation = atan2(crossLength, dotProduct) * 180.0 / M_PI;
+
+    Math::Vector3D crossResult = upDir.cross(rotatedUpDir);
+    if (crossResult.dot(viewDir) < 0) {
+        zRotation = -zRotation;
+    }
+
+    return Math::Vector3D(Math::Coords{xRotation, yRotation, zRotation});
+}
+
 void Camera::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     libconfig::Setting& resolution = setting->add("resolution", libconfig::Setting::TypeGroup);
 
@@ -166,13 +201,10 @@ void Camera::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) con
 
     libconfig::Setting& rotation = setting->add("rotation", libconfig::Setting::TypeGroup);
 
-    double xRotation = 0.0;
-    double yRotation = 0.0;
-    double zRotation = 0.0;
-
-    rotation.add("x", libconfig::Setting::TypeFloat) = xRotation;
-    rotation.add("y", libconfig::Setting::TypeFloat) = yRotation;
-    rotation.add("z", libconfig::Setting::TypeFloat) = zRotation;
+    Math::Vector3D rotationAngles = calculateRotationAngles();
+    rotation.add("x", libconfig::Setting::TypeFloat) = rotationAngles.X;
+    rotation.add("y", libconfig::Setting::TypeFloat) = rotationAngles.Y;
+    rotation.add("z", libconfig::Setting::TypeFloat) = rotationAngles.Z;
 
     setting->add("fieldOfView", libconfig::Setting::TypeFloat) = fov;
 }

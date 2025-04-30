@@ -13,16 +13,16 @@
 namespace RayTracer {
 
 InputManager::InputManager(std::shared_ptr<IEventsManager> eventsManager, int windowWidth, int windowHeight)
-    : _eventsManager(eventsManager),
-      _windowWidth(windowWidth),
-      _windowHeight(windowHeight),
-      _moveSpeed(0.4),
-      _rotateSpeed(4.0),
-      _mouseRotateSensitivity(0.3),
-      _mouseWasPressed(false),
-      _rightMouseWasPressed(false),
-      _isDragging(false),
-      _selectedPrimitive(nullptr) {
+    : _eventsManager(eventsManager)
+    , _windowWidth(windowWidth)
+    , _windowHeight(windowHeight)
+    , _moveSpeed(0.4)
+    , _rotateSpeed(4.0)
+    , _mouseRotateSensitivity(0.3)
+    , _mouseWasPressed(false)
+    , _rightMouseWasPressed(false)
+    , _isDragging(false)
+    , _selectedPrimitive(nullptr) {
 }
 
 void InputManager::processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera) {
@@ -36,7 +36,7 @@ void InputManager::processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Ca
 
     handleCameraMovement(camera);
     handleObjectSelection(scene, camera);
-
+    handleObjectScrolling(scene, camera);
     if (_isDragging && _selectedPrimitive) {
         handleObjectDragging(camera);
     }
@@ -49,26 +49,28 @@ void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
     Math::Vector3D upDir = camera->screen.left_side.normalize();
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
+    double currentMoveSpeed = _moveSpeed;
+    if (_eventsManager->isKeyPressed("LSHIFT")) {
+        currentMoveSpeed *= 3.5;
+    }
     if (_eventsManager->isKeyPressed("Z")) {
-        camera->translate(forwardDir * _moveSpeed);
+        camera->translate(forwardDir * currentMoveSpeed);
     }
     if (_eventsManager->isKeyPressed("S")) {
-        camera->translate(forwardDir * -_moveSpeed);
+        camera->translate(forwardDir * -currentMoveSpeed);
     }
     if (_eventsManager->isKeyPressed("Q")) {
-        camera->translate(rightDir * -_moveSpeed);
+        camera->translate(rightDir * -currentMoveSpeed);
     }
     if (_eventsManager->isKeyPressed("D")) {
-        camera->translate(rightDir * _moveSpeed);
+        camera->translate(rightDir * currentMoveSpeed);
     }
-
-    // if (_eventsManager->isKeyPressed("SPACE")) {
-    //     camera->translate(upDir * _moveSpeed);
-    // }
-    // if (_eventsManager->isKeyPressed("LCONTROL")) {
-    //     camera->translate(upDir * -_moveSpeed);
-    // }
-
+    if (_eventsManager->isKeyPressed("SPACE")) {
+        camera->translate(Math::Vector3D(Math::Coords{0.0, currentMoveSpeed, 0.0}));
+    }
+    if (_eventsManager->isKeyPressed("LCONTROL")) {
+        camera->translate(Math::Vector3D(Math::Coords{0.0, -currentMoveSpeed, 0.0}));
+    }
     if (_eventsManager->isKeyPressed("LEFT")) {
         camera->rotateY(_rotateSpeed);
     }
@@ -142,6 +144,30 @@ void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
         Math::Vector3D moveVec = rightDir * (deltaX * 0.01) + upDir * (-deltaY * 0.01);
         _selectedPrimitive->translate(moveVec);
         _dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
+    }
+}
+
+void InputManager::handleObjectScrolling(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera) {
+    float mouseOffset = _eventsManager->getMouseWheelDelta();
+
+    if (static_cast<int>(mouseOffset) != 0) {
+        auto currentMousePos = _eventsManager->getMousePos();
+        sf::Vector2i currentPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
+
+        double u = static_cast<double>(currentMousePos.x) / (_windowWidth - 1);
+        double v = static_cast<double>((_windowHeight - 1) - currentMousePos.y) / (_windowHeight - 1);
+
+        Ray ray = camera->ray(u, v);
+        auto hit = scene->trace(ray);
+
+        if (hit && hit->primitive) {
+            Math::Point3D screenCenter = camera->screen.origin +
+                camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
+            Math::Vector3D viewDir = (screenCenter - camera->origin).normalize();
+
+            Math::Vector3D moveVec = viewDir * mouseOffset * 0.2;
+            hit->primitive->translate(moveVec);
+        }
     }
 }
 

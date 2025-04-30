@@ -31,6 +31,7 @@ class InputManager {
     void handleCameraMovement(std::shared_ptr<Camera> camera);
     void handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
     void handleObjectDragging(std::shared_ptr<Camera> camera);
+    void handleObjectScrolling(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
 
     std::shared_ptr<IEventsManager> _eventsManager;
     int _windowWidth;

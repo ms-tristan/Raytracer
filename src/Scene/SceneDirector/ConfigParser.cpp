@@ -73,21 +73,88 @@ Math::Vector3D ConfigParser::parseColor(const libconfig::Setting& setting) {
 
 void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     Math::Point3D position;
+
     if (setting.exists("position")) {
         position = parsePoint3D(setting["position"]);
     } else {
         position = Math::Point3D(Math::Coords{0, 0, 5});
     }
 
-    Math::Point3D lookAt;
-    if (setting.exists("rotation")) {
-        Math::Vector3D forward(Math::Coords{0, 0, -1});
-        lookAt = position + forward;
-    } else {
-        lookAt = Math::Point3D(Math::Coords{0, 0, 0});
+    Math::Vector3D forward(Math::Coords{0.0, 0.0, -1.0});
+    Math::Vector3D up(Math::Coords{0.0, 1.0, 0.0});
+    Math::Vector3D right(Math::Coords{1.0, 0.0, 0.0});
+
+    double distance = 1.0;
+    double width = 2.0;
+    double height = 2.0;
+
+    Math::Point3D screenCenter = position + (forward * distance);
+    Rectangle3D screen(
+        screenCenter - (right * (width/2)) - (up * (height/2)),
+        right * width,
+        up * height);
+
+    Camera camera(position, screen);
+
+    if (setting.exists("fieldOfView")) {
+        double fov = static_cast<double>(setting["fieldOfView"]);
+        camera.setFOV(fov);
     }
 
-    builder->setCamera(position, lookAt);
+    if (setting.exists("rotation")) {
+        Math::Vector3D rotation = parseVector3D(setting["rotation"]);
+
+        if (rotation.Y != 0.0) {
+            std::cout << "Rotating Y: " << rotation.Y << std::endl;
+            camera.rotateY(rotation.Y);
+        }
+        if (rotation.X != 0.0) {
+            std::cout << "Rotating X: " << rotation.X << std::endl;
+            camera.rotateX(rotation.X);
+        }
+        if (rotation.Z != 0.0) {
+            std::cout << "Rotating Z: " << rotation.Z << std::endl;
+            camera.rotateZ(rotation.Z);
+        }
+    } else if (setting.exists("lookAt")) {
+        Math::Point3D lookAt = parsePoint3D(setting["lookAt"]);
+        Math::Vector3D forward = (lookAt - position).normalize();
+        Math::Vector3D up(Math::Coords{0.0, 1.0, 0.0});
+        Math::Vector3D right = up.cross(forward).normalize();
+        up = forward.cross(right).normalize();
+
+        screenCenter = position + (forward * distance);
+        camera.screen.origin = screenCenter - (right * (width/2)) - (up * (height/2));
+        camera.screen.bottom_side = right * width;
+        camera.screen.left_side = up * height;
+    }
+
+    if (setting.exists("resolution")) {
+        int width = 1000, height = 1000;
+        if (setting["resolution"].exists("width"))
+            width = static_cast<int>(setting["resolution"]["width"]);
+        if (setting["resolution"].exists("height"))
+            height = static_cast<int>(setting["resolution"]["height"]);
+
+            double aspectRatio = static_cast<double>(width) / height;
+
+        Math::Point3D screenCenter = camera.screen.origin +
+        camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
+        Math::Vector3D viewDir = (screenCenter - camera.origin).normalize();
+        Math::Vector3D rightDir = camera.screen.bottom_side.normalize();
+        Math::Vector3D upDir = camera.screen.left_side.normalize();
+
+        double screenDistance = (screenCenter - camera.origin).length();
+        double halfHeight = camera.screen.left_side.length() / 2.0;
+        double halfWidth = halfHeight * aspectRatio;
+
+        camera.screen.bottom_side = rightDir * (halfWidth * 2.0);
+        camera.screen.left_side = upDir * (halfHeight * 2.0);
+        camera.screen.origin = screenCenter -
+        camera.screen.bottom_side * 0.5 - camera.screen.left_side * 0.5;
+    }
+
+    builder->setCamera(camera);
 }
 
 void LightsParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
@@ -426,7 +493,6 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
             }
         }
     }
-
     return params;
 }
 

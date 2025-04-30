@@ -18,23 +18,25 @@ namespace RayTracer {
 
 class SFMLEventsManager : public IEventsManager {
  public:
-    explicit SFMLEventsManager(std::shared_ptr<sf::RenderWindow> window);
-    ~SFMLEventsManager() override = default;
+   explicit SFMLEventsManager(std::shared_ptr<sf::RenderWindow> window);
+   ~SFMLEventsManager() override = default;
 
-    bool isKeyPressed(std::string key) const override;
-    vector2f_t getMousePos() override;
+   bool isKeyPressed(std::string key) const override;
+   vector2f_t getMousePos() override;
+   float getMouseWheelDelta() const override;
 
-    bool processEvents() override;
-    bool isWindowClosed() const override;
-    bool isWindowResized() const override;
-    vector2i_t getResizedDimensions() const override;
+   bool processEvents() override;
+   bool isWindowClosed() const override;
+   bool isWindowResized() const override;
+   vector2i_t getResizedDimensions() const override;
 
  private:
-    std::shared_ptr<sf::RenderWindow> _window;
-    bool _isWindowClosed;
-    bool _isWindowResized;
-    vector2i_t _resizedDimensions;
-    sf::Event _event;
+   std::shared_ptr<sf::RenderWindow> _window;
+   bool _isWindowClosed;
+   bool _isWindowResized;
+   vector2i_t _resizedDimensions;
+   sf::Event _event;
+   float _mouseWheelDelta;
 
     std::unordered_map<std::string, sf::Keyboard::Key> _keyMap;
 

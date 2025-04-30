@@ -426,7 +426,6 @@ std::map<std::string, double> PrimitivesParser::extractParametersFromSetting(
             }
         }
     }
-
     return params;
 }
 

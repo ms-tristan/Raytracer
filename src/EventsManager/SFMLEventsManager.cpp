@@ -82,7 +82,14 @@ vector2f_t SFMLEventsManager::getMousePos() {
     return {static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
 }
 
+float SFMLEventsManager::getMouseWheelDelta() const {
+    return _mouseWheelDelta;
+}
+
 bool SFMLEventsManager::processEvents() {
+    sf::Event event;
+    _mouseWheelDelta = 0.0f;
+
     _isWindowClosed = false;
     _isWindowResized = false;
 
@@ -96,6 +103,9 @@ bool SFMLEventsManager::processEvents() {
                 _isWindowResized = true;
                 _resizedDimensions.x = _event.size.width;
                 _resizedDimensions.y = _event.size.height;
+                break;
+            case sf::Event::MouseWheelScrolled:
+                _mouseWheelDelta += _event.mouseWheelScroll.delta;
                 break;
             default:
                 break;

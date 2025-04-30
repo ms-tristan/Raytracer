@@ -10,7 +10,8 @@ EXCLUDED_RULES = [
     "-readability/namespace",  # Exclude namespace readability warnings
     "-whitespace/comments",
     "-build/header_guard",
-    "-whitespace/parens"
+    "-whitespace/parens",
+    "-build/c++11"
 ]
 
 def run_cpplint(directory):

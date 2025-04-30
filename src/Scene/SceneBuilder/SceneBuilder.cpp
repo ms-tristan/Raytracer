@@ -47,6 +47,11 @@ const Math::Point3D& lookAt) {
     return *this;
 }
 
+SceneBuilder& SceneBuilder::setCamera(const Camera& camera) {
+    scene->setCamera(camera);
+    return *this;
+}
+
 SceneBuilder& SceneBuilder::setAmbientLight(const Math::Vector3D& color) {
     AmbientLight light(color);
     scene->setAmbientLight(light);

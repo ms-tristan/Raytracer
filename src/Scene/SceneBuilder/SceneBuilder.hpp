@@ -33,6 +33,7 @@ class SceneBuilder {
     SceneBuilder& reset();
     SceneBuilder& setCamera(const Math::Point3D& origin,
         const Math::Point3D& lookAt);
+    SceneBuilder& setCamera(const Camera& camera);
     SceneBuilder& setAmbientLight(const Math::Vector3D& color);
 
     SceneBuilder& addLight(const std::shared_ptr<ILight>& light);

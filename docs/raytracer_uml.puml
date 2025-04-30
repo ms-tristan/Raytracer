@@ -1,0 +1,105 @@
+@startuml Raytracer_Global_Architecture
+skinparam dpi 300
+title Architecture Globale du Raytracer
+
+' Style settings
+skinparam packageStyle rectangle
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam componentStyle uml2
+skinparam linetype polyline
+
+' Components
+package "Core" {
+    [Renderer] as renderer
+    [Scene] as scene
+    [Ray] as ray
+    [Camera] as camera
+    
+    component "EventsManager" as eventsManager
+}
+
+package "Math" {
+    [Vector3D] as vector
+    [Point3D] as point
+    [Rectangle3D] as rectangle
+}
+
+package "Primitives" {
+    interface "IPrimitive" as iprimitive
+    [PrimitiveFactory] as primFactory
+    component "Plugins" as primPlugins
+}
+
+package "Lights" {
+    interface "ILight" as ilight
+    [LightFactory] as lightFactory
+    [AmbientLight] as ambientLight
+}
+
+package "Shaders" {
+    interface "IShader" as ishader
+    [ShaderFactory] as shaderFactory
+    component "Plugins" as shaderPlugins
+}
+
+package "PostProcessing" {
+    interface "IPostProcess" as ipostprocess
+    [PostProcessFactory] as postprocessFactory
+    component "Plugins" as ppPlugins
+}
+
+package "Materials" {
+    [Material] as material
+}
+
+' Key relationships
+scene -down-> iprimitive : contains >
+scene -down-> ilight : contains >
+scene -down-> ishader : contains >
+scene -down-> ipostprocess : contains >
+scene -> camera : uses >
+
+renderer -down-> scene : renders >
+renderer --> eventsManager : handles input >
+
+camera --> ray : generates >
+ray --> iprimitive : intersects >
+
+primFactory -up-> iprimitive : creates >
+primFactory --> primPlugins : loads >
+
+lightFactory -up-> ilight : creates >
+shaderFactory -up-> ishader : creates >
+shaderFactory --> shaderPlugins : loads >
+postprocessFactory -up-> ipostprocess : creates >
+postprocessFactory --> ppPlugins : loads >
+
+iprimitive --> material : has >
+
+' Math relationships
+camera --> point : uses >
+camera --> vector : uses >
+camera --> rectangle : uses >
+iprimitive --> vector : uses >
+iprimitive --> point : uses >
+ray --> point : uses >
+ray --> vector : uses >
+
+' Legend
+legend right
+  <b>Architecture Globale du Raytracer</b>
+  
+  Cette vue simplifiée montre les interactions principales
+  entre les composants du système sans entrer dans les
+  détails de chaque classe.
+  
+  <i>Éléments clés:</i>
+  ◆ Le Renderer coordonne le processus de rendu
+  ◆ La Scene contient tous les objets (primitives, lumières, etc.)
+  ◆ Les Factory créent et gèrent les éléments
+  ◆ Les Plugins permettent l'extension du système
+endlegend
+
+@enduml

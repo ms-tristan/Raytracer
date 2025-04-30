@@ -10,8 +10,8 @@
 #define SRC_CAMERA_CAMERA_HPP_
 
 #include <memory>
-#include <libconfig.h++>
 #include <cmath>
+#include <libconfig.h++>
 
 #include "Math/Point3D/Point3D.hpp"
 #include "Ray/Ray.hpp"

@@ -72,8 +72,8 @@ Math::Vector3D ConfigParser::parseColor(const libconfig::Setting& setting) {
 }
 
 void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
-
     Math::Point3D position;
+
     if (setting.exists("position")) {
         position = parsePoint3D(setting["position"]);
     } else {
@@ -107,10 +107,12 @@ void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<Scen
         if (rotation.Y != 0.0) {
             std::cout << "Rotating Y: " << rotation.Y << std::endl;
             camera.rotateY(rotation.Y);
-        } if (rotation.X != 0.0) {
+        }
+        if (rotation.X != 0.0) {
             std::cout << "Rotating X: " << rotation.X << std::endl;
             camera.rotateX(rotation.X);
-        } if (rotation.Z != 0.0) {
+        }
+        if (rotation.Z != 0.0) {
             std::cout << "Rotating Z: " << rotation.Z << std::endl;
             camera.rotateZ(rotation.Z);
         }

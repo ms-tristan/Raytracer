@@ -21,12 +21,12 @@ add_subdirectory(src)
 list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX ".*/build/.*")
 list(FILTER ALL_SOURCE_FILES EXCLUDE REGEX ".*Plugin\.cpp$")
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Logs)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/logs)
 
 add_custom_target(
     cpplint-check
-    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cpplint.py ${PROJECT_SOURCE_DIR}/src > ${CMAKE_CURRENT_SOURCE_DIR}/Logs/cpplint-reports.log 2>&1
-    COMMENT "🔍 Running cpplint on all source files without exclude rules and saving to Logs/cpplint-reports.log"
+    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cpplint.py ${PROJECT_SOURCE_DIR}/src > ${CMAKE_CURRENT_SOURCE_DIR}/logs/cpplint-reports.log 2>&1
+    COMMENT "🔍 Running cpplint on all source files without exclude rules and saving to logs/cpplint-reports.log"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

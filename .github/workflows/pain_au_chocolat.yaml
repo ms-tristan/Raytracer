@@ -66,16 +66,6 @@ jobs:
           cmake ..
           cmake --build .
 
-      - name: Run clang-format
-        run: |
-          cd build
-          cmake --build . --target format
-
-      - name: Rebuild project
-        run: |
-          cd build
-          cmake --build .
-
       - name: Run cpplint-check
         id: cpplint-check
         run: |

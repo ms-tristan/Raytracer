@@ -49,25 +49,31 @@ void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
     Math::Vector3D upDir = camera->screen.left_side.normalize();
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
-    if (_eventsManager->isKeyPressed("Z")) {
-        camera->translate(forwardDir * _moveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("S")) {
-        camera->translate(forwardDir * -_moveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("Q")) {
-        camera->translate(rightDir * -_moveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("D")) {
-        camera->translate(rightDir * _moveSpeed);
+    // Vérifier si LSHIFT est enfoncé pour augmenter la vitesse
+    double currentMoveSpeed = _moveSpeed;
+    if (_eventsManager->isKeyPressed("LSHIFT")) {
+        currentMoveSpeed *= 2.5; // Multiplication de la vitesse par 2.5 quand Shift est enfoncé
     }
 
-    // if (_eventsManager->isKeyPressed("SPACE")) {
-    //     camera->translate(upDir * _moveSpeed);
-    // }
-    // if (_eventsManager->isKeyPressed("LCONTROL")) {
-    //     camera->translate(upDir * -_moveSpeed);
-    // }
+    if (_eventsManager->isKeyPressed("Z")) {
+        camera->translate(forwardDir * currentMoveSpeed);
+    }
+    if (_eventsManager->isKeyPressed("S")) {
+        camera->translate(forwardDir * -currentMoveSpeed);
+    }
+    if (_eventsManager->isKeyPressed("Q")) {
+        camera->translate(rightDir * -currentMoveSpeed);
+    }
+    if (_eventsManager->isKeyPressed("D")) {
+        camera->translate(rightDir * currentMoveSpeed);
+    }
+
+    if (_eventsManager->isKeyPressed("SPACE")) {
+        camera->translate(Math::Vector3D(Math::Coords{0.0, currentMoveSpeed, 0.0}));
+    }
+    if (_eventsManager->isKeyPressed("LCONTROL")) {
+        camera->translate(Math::Vector3D(Math::Coords{0.0, -currentMoveSpeed, 0.0}));
+    }
 
     if (_eventsManager->isKeyPressed("LEFT")) {
         camera->rotateY(_rotateSpeed);

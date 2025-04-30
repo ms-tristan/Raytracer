@@ -95,7 +95,7 @@ double radius, const std::shared_ptr<Material>& material) {
         {"radius", radius}
     };
 
-    return createPrimitive("sphere", params, material);
+    return createPrimitive("spheres", params, material);
 }
 
 SceneBuilder& SceneBuilder::addPlane(const Math::Point3D& position,
@@ -109,7 +109,7 @@ const Math::Vector3D& normal, const std::shared_ptr<Material>& material) {
         {"nz", normal.Z}
     };
 
-    return createPrimitive("plane", params, material);
+    return createPrimitive("planes", params, material);
 }
 
 SceneBuilder& SceneBuilder::addCylinder(const Math::Point3D& center,
@@ -126,7 +126,7 @@ const std::shared_ptr<Material>& material) {
         {"height", height}
     };
 
-    return createPrimitive("cylinder", params, material);
+    return createPrimitive("cylinders", params, material);
 }
 
 SceneBuilder& SceneBuilder::addCone(const Math::Point3D& apex,
@@ -143,7 +143,7 @@ const std::shared_ptr<Material>& material) {
         {"height", height}
     };
 
-    return createPrimitive("cone", params, material);
+    return createPrimitive("cones", params, material);
 }
 
 SceneBuilder& SceneBuilder::addPostProcess(const std::shared_ptr<IPostProcess>& postProcess) {

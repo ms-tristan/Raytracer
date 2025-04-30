@@ -20,24 +20,24 @@
 namespace RayTracer {
 class Camera {
  public:
-   Math::Point3D origin;
-   Rectangle3D screen;
-   double fov;
+    Math::Point3D origin;
+    Rectangle3D screen;
+    double fov;
 
-   Camera();
-   Camera(const Math::Point3D &origin,
-   const Rectangle3D &screen, double fov = 90.0);
-   void setFOV(double newFov);
-   double getFOV() const;
-   Ray ray(double u, double v) const;
-   void rotateX(double degrees);
-   void rotateY(double degrees);
-   void rotateZ(double degrees);
-   void translate(const Math::Vector3D &translation);
-   void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
+    Camera();
+    Camera(const Math::Point3D &origin,
+    const Rectangle3D &screen, double fov = 90.0);
+    void setFOV(double newFov);
+    double getFOV() const;
+    Ray ray(double u, double v) const;
+    void rotateX(double degrees);
+    void rotateY(double degrees);
+    void rotateZ(double degrees);
+    void translate(const Math::Vector3D &translation);
+    void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
  private:
-   void updateScreenForFOV();
-   Math::Vector3D calculateRotationAngles() const;
+    void updateScreenForFOV();
+    Math::Vector3D calculateRotationAngles() const;
 };
 }  // namespace RayTracer
 

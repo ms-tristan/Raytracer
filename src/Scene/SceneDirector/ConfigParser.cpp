@@ -242,7 +242,7 @@ void PrimitivesParser::parse(const libconfig::Setting& setting, std::shared_ptr<
 
     for (const auto& typeName : loadedPluginNames) {
         if (setting.exists(typeName)) {
-            parsePluginPrimitives(typeName, setting[typeName], builder);
+            parsePluginPrimitives(typeName, setting[typeName.c_str()], builder);
         }
     }
 }

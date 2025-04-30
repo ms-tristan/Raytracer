@@ -22,31 +22,32 @@ namespace RayTracer {
 
 class InputManager {
  public:
-    InputManager(std::shared_ptr<IEventsManager> eventsManager, int windowWidth, int windowHeight);
-    ~InputManager() = default;
+   InputManager(std::shared_ptr<IEventsManager> eventsManager, int windowWidth, int windowHeight);
+   ~InputManager() = default;
 
-    void processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
+   void processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
 
  private:
-    void handleCameraMovement(std::shared_ptr<Camera> camera);
-    void handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
-    void handleObjectDragging(std::shared_ptr<Camera> camera);
+   void handleCameraMovement(std::shared_ptr<Camera> camera);
+   void handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
+   void handleObjectDragging(std::shared_ptr<Camera> camera);
+   void handleObjectScrolling(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera);
 
-    std::shared_ptr<IEventsManager> _eventsManager;
-    int _windowWidth;
-    int _windowHeight;
+   std::shared_ptr<IEventsManager> _eventsManager;
+   int _windowWidth;
+   int _windowHeight;
 
-    double _moveSpeed;
-    double _rotateSpeed;
-    double _mouseRotateSensitivity;
+   double _moveSpeed;
+   double _rotateSpeed;
+   double _mouseRotateSensitivity;
 
-    bool _mouseWasPressed;
-    bool _rightMouseWasPressed;
-    sf::Vector2i _lastMousePos;
+   bool _mouseWasPressed;
+   bool _rightMouseWasPressed;
+   sf::Vector2i _lastMousePos;
 
-    bool _isDragging;
-    std::shared_ptr<IPrimitive> _selectedPrimitive;
-    sf::Vector2i _dragStartPos;
+   bool _isDragging;
+   std::shared_ptr<IPrimitive> _selectedPrimitive;
+   sf::Vector2i _dragStartPos;
 };
 
 }  // namespace RayTracer

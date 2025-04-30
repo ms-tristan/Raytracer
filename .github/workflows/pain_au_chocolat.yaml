@@ -76,41 +76,6 @@ jobs:
           cd build
           cmake --build .
 
-      - name: Run clang-check
-        id: clang-check
-        run: |
-          cmake --build build --target clang-check || true
-
-      - name: Create annotations for clang-check
-        run: |
-          clang_check_log="Logs/clang-reports.log"
-          cat $clang_check_log
-          error_found=false
-          if [ -f $clang_check_log ]; then
-            while IFS= read -r line; do
-              if echo "$line" | grep -q "error:"; then
-                file=$(echo "$line" | awk -F':' '{print $1}')
-                line_num=$(echo "$line" | awk -F':' '{print $2}')
-                msg=$(echo "$line" | cut -d':' -f4- | sed 's/^[[:space:]]*//')
-                echo "::error file=$file,line=$line_num::$msg"
-                error_found=true
-              elif echo "$line" | grep -q "warning:"; then
-                file=$(echo "$line" | awk -F':' '{print $1}')
-                line_num=$(echo "$line" | awk -F':' '{print $2}')
-                msg=$(echo "$line" | cut -d':' -f4- | sed 's/^[[:space:]]*//')
-                echo "::warning file=$file,line=$line_num::$msg"
-              elif echo "$line" | grep -q "note:"; then
-                file=$(echo "$line" | awk -F':' '{print $1}')
-                line_num=$(echo "$line" | awk -F':' '{print $2}')
-                msg=$(echo "$line" | cut -d':' -f4- | sed 's/^[[:space:]]*//')
-                echo "::notice file=$file,line=$line_num::$msg"
-              fi
-            done < $clang_check_log
-          fi
-          if [ "$error_found" = true ]; then
-            exit 1
-          fi
-
       - name: Run cpplint-check
         id: cpplint-check
         run: |

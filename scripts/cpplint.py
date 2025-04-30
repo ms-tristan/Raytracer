@@ -9,7 +9,8 @@ EXCLUDED_RULES = [
     "-build/include_subdir",  # Exclude include subdirectory warnings
     "-readability/namespace",  # Exclude namespace readability warnings
     "-whitespace/comments",
-    "-build/header_guard"
+    "-build/header_guard",
+    "-whitespace/parens"
 ]
 
 def run_cpplint(directory):

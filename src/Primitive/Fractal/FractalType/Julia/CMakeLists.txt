@@ -1,0 +1,7 @@
+set(JULIA_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/JuliaFractal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/JuliaFractal.hpp
+)
+
+# Add sources to parent scope
+set(FRACTALTYPE_SOURCES ${FRACTALTYPE_SOURCES} ${JULIA_SOURCES} PARENT_SCOPE)

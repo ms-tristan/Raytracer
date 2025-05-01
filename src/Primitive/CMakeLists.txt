@@ -8,6 +8,8 @@ add_subdirectory(Cylinder)
 add_subdirectory(Cone)
 add_subdirectory(Plugin)
 add_subdirectory(Box)
+add_subdirectory(MobiusStrip)
+add_subdirectory(Fractal)
 
 # List primitive source files directly
 set(PRIMITIVE_LOCAL_SOURCES "")

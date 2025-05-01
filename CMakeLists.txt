@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_PPM "Enable PPM output" OFF)
 option(ENABLE_DOCS "Enable documentation" OFF)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)

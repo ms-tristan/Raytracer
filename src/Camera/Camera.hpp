@@ -23,10 +23,10 @@ class Camera {
     Math::Point3D origin;
     Rectangle3D screen;
     double fov;
-    Math::Vector3D originalRotation;
-    double rotatedX;
-    double rotatedY;
-    double rotatedZ;
+    mutable Math::Vector3D originalRotation;
+    mutable double rotatedX;
+    mutable double rotatedY;
+    mutable double rotatedZ;
 
     Camera();
     Camera(const Math::Point3D &origin,

@@ -222,12 +222,12 @@ void Camera::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) con
     rotation.add("y", libconfig::Setting::TypeFloat) = totalRotationY;
     rotation.add("z", libconfig::Setting::TypeFloat) = totalRotationZ;
 
-    const_cast<Camera*>(this)->originalRotation.X = totalRotationX;
-    const_cast<Camera*>(this)->originalRotation.Y = totalRotationY;
-    const_cast<Camera*>(this)->originalRotation.Z = totalRotationZ;
-    const_cast<Camera*>(this)->rotatedX = 0.0;
-    const_cast<Camera*>(this)->rotatedY = 0.0;
-    const_cast<Camera*>(this)->rotatedZ = 0.0;
+    originalRotation.X = totalRotationX;
+    originalRotation.Y = totalRotationY;
+    originalRotation.Z = totalRotationZ;
+    rotatedX = 0.0;
+    rotatedY = 0.0;
+    rotatedZ = 0.0;
 
     setting->add("fieldOfView", libconfig::Setting::TypeFloat) = fov;
 }

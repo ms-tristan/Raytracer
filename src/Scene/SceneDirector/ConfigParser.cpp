@@ -494,8 +494,17 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
 
         if (setting["material"].exists("reflectivity")) {
             material->reflectivity = static_cast<double>(setting["material"]["reflectivity"]);
-
             material->reflectivity = std::max(0.0, std::min(1.0, material->reflectivity));
+        }
+
+        if (setting["material"].exists("transparency")) {
+            material->transparency = static_cast<double>(setting["material"]["transparency"]);
+            material->transparency = std::max(0.0, std::min(1.0, material->transparency));
+        }
+
+        if (setting["material"].exists("refractionIndex")) {
+            material->refractionIndex = static_cast<double>(setting["material"]["refractionIndex"]);
+            material->refractionIndex = std::max(1.0, material->refractionIndex);
         }
     } else if (setting.exists("color")) {
         material->color = parseColor(setting["color"]);

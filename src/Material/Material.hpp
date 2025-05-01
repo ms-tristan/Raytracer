@@ -17,9 +17,12 @@ class Material {
  public:
     Math::Vector3D color;
     double reflectivity;
+    double transparency;
+    double refractionIndex;
 
     Material();
-    explicit Material(const Math::Vector3D &color, double reflectivity = 0.0);
+    explicit Material(const Math::Vector3D &color, double reflectivity = 0.0,
+        double transparency = 0.0, double refractionIndex = 1.0);
     virtual ~Material() = default;
 };
 }  // namespace RayTracer

@@ -115,9 +115,7 @@ Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
     double transparency = material->transparency;
     double epsilon = 0.001;
 
-    double remainingEffect = 1.0;
     Math::Vector3D resultColor = pixelColor * (1.0 - reflectivity - transparency);
-    remainingEffect -= (1.0 - reflectivity - transparency);
 
     if (reflectivity > 0.0 && depth < maxReflectionDepth) {
         double dotProduct = ray.direction.dot(hit->normal);

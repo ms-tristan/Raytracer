@@ -2,7 +2,7 @@ build
 raytracer
 coding-style-reports.log
 cpp-lint-reports.log
-Logs
+logs
 .vscode
 plugins
 libraytracer_core.so

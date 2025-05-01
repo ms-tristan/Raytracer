@@ -46,10 +46,40 @@
 #include "Math/Point3D/Point3D.hpp"
 #include "Ray/Ray.hpp"
 
+void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
+                 int width, int height, const std::string& filename) {
+    std::ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        std::cerr << "Failed to open output file: " << filename << std::endl;
+        return;
+    }
+
+    outFile << "P3\n" << width << " " << height << "\n255\n";
+
+    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+    std::cout.rdbuf(outFile.rdbuf());
+
+    for (int j = height - 1; j >= 0; j--) {
+        for (int i = 0; i < width; i++) {
+            double u = static_cast<double>(i) / (width - 1);
+            double v = static_cast<double>(j) / (height - 1);
+
+            RayTracer::Ray ray = camera.ray(u, v);
+            Math::Vector3D pixelColor = scene.computeColor(ray);
+
+            scene.writeColor(pixelColor);
+        }
+    }
+
+    std::cout.rdbuf(oldCoutStreamBuf);
+    outFile.close();
+}
 
 int main(int argc, char **argv) {
     const int image_width = 800;
     const int image_height = 600;
+    bool displayMode = true;
+    std::string outputFile = "output.ppm";
 
     RayTracer::SceneDirector director;
     std::shared_ptr<RayTracer::Scene> scene;
@@ -58,25 +88,29 @@ int main(int argc, char **argv) {
     std::string ppmFilename;
 
     try {
-        // Parse command line arguments
         for (int i = 1; i < argc; ++i) {
-            std::string arg(argv[i]);
-            if (arg == "--ppm" && i + 1 < argc) {
-                ppmOutput = true;
-                ppmFilename = argv[i + 1];
-                i++; // Skip the next argument as we've already processed it
-            } else if (!ppmOutput) {
-                // Only use the first non-flag argument as scene file
+            std::string arg = argv[i];
+            if (arg == "--file" && i + 1 < argc) {
+                sceneFile = argv[++i];
+            } else if (arg == "--output" && i + 1 < argc) {
+                outputFile = argv[++i];
+            } else if (arg == "--no-display") {
+                displayMode = false;
+            } else if (arg == "--help") {
+                std::cout << "Usage: ./raytracer [options]\n"
+                          << "Options:\n"
+                          << "  --file <filename>    Specify scene file (default: scenes/default_scene.cfg)\n"
+                          << "  --output <filename>  Specify output PPM file (default: output.ppm)\n"
+                          << "  --no-display         Render to PPM file without displaying window\n"
+                          << "  --help               Display this help message\n";
+                return 0;
+            } else if (i == 1 && arg[0] != '-') {
                 sceneFile = arg;
             }
         }
 
-        if (ppmOutput) {
-            std::cout << "Rendering to PPM file: " << ppmFilename << std::endl;
-        }
-
-        std::cout << "Loading scene from file: " << sceneFile << std::endl;
         scene = director.createSceneFromFile(sceneFile);
+
         if (!scene) {
             std::cout << "Failed to load scene, using default scene instead." << std::endl;
             scene = director.createDefaultScene();
@@ -84,41 +118,9 @@ int main(int argc, char **argv) {
 
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
 
-        if (ppmOutput) {
-            // Output to PPM file
-            std::ofstream outfile(ppmFilename);
-            if (!outfile.is_open()) {
-                std::cerr << "Failed to open output file: " << ppmFilename << std::endl;
-                return 1;
-            }
+        renderToPPM(*scene, *camera, image_width, image_height, outputFile);
 
-            // Write PPM header
-            outfile << "P3" << std::endl;
-            outfile << image_width << " " << image_height << std::endl;
-            outfile << "255" << std::endl;
-
-            // Render scene to PPM
-            for (int j = image_height - 1; j >= 0; --j) {
-                std::cout << "\rScanlines remaining: " << j << ' ' << std::flush;
-                for (int i = 0; i < image_width; ++i) {
-                    double u = static_cast<double>(i) / (image_width - 1);
-                    double v = static_cast<double>(j) / (image_height - 1);
-
-                    RayTracer::Ray ray = camera->ray(u, v);
-                    Math::Vector3D pixelColor = scene->computeColor(ray);
-
-                    // Write the color to the file
-                    int r = static_cast<int>(255.999 * std::clamp(pixelColor.X, 0.0, 1.0));
-                    int g = static_cast<int>(255.999 * std::clamp(pixelColor.Y, 0.0, 1.0));
-                    int b = static_cast<int>(255.999 * std::clamp(pixelColor.Z, 0.0, 1.0));
-
-                    outfile << r << ' ' << g << ' ' << b << std::endl;
-                }
-            }
-            std::cout << "\nDone." << std::endl;
-            outfile.close();
-        } else {
-            // Interactive SFML display
+        if (displayMode) {
             auto displayManager = std::make_shared<RayTracer::SFMLDisplayManager>();
             displayManager->initialize(image_width, image_height, "Raytracer", false);
 
@@ -134,18 +136,14 @@ int main(int argc, char **argv) {
                 renderer.drawScene(*scene, *camera);
                 inputManager.processInput(scene, camera);
 
-                if (eventsManager->isKeyPressed("ESCAPE")) {
+                if (eventsManager->isKeyPressed("ESCAPE"))
                     displayManager->closeWindow();
-                }
             }
 
             scene->setCamera(*camera);
 
-            if (!director.saveSceneToFile(*scene, sceneFile)) {
+            if (!director.saveSceneToFile(*scene, sceneFile))
                 std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
-            } else {
-                std::cout << "Scene saved successfully to " << sceneFile << std::endl;
-            }
         }
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;

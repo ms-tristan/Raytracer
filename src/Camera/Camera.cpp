@@ -5,6 +5,8 @@
 ** File description:
 ** Camera
 */
+#include <iostream>
+#include <cmath>
 #include "Camera/Camera.hpp"
 #include "Transformation/Rotate/Rotate.hpp"
 
@@ -14,11 +16,19 @@ Camera::Camera()
 screen(Math::Point3D(Math::Coords{-1.0, -1.0, -1.0}),
 Math::Vector3D(Math::Coords{2.0, 0.0, 0.0}),
 Math::Vector3D(Math::Coords{0.0, 2.0, 0.0})),
-fov(90.0) {}
+fov(90.0),
+originalRotation(Math::Coords{0.0, 0.0, 0.0}),
+rotatedX(0.0),
+rotatedY(0.0),
+rotatedZ(0.0) {}
 
 Camera::Camera(const Math::Point3D &origin,
 const Rectangle3D &screen, double fov)
-: origin(origin), screen(screen), fov(fov) {
+: origin(origin), screen(screen), fov(fov),
+originalRotation(Math::Coords{0.0, 0.0, 0.0}),
+rotatedX(0.0),
+rotatedY(0.0),
+rotatedZ(0.0) {
     updateScreenForFOV();
 }
 
@@ -65,6 +75,7 @@ void Camera::translate(const Math::Vector3D &translation) {
 }
 
 void Camera::rotateX(double degrees) {
+    rotatedX += degrees;
     Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();
@@ -95,6 +106,7 @@ void Camera::rotateX(double degrees) {
 }
 
 void Camera::rotateY(double degrees) {
+    rotatedY += degrees;
     Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();
@@ -125,6 +137,7 @@ void Camera::rotateY(double degrees) {
 }
 
 void Camera::rotateZ(double degrees) {
+    rotatedZ += degrees;
     Math::Point3D screenCenter = screen.origin +
         screen.bottom_side * 0.5 + screen.left_side * 0.5;
     Math::Vector3D viewDir = (screenCenter - origin).normalize();
@@ -201,10 +214,20 @@ void Camera::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) con
 
     libconfig::Setting& rotation = setting->add("rotation", libconfig::Setting::TypeGroup);
 
-    Math::Vector3D rotationAngles = calculateRotationAngles();
-    rotation.add("x", libconfig::Setting::TypeFloat) = rotationAngles.X;
-    rotation.add("y", libconfig::Setting::TypeFloat) = rotationAngles.Y;
-    rotation.add("z", libconfig::Setting::TypeFloat) = rotationAngles.Z;
+    double totalRotationX = originalRotation.X + rotatedX;
+    double totalRotationY = originalRotation.Y + rotatedY;
+    double totalRotationZ = originalRotation.Z + rotatedZ;
+
+    rotation.add("x", libconfig::Setting::TypeFloat) = totalRotationX;
+    rotation.add("y", libconfig::Setting::TypeFloat) = totalRotationY;
+    rotation.add("z", libconfig::Setting::TypeFloat) = totalRotationZ;
+
+    const_cast<Camera*>(this)->originalRotation.X = totalRotationX;
+    const_cast<Camera*>(this)->originalRotation.Y = totalRotationY;
+    const_cast<Camera*>(this)->originalRotation.Z = totalRotationZ;
+    const_cast<Camera*>(this)->rotatedX = 0.0;
+    const_cast<Camera*>(this)->rotatedY = 0.0;
+    const_cast<Camera*>(this)->rotatedZ = 0.0;
 
     setting->add("fieldOfView", libconfig::Setting::TypeFloat) = fov;
 }

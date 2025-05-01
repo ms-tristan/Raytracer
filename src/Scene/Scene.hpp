@@ -31,6 +31,7 @@ class Scene {
     std::vector<std::shared_ptr<IPostProcess>> postProcessEffects;
     AmbientLight ambientLight;
     Camera camera;
+    static constexpr int maxReflectionDepth = 5;
 
  public:
     Scene() = default;
@@ -46,12 +47,12 @@ class Scene {
     bool isInShadow(const Math::Point3D &hitPoint,
       const Math::Vector3D &lightDir,
       const std::shared_ptr<ILight> &light) const;
-    Math::Vector3D computeColor(const Ray &ray) const;
+    Math::Vector3D computeColor(const Ray &ray, int depth = 0) const;
 
     std::vector<Math::Vector3D> applyPostProcessingToFrameBuffer(
         const std::vector<Math::Vector3D>& frameBuffer, int width, int height) const;
 
-        void writeColor(const Math::Vector3D &color);
+    void writeColor(const Math::Vector3D &color) const;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
     const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }

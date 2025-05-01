@@ -76,7 +76,10 @@ const {
     return false;
 }
 
-Math::Vector3D Scene::computeColor(const Ray &ray) const {
+Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
+    if (depth > maxReflectionDepth)
+        return Math::Vector3D(Math::Coords{0.0, 0.0, 0.0});
+
     auto hit = trace(ray);
     if (!hit)
         return Math::Vector3D(Math::Coords{0.0, 0.0, 0.0});
@@ -109,6 +112,21 @@ Math::Vector3D Scene::computeColor(const Ray &ray) const {
     pixelColor.Y = std::min(1.0, pixelColor.Y);
     pixelColor.Z = std::min(1.0, pixelColor.Z);
 
+    double reflectivity = hit->primitive->getMaterial()->reflectivity;
+    if (reflectivity > 0.0 && depth < maxReflectionDepth) {
+        double dotProduct = ray.direction.dot(hit->normal);
+        Math::Vector3D reflectionDir = ray.direction - hit->normal * (2.0 * dotProduct);
+        reflectionDir = reflectionDir.normalize();
+
+        double epsilon = 0.001;
+        Math::Point3D reflectionOrigin = hit->hitPoint + reflectionDir * epsilon;
+        Ray reflectionRay(reflectionOrigin, reflectionDir);
+
+        Math::Vector3D reflectedColor = computeColor(reflectionRay, depth + 1);
+
+        pixelColor = pixelColor * (1.0 - reflectivity) + reflectedColor * reflectivity;
+    }
+
     for (const auto& shader : shaders) {
         pixelColor = shader->apply(pixelColor, *hit, ray);
     }
@@ -128,7 +146,7 @@ std::vector<Math::Vector3D> Scene::applyPostProcessingToFrameBuffer(
     return processedBuffer;
 }
 
-void Scene::writeColor(const Math::Vector3D &color) {
+void Scene::writeColor(const Math::Vector3D &color) const {
     double r = std::sqrt(std::max(0.0, std::min(1.0, color.X)));
     double g = std::sqrt(std::max(0.0, std::min(1.0, color.Y)));
     double b = std::sqrt(std::max(0.0, std::min(1.0, color.Z)));

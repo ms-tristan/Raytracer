@@ -193,5 +193,6 @@ void Cone::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const
 
     mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
     mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+    mat.add("reflectivity", libconfig::Setting::TypeFloat) = material->reflectivity;
 }
 }  // namespace RayTracer

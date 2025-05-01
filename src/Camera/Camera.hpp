@@ -23,6 +23,10 @@ class Camera {
     Math::Point3D origin;
     Rectangle3D screen;
     double fov;
+    Math::Vector3D originalRotation;
+    double rotatedX;
+    double rotatedY;
+    double rotatedZ;
 
     Camera();
     Camera(const Math::Point3D &origin,
@@ -30,11 +34,15 @@ class Camera {
     void setFOV(double newFov);
     double getFOV() const;
     Ray ray(double u, double v) const;
+
     void rotateX(double degrees);
     void rotateY(double degrees);
     void rotateZ(double degrees);
+
     void translate(const Math::Vector3D &translation);
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const;
+    void setOriginalRotation(const Math::Vector3D& rotation) { originalRotation = rotation; }
+
  private:
     void updateScreenForFOV();
     Math::Vector3D calculateRotationAngles() const;

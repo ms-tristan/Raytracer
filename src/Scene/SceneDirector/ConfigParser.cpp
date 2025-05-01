@@ -74,11 +74,10 @@ Math::Vector3D ConfigParser::parseColor(const libconfig::Setting& setting) {
 void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) {
     Math::Point3D position;
 
-    if (setting.exists("position")) {
+    if (setting.exists("position"))
         position = parsePoint3D(setting["position"]);
-    } else {
+    else
         position = Math::Point3D(Math::Coords{0, 0, 5});
-    }
 
     Math::Vector3D forward(Math::Coords{0.0, 0.0, -1.0});
     Math::Vector3D up(Math::Coords{0.0, 1.0, 0.0});
@@ -104,18 +103,18 @@ void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<Scen
     if (setting.exists("rotation")) {
         Math::Vector3D rotation = parseVector3D(setting["rotation"]);
 
-        if (rotation.Y != 0.0) {
-            std::cout << "Rotating Y: " << rotation.Y << std::endl;
+        camera.setOriginalRotation(rotation);
+
+        if (std::isfinite(rotation.Y) && rotation.Y != 0.0)
             camera.rotateY(rotation.Y);
-        }
-        if (rotation.X != 0.0) {
-            std::cout << "Rotating X: " << rotation.X << std::endl;
-            camera.rotateX(rotation.X);
-        }
-        if (rotation.Z != 0.0) {
-            std::cout << "Rotating Z: " << rotation.Z << std::endl;
+        if (std::isfinite(rotation.Z) && rotation.Z != 0.0)
             camera.rotateZ(rotation.Z);
-        }
+        if (std::isfinite(rotation.X) && rotation.X != 0.0)
+            camera.rotateX(rotation.X);
+
+        camera.rotatedX = 0.0;
+        camera.rotatedY = 0.0;
+        camera.rotatedZ = 0.0;
     } else if (setting.exists("lookAt")) {
         Math::Point3D lookAt = parsePoint3D(setting["lookAt"]);
         Math::Vector3D forward = (lookAt - position).normalize();
@@ -130,16 +129,16 @@ void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<Scen
     }
 
     if (setting.exists("resolution")) {
-        int width = 1000, height = 1000;
+        int width = 800, height = 600;
         if (setting["resolution"].exists("width"))
             width = static_cast<int>(setting["resolution"]["width"]);
         if (setting["resolution"].exists("height"))
             height = static_cast<int>(setting["resolution"]["height"]);
 
-            double aspectRatio = static_cast<double>(width) / height;
+        double aspectRatio = static_cast<double>(width) / height;
 
         Math::Point3D screenCenter = camera.screen.origin +
-        camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
+            camera.screen.bottom_side * 0.5 + camera.screen.left_side * 0.5;
         Math::Vector3D viewDir = (screenCenter - camera.origin).normalize();
         Math::Vector3D rightDir = camera.screen.bottom_side.normalize();
         Math::Vector3D upDir = camera.screen.left_side.normalize();
@@ -151,7 +150,7 @@ void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<Scen
         camera.screen.bottom_side = rightDir * (halfWidth * 2.0);
         camera.screen.left_side = upDir * (halfHeight * 2.0);
         camera.screen.origin = screenCenter -
-        camera.screen.bottom_side * 0.5 - camera.screen.left_side * 0.5;
+            camera.screen.bottom_side * 0.5 - camera.screen.left_side * 0.5;
     }
 
     builder->setCamera(camera);
@@ -163,13 +162,11 @@ void LightsParser::parse(const libconfig::Setting& setting, std::shared_ptr<Scen
         ambientIntensity, ambientIntensity, ambientIntensity
     }));
 
-    if (setting.exists("point")) {
+    if (setting.exists("point"))
         parsePointLights(setting["point"], builder);
-    }
 
-    if (setting.exists("directional")) {
+    if (setting.exists("directional"))
         parseDirectionalLights(setting["directional"], builder);
-    }
 }
 
 void LightsParser::parsePointLights(const libconfig::Setting& lights, std::shared_ptr<SceneBuilder> builder) {
@@ -178,16 +175,14 @@ void LightsParser::parsePointLights(const libconfig::Setting& lights, std::share
         const libconfig::Setting& light = lights[i];
 
         Math::Point3D position;
-        if (light.exists("position")) {
+        if (light.exists("position"))
             position = parsePoint3D(light["position"]);
-        } else {
+        else
             position = parsePoint3D(light);
-        }
 
         Math::Vector3D color(Math::Coords{1.0, 1.0, 1.0});
-        if (light.exists("color")) {
+        if (light.exists("color"))
             color = parseColor(light["color"]);
-        }
 
         double constant = 1.0;
         double linear = 0.09;
@@ -218,16 +213,14 @@ void LightsParser::parseDirectionalLights(const libconfig::Setting& lights, std:
         const libconfig::Setting& light = lights[i];
 
         Math::Vector3D direction;
-        if (light.exists("direction")) {
+        if (light.exists("direction"))
             direction = parseVector3D(light["direction"]).normalize();
-        } else {
+        else
             direction = parseVector3D(light).normalize();
-        }
 
         Math::Vector3D color(Math::Coords{1.0, 1.0, 1.0});
-        if (light.exists("color")) {
+        if (light.exists("color"))
             color = parseColor(light["color"]);
-        }
 
         auto dirLight = std::make_shared<DirectionalLight>(direction, color);
         builder->addLight(dirLight);
@@ -243,9 +236,8 @@ void PrimitivesParser::parse(const libconfig::Setting& setting, std::shared_ptr<
     auto loadedPluginNames = pluginManager->getLoadedPluginNames();
 
     for (const auto& typeName : loadedPluginNames) {
-        if (setting.exists(typeName)) {
+        if (setting.exists(typeName))
             parsePluginPrimitives(typeName, setting[typeName.c_str()], builder);
-        }
     }
 }
 
@@ -306,11 +298,10 @@ void PostProcessParser::parsePluginPostProcess(const libconfig::Setting& postPro
 
         try {
             auto postProcessObj = pluginManager->createPostProcess(typeName, params);
-            if (postProcessObj) {
+            if (postProcessObj)
                 builder->addPostProcess(postProcessObj);
-            } else {
+            else
                 std::cerr << "Failed to create PostProcess effect of type: " << typeName << std::endl;
-            }
         } catch (const std::exception& ex) {
             std::cerr << "Error creating PostProcess effect: " << ex.what() << std::endl;
         }
@@ -330,9 +321,8 @@ std::map<std::string, double> PostProcessParser::extractParametersFromSetting(
     for (int i = 0; i < setting.getLength(); ++i) {
         const std::string& name = setting[i].getName();
 
-        if (name == "type") {
+        if (name == "type")
             continue;
-        }
 
         if (setting[i].getType() == libconfig::Setting::TypeFloat ||
             setting[i].getType() == libconfig::Setting::TypeInt) {
@@ -501,6 +491,12 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
 
     if (setting.exists("material") && setting["material"].exists("color")) {
         material->color = parseColor(setting["material"]["color"]);
+
+        if (setting["material"].exists("reflectivity")) {
+            material->reflectivity = static_cast<double>(setting["material"]["reflectivity"]);
+
+            material->reflectivity = std::max(0.0, std::min(1.0, material->reflectivity));
+        }
     } else if (setting.exists("color")) {
         material->color = parseColor(setting["color"]);
     } else {

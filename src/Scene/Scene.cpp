@@ -84,8 +84,8 @@ Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
     if (!hit)
         return Math::Vector3D(Math::Coords{0.0, 0.0, 0.0});
 
-    Math::Vector3D pixelColor = hit->primitive->getMaterial()->color
-        * ambientLight.color;
+    auto material = hit->primitive->getMaterial();
+    Math::Vector3D pixelColor = material->color * ambientLight.color;
 
     for (const auto &light : lights) {
         Math::Vector3D lightDir = light->getLightDirection(hit->hitPoint);
@@ -103,8 +103,7 @@ Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
         if (shadowed)
             diffuseFactor *= 0.4;
 
-        Math::Vector3D diffuse = hit->primitive->getMaterial()->color *
-            lightColor * diffuseFactor;
+        Math::Vector3D diffuse = material->color * lightColor * diffuseFactor;
         pixelColor += diffuse;
     }
 
@@ -112,26 +111,63 @@ Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
     pixelColor.Y = std::min(1.0, pixelColor.Y);
     pixelColor.Z = std::min(1.0, pixelColor.Z);
 
-    double reflectivity = hit->primitive->getMaterial()->reflectivity;
+    double reflectivity = material->reflectivity;
+    double transparency = material->transparency;
+    double epsilon = 0.001;
+
+    Math::Vector3D resultColor = pixelColor * (1.0 - reflectivity - transparency);
+
     if (reflectivity > 0.0 && depth < maxReflectionDepth) {
         double dotProduct = ray.direction.dot(hit->normal);
         Math::Vector3D reflectionDir = ray.direction - hit->normal * (2.0 * dotProduct);
         reflectionDir = reflectionDir.normalize();
 
-        double epsilon = 0.001;
         Math::Point3D reflectionOrigin = hit->hitPoint + reflectionDir * epsilon;
         Ray reflectionRay(reflectionOrigin, reflectionDir);
 
         Math::Vector3D reflectedColor = computeColor(reflectionRay, depth + 1);
+        resultColor += reflectedColor * reflectivity;
+    }
 
-        pixelColor = pixelColor * (1.0 - reflectivity) + reflectedColor * reflectivity;
+    if (transparency > 0.0 && depth < maxReflectionDepth) {
+        Math::Vector3D refractionDir;
+        bool isEntering = ray.direction.dot(hit->normal) < 0;
+        Math::Vector3D normal = isEntering ? hit->normal : hit->normal * -1.0;
+
+        double n1 = isEntering ? 1.0 : material->refractionIndex;
+        double n2 = isEntering ? material->refractionIndex : 1.0;
+        double ratio = n1 / n2;
+        double cosI = -normal.dot(ray.direction);
+        double sinT2 = ratio * ratio * (1.0 - cosI * cosI);
+
+        if (sinT2 < 1.0) {
+            double cosT = std::sqrt(1.0 - sinT2);
+            refractionDir = ray.direction * ratio + normal * (ratio * cosI - cosT);
+            refractionDir = refractionDir.normalize();
+
+            Math::Point3D refractionOrigin = hit->hitPoint + refractionDir * epsilon;
+            Ray refractionRay(refractionOrigin, refractionDir);
+
+            Math::Vector3D refractedColor = computeColor(refractionRay, depth + 1);
+            resultColor += refractedColor * transparency;
+        } else {
+            double dotProduct = ray.direction.dot(hit->normal);
+            Math::Vector3D reflectionDir = ray.direction - hit->normal * (2.0 * dotProduct);
+            reflectionDir = reflectionDir.normalize();
+
+            Math::Point3D reflectionOrigin = hit->hitPoint + reflectionDir * epsilon;
+            Ray reflectionRay(reflectionOrigin, reflectionDir);
+
+            Math::Vector3D reflectedColor = computeColor(reflectionRay, depth + 1);
+            resultColor += reflectedColor * transparency;
+        }
     }
 
     for (const auto& shader : shaders) {
-        pixelColor = shader->apply(pixelColor, *hit, ray);
+        resultColor = shader->apply(resultColor, *hit, ray);
     }
 
-    return pixelColor;
+    return resultColor;
 }
 
 std::vector<Math::Vector3D> Scene::applyPostProcessingToFrameBuffer(

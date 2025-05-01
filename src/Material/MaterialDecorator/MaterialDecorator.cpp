@@ -41,6 +41,8 @@ void MaterialDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> s
     mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
     mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
     mat.add("reflectivity", libconfig::Setting::TypeFloat) = overrideMaterial->reflectivity;
+    mat.add("transparency", libconfig::Setting::TypeFloat) = overrideMaterial->transparency;
+    mat.add("refractionIndex", libconfig::Setting::TypeFloat) = overrideMaterial->refractionIndex;
 }
 
 }  // namespace RayTracer

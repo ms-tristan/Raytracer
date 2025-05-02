@@ -28,9 +28,8 @@ std::shared_ptr<IPrimitive> MaterialDecorator::clone() const {
 void MaterialDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     PrimitiveDecorator::getLibConfigParams(setting);
 
-    if (setting->exists("material")) {
+    if (setting->exists("material"))
         setting->remove("material");
-    }
 
     libconfig::Setting& mat = setting->add("material", libconfig::Setting::TypeGroup);
 
@@ -41,6 +40,9 @@ void MaterialDecorator::getLibConfigParams(std::shared_ptr<libconfig::Setting> s
 
     mat.add("ambient", libconfig::Setting::TypeFloat) = 0.1;
     mat.add("diffuse", libconfig::Setting::TypeFloat) = 0.9;
+    mat.add("reflectivity", libconfig::Setting::TypeFloat) = overrideMaterial->reflectivity;
+    mat.add("transparency", libconfig::Setting::TypeFloat) = overrideMaterial->transparency;
+    mat.add("refractionIndex", libconfig::Setting::TypeFloat) = overrideMaterial->refractionIndex;
 }
 
 }  // namespace RayTracer

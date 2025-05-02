@@ -8,11 +8,14 @@
 #include "Material/Material.hpp"
 
 namespace RayTracer {
-Material::Material() {
+Material::Material() : reflectivity(0.0), transparency(0.0), refractionIndex(1.0) {
     const Math::Coords colors{1.0, 1.0, 1.0};
     color = Math::Vector3D(colors);
 }
 
-Material::Material(const Math::Vector3D &colors) : color(colors) {}
+Material::Material(const Math::Vector3D &colors, double reflectivity,
+    double transparency, double refractionIndex)
+    : color(colors), reflectivity(reflectivity),
+      transparency(transparency), refractionIndex(refractionIndex) {}
 
 }  // namespace RayTracer

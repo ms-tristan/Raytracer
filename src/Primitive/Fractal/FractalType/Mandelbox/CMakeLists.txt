@@ -1,0 +1,7 @@
+set(MANDELBOX_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/MandelboxFractal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MandelboxFractal.hpp
+)
+
+# Add sources to parent scope
+set(FRACTALTYPE_SOURCES ${FRACTALTYPE_SOURCES} ${MANDELBOX_SOURCES} PARENT_SCOPE)

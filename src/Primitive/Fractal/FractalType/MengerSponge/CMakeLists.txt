@@ -1,0 +1,7 @@
+set(MENGERSPONGE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/MengerSpongeFractal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MengerSpongeFractal.hpp
+)
+
+# Add sources to parent scope
+set(FRACTALTYPE_SOURCES ${FRACTALTYPE_SOURCES} ${MENGERSPONGE_SOURCES} PARENT_SCOPE)

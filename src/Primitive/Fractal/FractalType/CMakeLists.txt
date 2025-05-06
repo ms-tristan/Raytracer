@@ -3,7 +3,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Initialize list for collecting all fractal type sources
 set(FRACTALTYPE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/IFractalType.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/FractalTypeFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FractalTypeFactory.hpp
 )
 

@@ -7,19 +7,19 @@
 */
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 #include "Primitive/Fractal/FractalType/MengerSponge/MengerSpongeFractal.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
 
 namespace RayTracer {
 
-// Helper function for the Menger sponge - distance to a box
 double boxDistance(const Math::Vector3D& p, const Math::Vector3D& b) {
     Math::Vector3D d = Math::Vector3D(Math::Coords{
         std::abs(p.X) - b.X,
         std::abs(p.Y) - b.Y,
         std::abs(p.Z) - b.Z
     });
-    
+
     return std::min(std::max(d.X, std::max(d.Y, d.Z)), 0.0) +
            Math::Vector3D(Math::Coords{
                std::max(d.X, 0.0),
@@ -28,59 +28,58 @@ double boxDistance(const Math::Vector3D& p, const Math::Vector3D& b) {
            }).length();
 }
 
-// Main distance estimator for Menger sponge
+Math::Vector3D estimateNormalMenger(const Math::Point3D& p, const Math::Point3D& center,
+                          int maxIterations, double scale) {
+    const double EPSILON = 0.0001;
+    Math::Vector3D dx(Math::Coords{EPSILON, 0, 0});
+    Math::Vector3D dy(Math::Coords{0, EPSILON, 0});
+    Math::Vector3D dz(Math::Coords{0, 0, EPSILON});
+    MengerSpongeFractal fractal(scale);
+    double gx = fractal.distanceEstimator(p + dx, center, maxIterations, 0, 0) -
+              fractal.distanceEstimator(p - dx, center, maxIterations, 0, 0);
+    double gy = fractal.distanceEstimator(p + dy, center, maxIterations, 0, 0) -
+              fractal.distanceEstimator(p - dy, center, maxIterations, 0, 0);
+    double gz = fractal.distanceEstimator(p + dz, center, maxIterations, 0, 0) -
+              fractal.distanceEstimator(p - dz, center, maxIterations, 0, 0);
+    Math::Vector3D normal(Math::Coords{gx, gy, gz});
+    if (normal.length() < 1e-8) {
+        return (center - p).normalize();
+    }
+    return normal.normalize();
+}
+
 double MengerSpongeFractal::distanceEstimator(const Math::Point3D& point,
                                             const Math::Point3D& center,
                                             int maxIterations,
                                             double /*bailout*/,
                                             double /*power*/) const {
-    // Initialize position relative to center
     Math::Vector3D p = point - center;
-    
-    // Limit max iterations for the Menger sponge to prevent precision issues
-    int iterations = std::min(maxIterations, 6);
-    
-    // Distance to outer box (the basic shape of Menger sponge is a cube)
-    double d = boxDistance(p, Math::Vector3D(Math::Coords{1.0, 1.0, 1.0}));
-    
-    double s = 1.0;
-    
-    // Iterate to create the fractal detail
+    p = p / scale;
+    double d = boxDistance(p, Math::Vector3D(Math::Coords{1, 1, 1}));
+    int iterations = std::min(maxIterations, 3);
+    double m = 1.0;
     for (int i = 0; i < iterations; i++) {
-        // Scale coordinates by 3 for the standard Menger sponge
-        s *= 3.0 / scale;
-        
-        // Take absolute value and create the cross pattern
+        m *= 3.0;
         Math::Vector3D a = Math::Vector3D(Math::Coords{
-            std::fmod(std::abs(p.X * s), 3.0),
-            std::fmod(std::abs(p.Y * s), 3.0),
-            std::fmod(std::abs(p.Z * s), 3.0)
+            std::fmod(std::abs(p.X * m), 3.0),
+            std::fmod(std::abs(p.Y * m), 3.0),
+            std::fmod(std::abs(p.Z * m), 3.0)
         });
-        
-        // Subtract 1.5 from each component individually
-        a.X -= 1.5;
-        a.Y -= 1.5;
-        a.Z -= 1.5;
-        
-        // Calculate the cross pattern of the sponge
-        d = std::max(d, boxDistance(a, Math::Vector3D(Math::Coords{1.5, 1.5, 1.5})) / s);
-        
-        // Cross calculation - this removes the "crosses" from the cube
         Math::Vector3D r = Math::Vector3D(Math::Coords{
-            std::max(a.X - 1.0, 0.0),
-            std::max(a.Y - 1.0, 0.0),
-            std::max(a.Z - 1.0, 0.0)
+            a.X > 1.0 ? 3.0 - a.X : a.X,
+            a.Y > 1.0 ? 3.0 - a.Y : a.Y,
+            a.Z > 1.0 ? 3.0 - a.Z : a.Z
         });
-        
-        double crossDistance = std::min(
-            std::max(r.X, std::max(r.Y, r.Z)),
-            0.0
-        );
-        
-        d = std::max(d, -crossDistance / s);
+        double s = 1.0;
+        double v = 1.0;
+        double crossDist = std::max(r.X, std::max(r.Y, r.Z)) - s;
+        int count = (r.X > s ? 1 : 0) + (r.Y > s ? 1 : 0) + (r.Z > s ? 1 : 0);
+        if (count >= 2) {
+            d = std::max(d, crossDist / m);
+        }
     }
-    
-    return d * 0.5; // Scale factor for better visualization
+    double finalDistance = d * 0.4;
+    return std::max(0.0001, finalDistance);
 }
 
 }  // namespace RayTracer

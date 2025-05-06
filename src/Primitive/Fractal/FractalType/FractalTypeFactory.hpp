@@ -24,55 +24,43 @@ namespace RayTracer {
 
 class FractalTypeFactory {
  private:
-    // Make constructor private for singleton pattern
     FractalTypeFactory() {
-        // Register all known fractal types
         registerType("mandelbrot", []() { return std::make_shared<MandelbrotFractal>(); });
         registerType("1.0", []() { return std::make_shared<MandelbrotFractal>(); });
-        
+
         registerType("julia", []() { return std::make_shared<JuliaFractal>(); });
         registerType("2.0", []() { return std::make_shared<JuliaFractal>(); });
-        
+
         registerType("mandelbox", []() { return std::make_shared<MandelboxFractal>(); });
         registerType("3.0", []() { return std::make_shared<MandelboxFractal>(); });
-        
+
         registerType("menger_sponge", []() { return std::make_shared<MengerSpongeFractal>(); });
         registerType("4.0", []() { return std::make_shared<MengerSpongeFractal>(); });
-        
+
         registerType("sierpinski_tetrahedron", []() { return std::make_shared<SierpinskiTetrahedronFractal>(); });
         registerType("5.0", []() { return std::make_shared<SierpinskiTetrahedronFractal>(); });
-        
+
         registerType("quaternion_julia", []() { return std::make_shared<QuaternionJuliaFractal>(); });
         registerType("6.0", []() { return std::make_shared<QuaternionJuliaFractal>(); });
     }
-
-    // Map of fractal type names to creation functions
     std::unordered_map<std::string, std::function<std::shared_ptr<IFractalType>()>> creators;
-    
-    // Helper to register a new fractal type
     void registerType(const std::string& name, std::function<std::shared_ptr<IFractalType>()> creator) {
         creators[name] = creator;
     }
-    
+
  public:
-    // Singleton pattern accessor
     static FractalTypeFactory& getInstance() {
         static FractalTypeFactory instance;
         return instance;
     }
-
-    // Delete copy constructor and assignment operator
     FractalTypeFactory(const FractalTypeFactory&) = delete;
     void operator=(const FractalTypeFactory&) = delete;
 
-    // Create a fractal type by name
     std::shared_ptr<IFractalType> createFractalType(const std::string& name) {
         auto it = creators.find(name);
         if (it != creators.end()) {
             return it->second();
         }
-        
-        // Default to mandelbrot if name not found
         return std::make_shared<MandelbrotFractal>();
     }
 };

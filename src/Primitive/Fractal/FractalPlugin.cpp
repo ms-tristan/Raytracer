@@ -26,6 +26,9 @@
 
 namespace RayTracer {
 
+// This function implements a more robust approach to determine the fractal type
+std::string determineFractalType(const std::map<std::string, double>& params);
+
 class FractalPlugin : public IPrimitivePlugin {
  public:
     ~FractalPlugin() override = default;
@@ -52,69 +55,23 @@ class FractalPlugin : public IPrimitivePlugin {
         };
         Math::Point3D center(centerCoords);
         double boundingRadius = params.at("boundingRadius");
-        
-        std::string fractalType = "mandelbrot";
-        if (params.find("fractalType") != params.end()) {
-            try {
-                
-                double fractalTypeValue = params.at("fractalType");
-                int typeId = static_cast<int>(std::round(fractalTypeValue));
-                
-                std::cout << "Processing fractal with center ("
-                          << center.X << ", " << center.Y << ", " << center.Z
-                          << "), radius " << boundingRadius << std::endl;
-                std::cout << "Processing fractalType value: " << fractalTypeValue
-                          << " (rounded to: " << typeId << ")" << std::endl;
-                
-                switch (typeId) {
-                    case 1: fractalType = "mandelbrot"; break;
-                    case 2: fractalType = "julia"; break;
-                    case 3: fractalType = "mandelbox"; break;
-                    case 4: fractalType = "menger_sponge"; break;
-                    case 5: fractalType = "sierpinski_tetrahedron"; break;
-                    case 6: fractalType = "sierpinski_pyramid"; break;
-                    case 7: fractalType = "quaternion_julia"; break;
-                    case 8: fractalType = "qjulia_flower"; break;
-                    case 9: fractalType = "qjulia_spiral"; break;
-                    case 10: fractalType = "qjulia_cosmic"; break;
-                    default: 
-                        std::cerr << "Warning: Unknown fractal type ID: " << typeId
-                                  << ". Using default type 'mandelbrot'." << std::endl;
-                        fractalType = "mandelbrot";
-                }
-                
-                std::cout << "Selected fractal type: " << fractalType << std::endl;
-            } catch (const std::exception& e) {
-                std::cerr << "Error processing fractalType parameter: " << e.what() << std::endl;
-                std::cerr << "Using default type 'mandelbrot'." << std::endl;
-            }
-        } else {
-            std::cout << "No fractalType parameter found, using default: mandelbrot" << std::endl;
-        }
-        
-        // Get iteration parameters with defaults
+        std::string fractalType = determineFractalType(params);
+        std::cout << "Selected fractal type: " << fractalType << std::endl;
         int maxIterations = params.find("maxIterations") != params.end()
                             ? static_cast<int>(std::round(params.at("maxIterations"))) : 15;
         double bailout = params.find("bailout") != params.end()
                          ? params.at("bailout") : 4.0;
-        
         std::cout << "Creating fractal with maxIterations=" << maxIterations
                   << ", bailout=" << bailout << std::endl;
-        
-        // Create the fractal primitive
         auto fractal = std::make_shared<Fractal>(center, boundingRadius,
                                               fractalType, maxIterations,
                                               bailout, material);
-        
-        // Set common parameters if they exist
         if (params.find("power") != params.end()) {
             fractal->setPower(params.at("power"));
             std::cout << "Setting power=" << params.at("power") << std::endl;
         }
-        
-        // Julia coordinate access fix
-        if (fractalType == "julia" && 
-            params.find("julia_x") != params.end() && 
+        if (fractalType == "julia" &&
+            params.find("julia_x") != params.end() &&
             params.find("julia_y") != params.end() &&
             params.find("julia_z") != params.end()) {
             Math::Coords juliaCoords {
@@ -123,9 +80,9 @@ class FractalPlugin : public IPrimitivePlugin {
                 params.at("julia_z")
             };
             fractal->setJuliaConstant(Math::Point3D(juliaCoords));
-            std::cout << "Setting Julia constants: (" 
-                      << juliaCoords.Xcoords << ", " 
-                      << juliaCoords.Ycoords << ", " 
+            std::cout << "Setting Julia constants: ("
+                      << juliaCoords.Xcoords << ", "
+                      << juliaCoords.Ycoords << ", "
                       << juliaCoords.Zcoords << ")" << std::endl;
         } else if (fractalType == "julia") {
             // Set default Julia constants if not specified
@@ -133,24 +90,20 @@ class FractalPlugin : public IPrimitivePlugin {
             fractal->setJuliaConstant(Math::Point3D(juliaCoords));
             std::cout << "Setting default Julia constants: (0.3, 0.5, 0.4)" << std::endl;
         }
-        
-        // Set Quaternion Julia parameters if they exist
         if ((fractalType == "quaternion_julia" || fractalType == "qjulia_flower" ||
              fractalType == "qjulia_spiral" || fractalType == "qjulia_cosmic") &&
             params.find("qjulia_x") != params.end() &&
             params.find("qjulia_y") != params.end() &&
             params.find("qjulia_z") != params.end() &&
             params.find("qjulia_w") != params.end()) {
-                
             double qx = params.at("qjulia_x");
             double qy = params.at("qjulia_y");
             double qz = params.at("qjulia_z");
             double qw = params.at("qjulia_w");
-            
             fractal->setQuaternionConstant(qx, qy, qz, qw);
-            std::cout << "Setting Quaternion Julia constants: (" 
+            std::cout << "Setting Quaternion Julia constants: ("
                       << qx << ", " << qy << ", " << qz << ", " << qw << ")" << std::endl;
-        } else if (fractalType == "quaternion_julia" || fractalType == "qjulia_flower" || 
+        } else if (fractalType == "quaternion_julia" || fractalType == "qjulia_flower" ||
                    fractalType == "qjulia_spiral" || fractalType == "qjulia_cosmic") {
             // Set default Quaternion Julia constants if not specified
             switch (fractalType[0]) {
@@ -172,7 +125,6 @@ class FractalPlugin : public IPrimitivePlugin {
             }
             std::cout << "Setting default Quaternion Julia constants based on type" << std::endl;
         }
-        
         // Set Menger Sponge parameters if they exist
         if (fractalType == "menger_sponge" && params.find("menger_scale") != params.end()) {
             fractal->setMengerScale(params.at("menger_scale"));
@@ -182,9 +134,8 @@ class FractalPlugin : public IPrimitivePlugin {
             fractal->setMengerScale(3.0);
             std::cout << "Setting default Menger scale: 3.0" << std::endl;
         }
-        
         // Set Sierpinski parameters if they exist
-        if ((fractalType == "sierpinski_tetrahedron" || fractalType == "sierpinski_pyramid") && 
+        if ((fractalType == "sierpinski_tetrahedron" || fractalType == "sierpinski_pyramid") &&
             params.find("sierpinski_scale") != params.end()) {
             bool useTetrahedron = fractalType == "sierpinski_tetrahedron";
             if (params.find("sierpinski_tetrahedron") != params.end()) {
@@ -221,6 +172,104 @@ class FractalPlugin : public IPrimitivePlugin {
         return {"x", "y", "z", "boundingRadius"};
     }
 };
+
+// This function implements a more robust approach to determine the fractal type
+std::string determineFractalType(const std::map<std::string, double>& params) {
+    // Default to mandelbrot
+    std::string fractalType = "mandelbrot";
+    if (params.find("fractalType") != params.end()) {
+        double fractalTypeValue = params.at("fractalType");
+        // Check if it's NaN (which would indicate it might be a string)
+        if (std::isnan(fractalTypeValue)) {
+            std::cout << "FractalType is detected as a string (NaN value)" << std::endl;
+            // Debug: List all parameters we have
+            std::cout << "Available parameters: ";
+            for (const auto& pair : params) {
+                std::cout << pair.first << "=" << pair.second << " ";
+            }
+            std::cout << std::endl;
+            // Forced detection of quaternion_julia based on qjulia parameters
+            if (params.find("qjulia_x") != params.end() &&
+                params.find("qjulia_y") != params.end() &&
+                params.find("qjulia_z") != params.end() &&
+                params.find("qjulia_w") != params.end()) {
+                fractalType = "quaternion_julia";
+                std::cout << "Forced detection of quaternion_julia based on parameters" << std::endl;
+                return fractalType;
+            }
+            // Try direct string mapping
+            for (const auto& pair : params) {
+                // Look for special parameters that might indicate the fractal type as a string
+                if (pair.first.find("fractalType_") == 0) {
+                    std::string typeName = pair.first.substr(12); // Remove "fractalType_" prefix
+                    // Check for known types
+                    if (typeName == "string_mandelbrot" || typeName == "mandelbrot") {
+                        fractalType = "mandelbrot";
+                        std::cout << "Detected string fractalType: mandelbrot" << std::endl;
+                    } else if (typeName == "string_julia" || typeName == "julia") {
+                        fractalType = "julia";
+                        std::cout << "Detected string fractalType: julia" << std::endl;
+                    } else if (typeName == "string_mandelbox" || typeName == "mandelbox") {
+                        fractalType = "mandelbox";
+                        std::cout << "Detected string fractalType: mandelbox" << std::endl;
+                    } else if (typeName == "string_menger_sponge" || typeName == "menger_sponge") {
+                        fractalType = "menger_sponge";
+                        std::cout << "Detected string fractalType: menger_sponge" << std::endl;
+                    } else if (typeName == "string_sierpinski_tetrahedron" || typeName == "sierpinski_tetrahedron") {
+                        fractalType = "sierpinski_tetrahedron";
+                        std::cout << "Detected string fractalType: sierpinski_tetrahedron" << std::endl;
+                    } else if (typeName == "string_quaternion_julia" || typeName == "quaternion_julia") {
+                        fractalType = "quaternion_julia";
+                        std::cout << "Detected string fractalType: quaternion_julia" << std::endl;
+                    } else {
+                        std::cout << "Unknown fractal type string: " << typeName << std::endl;
+                    }
+                    // Once we found a type, no need to check further
+                    if (fractalType != "mandelbrot") {
+                        return fractalType;
+                    }
+                }
+            }
+        } else {
+            // It's a numeric value, use the original approach
+            int typeId = static_cast<int>(std::round(fractalTypeValue));
+            // Map numeric IDs to type names
+            switch (typeId) {
+                case 1: return "mandelbrot";
+                case 2: return "julia";
+                case 3: return "mandelbox";
+                case 4: return "menger_sponge";
+                case 5: return "sierpinski_tetrahedron";
+                case 6: return "sierpinski_pyramid";
+                case 7: return "quaternion_julia";
+                case 8: return "qjulia_flower";
+                case 9: return "qjulia_spiral";
+                case 10: return "qjulia_cosmic";
+                default:
+                    std::cerr << "Unknown fractal type ID: " << typeId << ". Using default type." << std::endl;
+                    break; // Will use default "mandelbrot"
+            }
+        }
+    }
+    // Check for type-specific parameters to infer the fractal type as a fallback
+    if (params.find("julia_x") != params.end() && params.find("julia_y") != params.end()) {
+        fractalType = "julia";
+        std::cout << "Detected Julia type from julia_x and julia_y parameters" << std::endl;
+    } else if (params.find("mandelbox_scale") != params.end() || params.find("mandelbox_minRadius") != params.end()) {
+        fractalType = "mandelbox";
+        std::cout << "Detected Mandelbox type from mandelbox_* parameters" << std::endl;
+    } else if (params.find("menger_scale") != params.end()) {
+        fractalType = "menger_sponge";
+        std::cout << "Detected Menger Sponge type from menger_scale parameter" << std::endl;
+    } else if (params.find("sierpinski_scale") != params.end()) {
+        fractalType = "sierpinski_tetrahedron";
+        std::cout << "Detected Sierpinski type from sierpinski_scale parameter" << std::endl;
+    } else if (params.find("qjulia_x") != params.end() || params.find("qjulia_w") != params.end()) {
+        fractalType = "quaternion_julia";
+        std::cout << "Detected Quaternion Julia type from qjulia_* parameters" << std::endl;
+    }
+    return fractalType;
+}
 
 extern "C" {
     IPrimitivePlugin* createPrimitivePlugin() {

@@ -141,7 +141,6 @@ int main(int argc, char **argv) {
             if (!director.saveSceneToFile(*scene, sceneFile))
                 std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
         }
-    }
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;

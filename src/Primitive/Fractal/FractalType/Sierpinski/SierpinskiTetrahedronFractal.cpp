@@ -36,8 +36,10 @@ Math::Vector3D estimateNormalSierpinski(const Math::Point3D& p, const Math::Poin
 double SierpinskiTetrahedronFractal::distanceEstimator(const Math::Point3D& point,
                                           const Math::Point3D& center,
                                           int maxIterations,
-                                          double /*bailout*/,
-                                          double /*power*/) const {
+                                          double bailout,
+                                          double power) const {
+    (void)bailout;
+    (void)power;
     Math::Vector3D p = point - center;
     double r = 2.0;
     Math::Vector3D z = p;

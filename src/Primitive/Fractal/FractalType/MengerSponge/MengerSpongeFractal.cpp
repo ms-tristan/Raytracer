@@ -51,8 +51,10 @@ Math::Vector3D estimateNormalMenger(const Math::Point3D& p, const Math::Point3D&
 double MengerSpongeFractal::distanceEstimator(const Math::Point3D& point,
                                             const Math::Point3D& center,
                                             int maxIterations,
-                                            double /*bailout*/,
-                                            double /*power*/) const {
+                                            double bailout,
+                                            double power) const {
+    (void)bailout;
+    (void)power;
     Math::Vector3D p = point - center;
     p = p / scale;
     double d = boxDistance(p, Math::Vector3D(Math::Coords{1, 1, 1}));

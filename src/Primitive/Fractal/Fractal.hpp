@@ -24,24 +24,17 @@ class Fractal : public IPrimitive, public std::enable_shared_from_this<Fractal> 
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
-
-    // Fractal specific parameters
     int maxIterations;
     double bailout;
     double power;
     std::shared_ptr<IFractalType> fractalType;
-
-    // Ray marching algorithm for rendering the fractal
     std::optional<HitInfo> rayMarch(const Ray& ray, double tMin, double tMax) const;
-
-    // Calculate the normal at a point using the distance estimator
     Math::Vector3D estimateNormal(const Math::Point3D& p) const;
 
  public:
     Math::Point3D center;
     double boundingRadius;
 
-    // Constructors
     Fractal(const Math::Point3D &center, double boundingRadius,
             const std::string &fractalTypeName, int maxIterations, double bailout);
     Fractal(const Math::Point3D &center, double boundingRadius,
@@ -57,24 +50,17 @@ class Fractal : public IPrimitive, public std::enable_shared_from_this<Fractal> 
         return Fractal::getTypeNameStatic();
     }
 
-    // Fractal type methods
     void setFractalType(const std::string& name);
     std::string getFractalTypeName() const;
     std::shared_ptr<IFractalType> getFractalType() const;
-
-    // Parameter setters
     void setPower(double p);
     void setMaxIterations(int iterations);
     void setBailout(double b);
-
-    // Special parameter setters for specific fractal types
     void setJuliaConstant(const Math::Point3D& c);
     void setQuaternionConstant(double cx, double cy, double cz, double cw);
     void setMengerScale(double scale);
     void setSierpinskiParameters(double scale, bool useTetrahedron);
     void setMandelboxParameters(double scale, double minRadius, double foldingLimit);
-
-    // Inherited methods from IPrimitive
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;

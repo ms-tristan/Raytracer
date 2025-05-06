@@ -8,7 +8,3 @@ set_target_properties(kleinbottle_plugin PROPERTIES
     PREFIX ""
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/primitives"
 )
-
-if(APPLE)
-    set_target_properties(kleinbottle_plugin PROPERTIES SUFFIX ".dylib")
-endif()

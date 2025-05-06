@@ -5,7 +5,6 @@
 ** File description:
 ** Mobius Strip Plugin implementation
 */
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -29,29 +28,36 @@ class MobiusStripPlugin : public IPrimitivePlugin {
     std::shared_ptr<IPrimitive> createPrimitive(
         const std::map<std::string, double>& params,
         const std::shared_ptr<Material>& material) override {
+        validateParameters(params);
+        Math::Point3D center = createCenter(params);
+        return std::make_shared<MobiusStrip>(center,
+                                            params.at("major_radius"),
+                                            params.at("minor_radius"),
+                                            params.at("thickness"),
+                                            material);
+    }
+
+    std::vector<std::string> getRequiredParameters() const override {
+        return {"x", "y", "z", "major_radius", "minor_radius", "thickness"};
+    }
+
+ private:
+    void validateParameters(const std::map<std::string, double>& params) const {
         auto requiredParams = getRequiredParameters();
         for (const auto& param : requiredParams) {
             if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: "
-                    + param);
+                throw std::runtime_error("Missing required parameter: " + param);
             }
         }
+    }
 
+    Math::Point3D createCenter(const std::map<std::string, double>& params) const {
         Math::Coords centerCoords {
             params.at("x"),
             params.at("y"),
             params.at("z")
         };
-        Math::Point3D center(centerCoords);
-        double majorRadius = params.at("major_radius");
-        double minorRadius = params.at("minor_radius");
-        double thickness = params.at("thickness");
-
-        return std::make_shared<MobiusStrip>(center, majorRadius, minorRadius, thickness, material);
-    }
-
-    std::vector<std::string> getRequiredParameters() const override {
-        return {"x", "y", "z", "major_radius", "minor_radius", "thickness"};
+        return Math::Point3D(centerCoords);
     }
 };
 

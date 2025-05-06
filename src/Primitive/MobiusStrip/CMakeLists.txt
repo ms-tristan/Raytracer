@@ -1,12 +1,14 @@
 file(GLOB Mobius_SOURCES "*.cpp")
+file(GLOB Mobius_UTILS_SOURCES "Utils/*.cpp")
 
 # Add the core Mobius sources to the main raytracer library
 set(MOBIUS_CORE_SOURCES
     MobiusStrip.cpp
+    ${Mobius_UTILS_SOURCES}
 )
 
 # Create a shared library for the Mobius plugin
-add_library(Mobius_plugin SHARED MobiusStripPlugin.cpp MobiusStrip.cpp)
+add_library(Mobius_plugin SHARED MobiusStripPlugin.cpp MobiusStrip.cpp ${Mobius_UTILS_SOURCES})
 target_include_directories(Mobius_plugin PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(Mobius_plugin PRIVATE raytracer_core)
 set_target_properties(Mobius_plugin PROPERTIES

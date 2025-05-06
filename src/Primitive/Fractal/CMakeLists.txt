@@ -20,9 +20,3 @@ set_target_properties(fractal_plugin PROPERTIES
     SUFFIX ".so"
     OUTPUT_NAME "fractal_plugin"
 )
-
-add_custom_command(TARGET fractal_plugin POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/plugins/primitives
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:fractal_plugin> ${CMAKE_SOURCE_DIR}/plugins/primitives/
-    COMMENT "Copying fractal_plugin.so to ${CMAKE_SOURCE_DIR}/plugins/primitives/"
-)

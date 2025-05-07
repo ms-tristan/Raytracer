@@ -8,10 +8,10 @@
 
 #ifndef SRC_EXCEPTION_SCENEIMPORTEXCEPTION_HPP_
     #define SRC_EXCEPTION_SCENEIMPORTEXCEPTION_HPP_
+    #include <sstream>
+    #include <string>
+    #include "Exception/BaseException.hpp"
 
-#include "Exception/BaseException.hpp"
-#include <sstream>
-#include <string>
 
 namespace RayTracer {
 
@@ -22,7 +22,7 @@ class SceneImportException : public BaseException {
  public:
     /**
      * @brief Construct a new Scene Import Exception object
-     * 
+     *
      * @param scenePath Path to the scene file that couldn't be imported
      * @param reason The reason for the import failure
      */
@@ -33,7 +33,7 @@ class SceneImportException : public BaseException {
  private:
     /**
      * @brief Create a descriptive error message
-     * 
+     *
      * @param scenePath Scene file path
      * @param reason Reason for import failure
      * @return std::string Error message

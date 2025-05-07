@@ -8,10 +8,10 @@
 
 #ifndef SRC_EXCEPTION_FILEIOEXCEPTION_HPP_
     #define SRC_EXCEPTION_FILEIOEXCEPTION_HPP_
+    #include <sstream>
+    #include <string>
+    #include "Exception/BaseException.hpp"
 
-#include "Exception/BaseException.hpp"
-#include <sstream>
-#include <string>
 
 namespace RayTracer {
 
@@ -22,7 +22,7 @@ class FileIOException : public BaseException {
  public:
     /**
      * @brief Construct a new File IO Exception object
-     * 
+     *
      * @param filePath Path to the file that caused the error
      * @param operation The operation that failed (e.g., "read", "write", "open")
      * @param reason Additional information about the failure
@@ -34,7 +34,7 @@ class FileIOException : public BaseException {
  private:
     /**
      * @brief Create a descriptive error message
-     * 
+     *
      * @param filePath File path
      * @param operation Operation that failed
      * @param reason Additional information
@@ -45,9 +45,8 @@ class FileIOException : public BaseException {
                                   const std::string& reason) {
         std::stringstream ss;
         ss << "File " << operation << " error for '" << filePath << "'";
-        if (!reason.empty()) {
+        if (!reason.empty())
             ss << ": " << reason;
-        }
         return ss.str();
     }
 };

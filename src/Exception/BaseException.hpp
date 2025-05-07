@@ -8,9 +8,8 @@
 
 #ifndef SRC_EXCEPTION_BASEEXCEPTION_HPP_
     #define SRC_EXCEPTION_BASEEXCEPTION_HPP_
-
-#include "Exception/IException.hpp"
-#include <string>
+    #include <string>
+    #include "Exception/IException.hpp"
 
 namespace RayTracer {
 
@@ -25,16 +24,16 @@ class BaseException : public IException {
  public:
     /**
      * @brief Construct a new Base Exception object
-     * 
+     *
      * @param message Error message
      * @param errorCode Error code (default: 84)
      */
     explicit BaseException(const std::string& message, int errorCode = 84) noexcept
         : _message(message), _errorCode(errorCode) {}
-    
+
     /**
      * @brief Construct a new Base Exception object
-     * 
+     *
      * @param message Error message
      * @param errorCode Error code (default: 84)
      */
@@ -43,7 +42,7 @@ class BaseException : public IException {
 
     /**
      * @brief Get the error message
-     * 
+     *
      * @return const char* Error message
      */
     const char* what() const noexcept override {
@@ -52,7 +51,7 @@ class BaseException : public IException {
 
     /**
      * @brief Get the error code
-     * 
+     *
      * @return int Error code
      */
     int getErrorCode() const noexcept override {

@@ -8,10 +8,10 @@
 
 #ifndef SRC_EXCEPTION_VALUERANGEEXCEPTION_HPP_
     #define SRC_EXCEPTION_VALUERANGEEXCEPTION_HPP_
+    #include <sstream>
+    #include <string>
+    #include "Exception/BaseException.hpp"
 
-#include "Exception/BaseException.hpp"
-#include <sstream>
-#include <string>
 
 namespace RayTracer {
 
@@ -22,7 +22,7 @@ class ValueRangeException : public BaseException {
  public:
     /**
      * @brief Construct a new Value Range Exception object
-     * 
+     *
      * @param paramName The name of the parameter that is out of range
      * @param value The invalid value
      * @param minValue The minimum valid value
@@ -35,7 +35,7 @@ class ValueRangeException : public BaseException {
  private:
     /**
      * @brief Create a descriptive error message
-     * 
+     *
      * @param paramName Parameter name
      * @param value Invalid value
      * @param minValue Minimum valid value

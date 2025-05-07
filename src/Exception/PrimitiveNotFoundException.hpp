@@ -8,10 +8,10 @@
 
 #ifndef SRC_EXCEPTION_PRIMITIVENOTFOUNDEXCEPTION_HPP_
     #define SRC_EXCEPTION_PRIMITIVENOTFOUNDEXCEPTION_HPP_
+    #include <sstream>
+    #include <string>
+    #include "Exception/BaseException.hpp"
 
-#include "Exception/BaseException.hpp"
-#include <sstream>
-#include <string>
 
 namespace RayTracer {
 
@@ -22,7 +22,7 @@ class PrimitiveNotFoundException : public BaseException {
  public:
     /**
      * @brief Construct a new Primitive Not Found Exception object
-     * 
+     *
      * @param primitiveType The type of primitive (e.g., "sphere", "cone")
      * @param primitiveId The identifier of the primitive (if available)
      */
@@ -33,7 +33,7 @@ class PrimitiveNotFoundException : public BaseException {
  private:
     /**
      * @brief Create a descriptive error message
-     * 
+     *
      * @param primitiveType The primitive type
      * @param primitiveId The primitive identifier (if available)
      * @return std::string Error message

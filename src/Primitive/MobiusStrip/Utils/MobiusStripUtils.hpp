@@ -40,7 +40,7 @@ bool checkBoundingSphereIntersection(const Ray& ray, const Math::Point3D& center
 Ray transformRayForRotation(const Ray& ray, double rotationX, double rotationY, double rotationZ);
 Math::Vector3D rotateNormal(const Math::Vector3D& normal, double rotationX, double rotationY, double rotationZ);
 
-}
+}  // namespace MobiusStripUtils
 }  // namespace RayTracer
 
 #endif  // SRC_PRIMITIVE_MOBIUSSTRIP_UTILS_MOBIUSSTRIPUTILS_HPP_

@@ -150,6 +150,7 @@ std::shared_ptr<IPrimitive> Cylinder::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 

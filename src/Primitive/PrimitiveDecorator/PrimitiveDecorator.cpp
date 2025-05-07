@@ -6,6 +6,7 @@
 ** PrimitiveDecorator
 */
 #include <memory>
+#include <string>
 #include <utility>
 #include "PrimitiveDecorator.hpp"
 
@@ -28,6 +29,14 @@ void PrimitiveDecorator::rotateY(double degrees) {
 
 void PrimitiveDecorator::rotateZ(double degrees) {
     wrappedPrimitive->rotateZ(degrees);
+}
+
+void PrimitiveDecorator::setSourceFile(const std::string& source) {
+    wrappedPrimitive->setSourceFile(source);
+}
+
+std::string PrimitiveDecorator::getSourceFile() const {
+    return wrappedPrimitive->getSourceFile();
 }
 
 std::optional<HitInfo> PrimitiveDecorator::hit(const Ray &ray,

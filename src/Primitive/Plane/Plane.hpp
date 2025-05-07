@@ -21,6 +21,7 @@ class Plane : public IPrimitive, public std::enable_shared_from_this<Plane> {
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
+    std::string sourceFile = "";
 
  public:
     Math::Point3D position;
@@ -37,6 +38,14 @@ class Plane : public IPrimitive, public std::enable_shared_from_this<Plane> {
 
     std::string getTypeName() const override {
         return Plane::getTypeNameStatic();
+    }
+
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
     }
 
     void translate(const Math::Vector3D &translation) override;

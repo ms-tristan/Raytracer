@@ -21,6 +21,7 @@ class MobiusStrip : public IPrimitive, public std::enable_shared_from_this<Mobiu
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
+    std::string sourceFile = "";
 
  public:
     Math::Point3D center;   // Center of the Möbius strip
@@ -41,6 +42,14 @@ class MobiusStrip : public IPrimitive, public std::enable_shared_from_this<Mobiu
 
     std::string getTypeName() const override {
         return MobiusStrip::getTypeNameStatic();
+    }
+
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
     }
 
     void translate(const Math::Vector3D &translation) override;

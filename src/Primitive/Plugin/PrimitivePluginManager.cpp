@@ -14,6 +14,8 @@
 #include <string>
 #include <map>
 #include "PrimitivePluginManager.hpp"
+#include "Exception/PrimitiveNotFoundException.hpp"
+#include "Exception/InvalidOperationException.hpp"
 
 namespace RayTracer {
 
@@ -109,7 +111,7 @@ const std::string& typeName) {
     if (it != loadedPlugins.end()) {
         return it->second.plugin;
     }
-    return nullptr;
+    throw PrimitiveNotFoundException(typeName);
 }
 
 std::vector<std::string> PrimitivePluginManager::getLoadedPluginNames() const {
@@ -127,14 +129,18 @@ const std::shared_ptr<Material>& material) {
     auto plugin = getPlugin(typeName);
     if (!plugin) {
         std::cerr << "Plugin not found: " << typeName << std::endl;
-        return nullptr;
+        throw PrimitiveNotFoundException(typeName + " (plugin not loaded or does not exist)");
     }
 
     try {
         return plugin->createPrimitive(params, material);
+    } catch (const IException& e) {
+        std::cerr << "Error creating primitive " << typeName << ": " << e.what() << std::endl;
+        throw;
     } catch (const std::exception& e) {
-        std::cerr << "Error creating primitive: " << e.what() << std::endl;
-        return nullptr;
+        std::cerr << "Error creating primitive " << typeName << ": " << e.what() << std::endl;
+        throw InvalidOperationException("Failed to create primitive of type '" +
+                                       typeName + "': " + e.what());
     }
 }
 

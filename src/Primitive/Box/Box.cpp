@@ -148,6 +148,7 @@ std::shared_ptr<IPrimitive> Box::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 

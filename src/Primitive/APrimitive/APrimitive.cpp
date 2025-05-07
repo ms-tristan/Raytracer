@@ -6,6 +6,7 @@
 ** APrimitve
 */
 #include <memory>
+#include <string>
 #include "APrimitive.hpp"
 
 namespace RayTracer {
@@ -21,5 +22,9 @@ void APrimitive::rotateX(double degrees) { rotationX += degrees; }
 void APrimitive::rotateY(double degrees) { rotationY += degrees; }
 
 void APrimitive::rotateZ(double degrees) { rotationZ += degrees; }
+
+void APrimitive::setSourceFile(const std::string& source) { sourceFile = source; }
+
+std::string APrimitive::getSourceFile() const { return sourceFile; }
 
 }  // namespace RayTracer

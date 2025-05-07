@@ -51,6 +51,7 @@ std::shared_ptr<IPrimitive> KleinBottle::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 

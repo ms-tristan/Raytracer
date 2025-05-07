@@ -22,6 +22,7 @@ class KleinBottle : public IPrimitive, public std::enable_shared_from_this<Klein
     double rotationY = 0.0;
     double rotationZ = 0.0;
     bool isFigure8 = false;
+    std::string sourceFile = "";
 
  public:
     Math::Point3D center;
@@ -39,6 +40,14 @@ class KleinBottle : public IPrimitive, public std::enable_shared_from_this<Klein
 
     std::string getTypeName() const override {
         return KleinBottle::getTypeNameStatic();
+    }
+
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
     }
 
     void translate(const Math::Vector3D &translation) override;

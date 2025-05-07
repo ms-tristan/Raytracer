@@ -21,6 +21,7 @@ class Sphere : public IPrimitive, public std::enable_shared_from_this<Sphere> {
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
+    std::string sourceFile = "";
 
  public:
     Math::Point3D center;
@@ -39,6 +40,13 @@ class Sphere : public IPrimitive, public std::enable_shared_from_this<Sphere> {
         return Sphere::getTypeNameStatic();
     }
 
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
+    }
 
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;

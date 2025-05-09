@@ -56,6 +56,9 @@ class SceneBuilder {
     SceneBuilder& addCone(const Math::Point3D& apex,
         const Math::Vector3D& axis, double radius, double height,
         const std::shared_ptr<Material>& material);
+    SceneBuilder& addTorus(const Math::Point3D& center,
+        const Math::Vector3D& axis, double majorRadius, double minorRadius,
+        const std::shared_ptr<Material>& material);
 
     std::unique_ptr<Scene> build();
 };

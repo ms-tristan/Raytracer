@@ -200,4 +200,4 @@ std::optional<HitInfo> KleinBottle::hit(const Ray &ray, double tMin, double tMax
     return std::nullopt;
 }
 
-} // namespace RayTracer
+}  // namespace RayTracer

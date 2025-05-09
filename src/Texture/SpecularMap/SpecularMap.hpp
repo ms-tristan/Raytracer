@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** Raytracer
+** File description:
+** ConfigParser
+*/
+
 #ifndef SRC_TEXTURE_SPECULARMAP_SPECULARMAP_HPP_
 #define SRC_TEXTURE_SPECULARMAP_SPECULARMAP_HPP_
 #include <memory>

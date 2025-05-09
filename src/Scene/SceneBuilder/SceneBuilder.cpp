@@ -156,8 +156,8 @@ const std::shared_ptr<Material>& material) {
         {"ax", axis.X},
         {"ay", axis.Y},
         {"az", axis.Z},
-        {"majorRadius", majorRadius},
-        {"minorRadius", minorRadius}
+        {"major_radius", majorRadius},
+        {"minor_radius", minorRadius}
     };
 
     return createPrimitive("torus", params, material);

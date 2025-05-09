@@ -22,6 +22,7 @@ class CompositePrimitive : public IPrimitive, public std::enable_shared_from_thi
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
+    std::string sourceFile = "";
 
  public:
     explicit CompositePrimitive(std::shared_ptr<Material> material);
@@ -35,6 +36,14 @@ class CompositePrimitive : public IPrimitive, public std::enable_shared_from_thi
         return CompositePrimitive::getTypeNameStatic();
     }
 
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;
@@ -44,6 +53,7 @@ class CompositePrimitive : public IPrimitive, public std::enable_shared_from_thi
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
+
     void add(std::shared_ptr<IPrimitive> primitive);
     void remove(std::shared_ptr<IPrimitive> primitive);
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const;

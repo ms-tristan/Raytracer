@@ -9,6 +9,9 @@
 #include "Primitive/Cylinder/Cylinder.hpp"
 #include <cmath>
 #include <memory>
+#include <iostream>
+#include <vector>
+#include <string>
 
 namespace RayTracer {
 Cylinder::Cylinder(const Math::Point3D &center, const Math::Vector3D &axis,
@@ -89,6 +92,7 @@ double tMin, double tMax) {
         return std::nullopt;
 
     double sqrtd = std::sqrt(discriminant);
+
     double t1 = (-b - sqrtd) / (2 * a);
     double t2 = (-b + sqrtd) / (2 * a);
 
@@ -135,12 +139,34 @@ double tMin, double tMax) {
             normal = rotateZ.applyToVector(normal);
         }
     }
+    double v = heightIntersect / height;
+    Math::Vector3D reference;
+    if (std::abs(axis.X) < std::abs(axis.Y) && std::abs(axis.X) < std::abs(axis.Z)) {
+        reference = Math::Vector3D(Math::Coords{1, 0, 0}).cross(axis).normalize();
+    } else {
+        reference = Math::Vector3D(Math::Coords{0, 1, 0}).cross(axis).normalize();
+    }
+    Math::Vector3D tangent = axis.cross(reference).normalize();
+    Math::Vector3D radialVec = hitPoint - axisPoint;
+    radialVec = radialVec.normalize();
+    double cosTheta = radialVec.dot(reference);
+    double sinTheta = radialVec.dot(tangent);
+    double theta = std::atan2(sinTheta, cosTheta);
+    double u = (theta + M_PI) / (2.0 * M_PI);
+    u = std::fmod(u, 1.0);
+    if (u < 0) u += 1.0;
 
     HitInfo info;
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
-    info.primitive = shared_from_this();
+    info.uv = Math::Vector2D(u, v);
+    try {
+        info.primitive = std::make_shared<Cylinder>(*this);
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Cylinder::hit(): " << e.what() << std::endl;
+        return std::nullopt;
+    }
     return info;
 }
 
@@ -150,9 +176,9 @@ std::shared_ptr<IPrimitive> Cylinder::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
-
 
 void Cylinder::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     libconfig::Setting& pos = setting->add("position", libconfig::Setting::TypeGroup);

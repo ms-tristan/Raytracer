@@ -32,16 +32,11 @@ class KleinBottlePlugin : public IPrimitivePlugin {
         Math::Point3D center = createCenter(params);
         double scale = params.at("scale");
         double thickness = params.at("thickness");
-        // Figure-8 mode: 0 = classic bottle, 1 = figure-8
+
         bool isFigure8 = false;
-        if (params.find("figure8") != params.end()) {
+        if (params.find("figure8") != params.end())
             isFigure8 = params.at("figure8") > 0.5;
-        }
-        std::cout << "Creating Klein bottle with parameters: "
-                  << "center(" << center.X << ", " << center.Y << ", " << center.Z << "), "
-                  << "scale: " << scale << ", "
-                  << "thickness: " << thickness << ", "
-                  << "isFigure8: " << (isFigure8 ? "true" : "false") << std::endl;
+
         return std::make_shared<KleinBottle>(center, scale, thickness, isFigure8, material);
     }
 
@@ -77,7 +72,6 @@ class KleinBottlePlugin : public IPrimitivePlugin {
 
 extern "C" {
     IPrimitivePlugin* createPrimitivePlugin() {
-        std::cout << "Creating Klein bottle primitive plugin" << std::endl;
         return new KleinBottlePlugin();
     }
 }

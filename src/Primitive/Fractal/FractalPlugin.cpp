@@ -61,7 +61,7 @@ class FractalPlugin : public IPrimitivePlugin {
                             ? static_cast<int>(std::round(params.at("maxIterations"))) : 15;
         double bailout = params.find("bailout") != params.end()
                          ? params.at("bailout") : 4.0;
-        std::cout << "Creating fractal with maxIterations=" << maxIterations
+        std::cout << " fractal with maxIterations=" << maxIterations
                   << ", bailout=" << bailout << std::endl;
         auto fractal = std::make_shared<Fractal>(center, boundingRadius,
                                               fractalType, maxIterations,
@@ -273,7 +273,6 @@ std::string determineFractalType(const std::map<std::string, double>& params) {
 
 extern "C" {
     IPrimitivePlugin* createPrimitivePlugin() {
-        std::cout << "Creating fractal primitive plugin" << std::endl;
         return new FractalPlugin();
     }
 }

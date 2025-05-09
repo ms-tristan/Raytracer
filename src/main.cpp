@@ -17,6 +17,16 @@
 
 #include <SFML/Graphics.hpp>
 
+// Exception system
+#include "Exception/IException.hpp"
+#include "Exception/BaseException.hpp"
+#include "Exception/ValueRangeException.hpp"
+#include "Exception/PrimitiveNotFoundException.hpp"
+#include "Exception/SceneImportException.hpp"
+#include "Exception/FileIOException.hpp"
+#include "Exception/ConfigParseException.hpp"
+#include "Exception/InvalidOperationException.hpp"
+
 // Display Manager
 #include "./Renderer/DisplayManager/SFMLDisplayManager.hpp"
 #include "./Renderer/Renderer.hpp"
@@ -50,8 +60,7 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
                  int width, int height, const std::string& filename) {
     std::ofstream outFile(filename);
     if (!outFile.is_open()) {
-        std::cerr << "Failed to open output file: " << filename << std::endl;
-        return;
+        throw RayTracer::FileIOException(filename, "open", "Could not open file for writing");
     }
 
     outFile << "P3\n" << width << " " << height << "\n255\n";
@@ -108,13 +117,12 @@ int main(int argc, char **argv) {
                 sceneFile = arg;
             }
         }
+
         scene = director.createSceneFromFile(sceneFile);
 
-        if (!scene) {
-            std::cout << "Failed to load scene, using default scene instead." << std::endl;
-            scene = director.createDefaultScene();
-        }
 
+        if (!scene)
+            throw RayTracer::SceneImportException(sceneFile, "Scene creation failed without specific error");
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
         renderToPPM(*scene, *camera, image_width, image_height, outputFile);
 
@@ -141,12 +149,16 @@ int main(int argc, char **argv) {
             if (!director.saveSceneToFile(*scene, sceneFile))
                 std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
         }
+    } catch (const RayTracer::IException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "DEBUG: Exception caught in main: " << e.what() << std::endl;
+        return e.getErrorCode();
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
+        return 84;
     } catch (...) {
         std::cerr << "Unknown error occurred." << std::endl;
-        return 1;
+        return 84;
     }
     return 0;
 }

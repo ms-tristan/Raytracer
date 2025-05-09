@@ -26,5 +26,4 @@ class Point3D {
     Vector3D operator-(const Point3D &other) const;
 };
 }  // namespace Math
-
 #endif  // SRC_MATH_POINT3D_POINT3D_HPP_

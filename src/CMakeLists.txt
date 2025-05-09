@@ -8,6 +8,7 @@ include_directories(${INCLUDE_DIRS})
 
 # Add subdirectories for each component
 add_subdirectory(Camera)
+add_subdirectory(Exception)
 add_subdirectory(IObserver)
 add_subdirectory(Light)
 add_subdirectory(Material)
@@ -51,6 +52,16 @@ set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/PostProcessFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginLoader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ATexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/NormalMap/NormalMap.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/SpecularMap/SpecularMap.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/DisplacementMap/DisplacementMap.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/AmbientOcclusionMap/AmbientOcclusionMap.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ProceduralTexture/PerlinNoiseTexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ImageTexture/ImageTexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ProceduralTexture/ProceduralTexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ProceduralTexture/ChessboardTexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ProceduralTexture/PerlinNoiseTexture.cpp
 )
 
 # Explicitly exclude main.cpp from the core library

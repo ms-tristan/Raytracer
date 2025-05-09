@@ -69,8 +69,14 @@ for scene in "${TEST_SCENES[@]}"; do
     echo -e "${YELLOW}Testing scene: $scene${NC}"
     
     # Extract expected exception type from scene file (from the first line comment)
-    expected_exception=$(head -n 1 "$scene_path" | grep -o "for [A-Za-z]*Exception" | cut -d' ' -f2)
-    
+    expected_exception=$(head -n 1 "$scene_path" | sed -nE 's/.*for ([A-Za-z]+Exception).*/\1/p')
+
+    if [ -z "$expected_exception" ]; then
+        echo -e "${RED}Error: Could not extract expected exception from $scene_path${NC}"
+        echo -e "${RED}  Ensure the first line of the file contains the format: '... for [ExceptionType]Exception'${NC}"
+        continue
+    fi
+
     echo -e "${PURPLE}Expected exception: $expected_exception${NC}"
     
     # Run the raytracer with the test scene

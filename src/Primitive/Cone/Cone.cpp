@@ -7,6 +7,9 @@
 */
 #include <cmath>
 #include <memory>
+#include <iostream>
+#include <vector>
+#include <string>
 #include "Primitive/Cone/Cone.hpp"
 
 
@@ -105,9 +108,7 @@ double tMax) {
             return std::nullopt;
     }
 
-    Math::Point3D hitPoint = transformedRay.origin +
-    transformedRay.direction * t;
-
+    Math::Point3D hitPoint = transformedRay.origin + transformedRay.direction * t;
     double heightIntersect = (hitPoint - apex).dot(axis);
     if (heightIntersect < 0 || heightIntersect > height) {
         t = t2;
@@ -146,12 +147,34 @@ double tMax) {
             normal = rotateZ.applyToVector(normal);
         }
     }
-
+    Math::Vector3D apexToHit = hitPoint - apex;
+    double v = heightIntersect / height;
+    Math::Vector3D reference;
+    if (std::abs(axis.X) < std::abs(axis.Y) && std::abs(axis.X) < std::abs(axis.Z)) {
+        reference = Math::Vector3D(Math::Coords{1, 0, 0}).cross(axis).normalize();
+    } else {
+        reference = Math::Vector3D(Math::Coords{0, 1, 0}).cross(axis).normalize();
+    }
+    Math::Vector3D tangent = axis.cross(reference).normalize();
+    Math::Vector3D projection = apexToHit - axis * (apexToHit.dot(axis) / axis.dot(axis));
+    projection = projection.normalize();
+    double cosTheta = projection.dot(reference);
+    double sinTheta = projection.dot(tangent);
+    double theta = std::atan2(sinTheta, cosTheta);
+    double u = (theta + M_PI) / (2.0 * M_PI);
+    u = std::fmod(u, 1.0);
+    if (u < 0) u += 1.0;
     HitInfo info;
+    info.uv = Math::Vector2D(u, v);
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
-    info.primitive = shared_from_this();
+    try {
+        info.primitive = std::make_shared<Cone>(*this);
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Cone::hit(): " << e.what() << std::endl;
+        return std::nullopt;
+    }
     return info;
 }
 

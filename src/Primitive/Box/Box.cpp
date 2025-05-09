@@ -6,6 +6,9 @@
 ** Box implementation
 */
 #include <memory>
+#include <iostream>
+#include <vector>
+#include <string>
 #include <algorithm>
 #include <cmath>
 #include "Primitive/Box/Box.hpp"
@@ -104,23 +107,29 @@ double tMin, double tMax) {
     HitInfo info;
     info.distance = t;
     info.hitPoint = ray.at(t);
-
     Math::Point3D localHitPoint = transformedRay.at(t);
     Math::Vector3D normal;
 
     double epsilon = 1e-6;
+    int faceIndex = 0;
     if (std::abs(localHitPoint.X - min_bound.X) < epsilon) {
         normal = Math::Vector3D(Math::Coords{-1, 0, 0});
+        faceIndex = 0;
     } else if (std::abs(localHitPoint.X - max_bound.X) < epsilon) {
         normal = Math::Vector3D(Math::Coords{1, 0, 0});
+        faceIndex = 1;
     } else if (std::abs(localHitPoint.Y - min_bound.Y) < epsilon) {
         normal = Math::Vector3D(Math::Coords{0, -1, 0});
+        faceIndex = 2;
     } else if (std::abs(localHitPoint.Y - max_bound.Y) < epsilon) {
         normal = Math::Vector3D(Math::Coords{0, 1, 0});
+        faceIndex = 3;
     } else if (std::abs(localHitPoint.Z - min_bound.Z) < epsilon) {
         normal = Math::Vector3D(Math::Coords{0, 0, -1});
+        faceIndex = 4;
     } else {
         normal = Math::Vector3D(Math::Coords{0, 0, 1});
+        faceIndex = 5;
     }
 
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
@@ -138,8 +147,43 @@ double tMin, double tMax) {
         }
     }
 
+    double u = 0.0, v = 0.0;
+    switch (faceIndex) {
+        case 0:
+            u = (localHitPoint.Z - min_bound.Z) / (max_bound.Z - min_bound.Z);
+            v = (localHitPoint.Y - min_bound.Y) / (max_bound.Y - min_bound.Y);
+            break;
+        case 1:
+            u = 1.0 - (localHitPoint.Z - min_bound.Z) / (max_bound.Z - min_bound.Z);
+            v = (localHitPoint.Y - min_bound.Y) / (max_bound.Y - min_bound.Y);
+            break;
+        case 2:
+            u = (localHitPoint.X - min_bound.X) / (max_bound.X - min_bound.X);
+            v = (localHitPoint.Z - min_bound.Z) / (max_bound.Z - min_bound.Z);
+            break;
+        case 3:
+            u = (localHitPoint.X - min_bound.X) / (max_bound.X - min_bound.X);
+            v = 1.0 - (localHitPoint.Z - min_bound.Z) / (max_bound.Z - min_bound.Z);
+            break;
+        case 4:
+            u = 1.0 - (localHitPoint.X - min_bound.X) / (max_bound.X - min_bound.X);
+            v = (localHitPoint.Y - min_bound.Y) / (max_bound.Y - min_bound.Y);
+            break;
+        case 5:
+            u = (localHitPoint.X - min_bound.X) / (max_bound.X - min_bound.X);
+            v = (localHitPoint.Y - min_bound.Y) / (max_bound.Y - min_bound.Y);
+            break;
+    }
+    u = std::clamp(u, 0.0, 1.0);
+    v = std::clamp(v, 0.0, 1.0);
+    info.uv = Math::Vector2D(u, v);
     info.normal = normal.normalize();
-    info.primitive = shared_from_this();
+    try {
+        info.primitive = std::make_shared<Box>(*this);
+    } catch (const std::exception& e) {
+        std::cerr << "Error in Box::hit(): " << e.what() << std::endl;
+        return std::nullopt;
+    }
     return info;
 }
 

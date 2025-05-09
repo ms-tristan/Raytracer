@@ -12,6 +12,7 @@
 
     #include "Math/Point3D/Point3D.hpp"
     #include "Math/Vector3D/Vector3D.hpp"
+    #include "Math/Vector2D/Vector2D.hpp"
 
 namespace RayTracer {
 
@@ -46,6 +47,7 @@ struct HitInfo {
     double distance;
     Math::Point3D hitPoint;
     Math::Vector3D normal;
+    Math::Vector2D uv;
     std::shared_ptr<IPrimitive> primitive;
 };
 

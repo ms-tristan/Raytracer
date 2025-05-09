@@ -90,11 +90,36 @@ double tMax) {
     info.distance = t;
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
-
     if (denominator > 0)
         info.normal = info.normal * -1.0;
+    Math::Vector3D tangent1, tangent2;
+    if (std::abs(info.normal.X) < std::abs(info.normal.Y) &&
+        std::abs(info.normal.X) < std::abs(info.normal.Z)) {
+        tangent1 = Math::Vector3D(Math::Coords{1, 0, 0});
+    } else if (std::abs(info.normal.Y) < std::abs(info.normal.Z)) {
+        tangent1 = Math::Vector3D(Math::Coords{0, 1, 0});
+    } else {
+        tangent1 = Math::Vector3D(Math::Coords{0, 0, 1});
+    }
+    tangent1 = tangent1 - info.normal * (info.normal.dot(tangent1));
+    tangent1 = tangent1.normalize();
+    tangent2 = info.normal.cross(tangent1).normalize();
+    Math::Vector3D toPoint = info.hitPoint - position;
+    double u = toPoint.dot(tangent1);
+    double v = toPoint.dot(tangent2);
+    double uvScale = 0.1;
+    u = std::fmod(u * uvScale, 1.0);
+    v = std::fmod(v * uvScale, 1.0);
+    if (u < 0) u += 1.0;
+    if (v < 0) v += 1.0;
 
-    info.primitive = shared_from_this();
+    info.uv = Math::Vector2D(u, v);
+    // Créer une copie de l'objet actuel avec le clone au lieu d'utiliser le constructeur de copie
+    std::shared_ptr<Plane> planeCopy = std::make_shared<Plane>(position, normal, material);
+    planeCopy->rotationX = rotationX;
+    planeCopy->rotationY = rotationY;
+    planeCopy->rotationZ = rotationZ;
+    info.primitive = planeCopy;
     return info;
 }
 

@@ -44,6 +44,7 @@ class CompositePrimitive : public IPrimitive, public std::enable_shared_from_thi
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
+
     void add(std::shared_ptr<IPrimitive> primitive);
     void remove(std::shared_ptr<IPrimitive> primitive);
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const;

@@ -8,6 +8,10 @@
 #include "Primitive/Sphere/Sphere.hpp"
 #include <cmath>
 #include <memory>
+#include <iostream>
+#include <vector>
+#include <string>
+
 
 namespace RayTracer {
 Sphere::Sphere(const Math::Point3D &center,
@@ -112,9 +116,17 @@ double tMax) {
             normal = rotateZ.applyToVector(normal);
         }
     }
+    Math::Vector3D normalizedPoint = normal.normalize();
+    double u = 0.5 + std::atan2(normalizedPoint.Z, normalizedPoint.X) / (2.0 * M_PI);
+    double v = 0.5 - std::asin(normalizedPoint.Y) / M_PI;
+    info.uv = Math::Vector2D(u, v);
 
     info.normal = normal;
-    info.primitive = shared_from_this();
+    std::shared_ptr<Sphere> sphereCopy = std::make_shared<Sphere>(center, radius, material);
+    sphereCopy->rotationX = rotationX;
+    sphereCopy->rotationY = rotationY;
+    sphereCopy->rotationZ = rotationZ;
+    info.primitive = sphereCopy;
     return info;
 }
 

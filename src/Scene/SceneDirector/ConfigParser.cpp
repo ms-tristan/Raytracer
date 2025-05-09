@@ -277,8 +277,7 @@ void LightsParser::parsePointLights(const libconfig::Setting& lights, std::share
             color,
             constant,
             linear,
-            quadratic
-        );
+            quadratic);
 
         builder->addLight(pointLight);
     }
@@ -736,7 +735,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
             material->refractionIndex = std::max(1.0, material->refractionIndex);
         }
 
-        // Ajout du support pour les textures
         if (setting["material"].exists("texture")) {
             const libconfig::Setting& textureSetting = setting["material"]["texture"];
             if (textureSetting.exists("path")) {
@@ -748,7 +746,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded texture from: " << texturePath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading texture: " << texturePath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + texturePath;
                         std::cout << "Trying alternative path: " << alternativePath << std::endl;
@@ -760,64 +757,45 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     }
                 }
             } else if (textureSetting.exists("type")) {
-                // Traitement des textures procédurales
                 std::string textureType = static_cast<const char*>(textureSetting["type"]);
-                
                 if (textureType == "chessboard") {
-                    // Création d'une texture en damier
-                    double scale = textureSetting.exists("scale") ? 
+                    double scale = textureSetting.exists("scale") ?
                         static_cast<double>(textureSetting["scale"]) : 1.0;
-                    
                     Math::Vector3D color1(Math::Coords{0.0, 0.0, 0.0});
                     Math::Vector3D color2(Math::Coords{1.0, 1.0, 1.0});
-                    
                     if (textureSetting.exists("color1")) {
                         color1 = parseColor(textureSetting["color1"]);
                     }
-                    
                     if (textureSetting.exists("color2")) {
                         color2 = parseColor(textureSetting["color2"]);
                     }
-                    
                     auto texture = std::make_shared<ChessboardTexture>(color1, color2, scale);
                     material->setTexture(texture);
                     std::cout << "Created chessboard texture with scale: " << scale << std::endl;
                 } else if (textureType == "perlin") {
-                    // Création d'une texture de bruit de Perlin
-                    double scale = textureSetting.exists("scale") ? 
+                    double scale = textureSetting.exists("scale") ?
                         static_cast<double>(textureSetting["scale"]) : 1.0;
-                    
-                    int octaves = textureSetting.exists("octaves") ? 
+                    int octaves = textureSetting.exists("octaves") ?
                         static_cast<int>(textureSetting["octaves"]) : 4;
-                    
-                    double persistence = textureSetting.exists("persistence") ? 
+                    double persistence = textureSetting.exists("persistence") ?
                         static_cast<double>(textureSetting["persistence"]) : 0.5;
-                    
                     Math::Vector3D color1(Math::Coords{1.0, 1.0, 1.0});
                     Math::Vector3D color2(Math::Coords{0.0, 0.0, 0.0});
-                    
                     auto texture = std::make_shared<PerlinNoiseTexture>(color1, color2, scale, persistence, octaves);
                     material->setTexture(texture);
-                    std::cout << "Created perlin noise texture with scale: " << scale 
-                              << ", octaves: " << octaves 
-                              << ", persistence: " << persistence << std::endl;
                 } else {
                     std::cerr << "Unknown texture type: " << textureType << std::endl;
                 }
             }
         }
-
-        // Ajout du support pour les normal maps
         if (setting["material"].exists("normalMap")) {
             const libconfig::Setting& normalMapSetting = setting["material"]["normalMap"];
             if (normalMapSetting.exists("path")) {
                 std::string normalMapPath = static_cast<const char*>(normalMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (normalMapSetting.exists("strength")) {
                     strength = static_cast<double>(normalMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -827,7 +805,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded normal map from: " << normalMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading normal map: " << normalMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + normalMapPath;
                         std::cout << "Trying alternative path for normal map: " << alternativePath << " with strength: " << strength << std::endl;
@@ -840,18 +817,14 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Ajout du support pour les displacement maps
         if (setting["material"].exists("displacementMap")) {
             const libconfig::Setting& dispMapSetting = setting["material"]["displacementMap"];
             if (dispMapSetting.exists("path")) {
                 std::string dispMapPath = static_cast<const char*>(dispMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (dispMapSetting.exists("strength")) {
                     strength = static_cast<double>(dispMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -861,7 +834,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded displacement map from: " << dispMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading displacement map: " << dispMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + dispMapPath;
                         std::cout << "Trying alternative path for displacement map: " << alternativePath << std::endl;
@@ -874,8 +846,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Ajout du support pour les specular maps
         if (setting["material"].exists("specularMap")) {
             const libconfig::Setting& specMapSetting = setting["material"]["specularMap"];
             if (specMapSetting.exists("path")) {
@@ -888,7 +858,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded specular map from: " << specMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading specular map: " << specMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + specMapPath;
                         std::cout << "Trying alternative path for specular map: " << alternativePath << std::endl;
@@ -901,20 +870,15 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Ajout du support pour les ambient occlusion maps
         if (setting["material"].exists("aoMap") || setting["material"].exists("ambientOcclusionMap")) {
-            const libconfig::Setting& aoMapSetting = setting["material"].exists("aoMap") ? 
+            const libconfig::Setting& aoMapSetting = setting["material"].exists("aoMap") ?
                 setting["material"]["aoMap"] : setting["material"]["ambientOcclusionMap"];
-            
             if (aoMapSetting.exists("path")) {
                 std::string aoMapPath = static_cast<const char*>(aoMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (aoMapSetting.exists("strength")) {
                     strength = static_cast<double>(aoMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -937,27 +901,19 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Récupération du coefficient de brillance (shininess) pour les reflets spéculaires
         if (setting["material"].exists("shininess")) {
             material->shininess = static_cast<double>(setting["material"]["shininess"]);
-            // Limiter à une valeur raisonnable
             material->shininess = std::max(1.0, material->shininess);
         }
-
-        // Ajout du support pour les normal maps
         if (setting["material"].exists("normalMap")) {
             const libconfig::Setting& normalMapSetting = setting["material"]["normalMap"];
             if (normalMapSetting.exists("path")) {
                 std::string normalMapPath = static_cast<const char*>(normalMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (normalMapSetting.exists("strength")) {
                     strength = static_cast<double>(normalMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
-
                 try {
                     std::cout << "Loading normal map from file: " << normalMapPath << " with strength: " << strength << std::endl;
                     auto normalMap = std::make_shared<NormalMap>(normalMapPath, strength);
@@ -965,7 +921,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded normal map from: " << normalMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading normal map: " << normalMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + normalMapPath;
                         std::cout << "Trying alternative path for normal map: " << alternativePath << " with strength: " << strength << std::endl;
@@ -978,8 +933,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-
-        // Ajout du support pour les textures procédurales
         if (setting["material"].exists("proceduralTexture")) {
             const libconfig::Setting& proceduralTextureSetting = setting["material"]["proceduralTexture"];
             if (proceduralTextureSetting.exists("type")) {
@@ -999,8 +952,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-
-        // Ajout du support pour les textures
         if (setting["material"].exists("texture")) {
             const libconfig::Setting& textureSetting = setting["material"]["texture"];
             if (textureSetting.exists("path")) {
@@ -1012,7 +963,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded texture from: " << texturePath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading texture: " << texturePath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + texturePath;
                         std::cout << "Trying alternative path: " << alternativePath << std::endl;
@@ -1024,47 +974,33 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     }
                 }
             } else if (textureSetting.exists("type")) {
-                // Traitement des textures procédurales
                 std::string textureType = static_cast<const char*>(textureSetting["type"]);
-                
                 if (textureType == "chessboard") {
-                    // Création d'une texture en damier
-                    double scale = textureSetting.exists("scale") ? 
+                    double scale = textureSetting.exists("scale") ?
                         static_cast<double>(textureSetting["scale"]) : 1.0;
-                    
                     Math::Vector3D color1(Math::Coords{0.0, 0.0, 0.0});
                     Math::Vector3D color2(Math::Coords{1.0, 1.0, 1.0});
-                    
                     if (textureSetting.exists("color1")) {
                         color1 = parseColor(textureSetting["color1"]);
                     }
-                    
                     if (textureSetting.exists("color2")) {
                         color2 = parseColor(textureSetting["color2"]);
                     }
-                    
                     auto texture = std::make_shared<ChessboardTexture>(color1, color2, scale);
                     material->setTexture(texture);
                     std::cout << "Created chessboard texture with scale: " << scale << std::endl;
                 } else if (textureType == "perlin") {
                     // Création d'une texture de bruit de Perlin
-                    double scale = textureSetting.exists("scale") ? 
+                    double scale = textureSetting.exists("scale") ?
                         static_cast<double>(textureSetting["scale"]) : 1.0;
-                    
-                    int octaves = textureSetting.exists("octaves") ? 
+                    int octaves = textureSetting.exists("octaves") ?
                         static_cast<int>(textureSetting["octaves"]) : 4;
-                    
-                    double persistence = textureSetting.exists("persistence") ? 
+                    double persistence = textureSetting.exists("persistence") ?
                         static_cast<double>(textureSetting["persistence"]) : 0.5;
-                    
                     Math::Vector3D color1(Math::Coords{1.0, 1.0, 1.0});
                     Math::Vector3D color2(Math::Coords{0.0, 0.0, 0.0});
-                    
                     auto texture = std::make_shared<PerlinNoiseTexture>(color1, color2, scale, persistence, octaves);
                     material->setTexture(texture);
-                    std::cout << "Created perlin noise texture with scale: " << scale 
-                              << ", octaves: " << octaves 
-                              << ", persistence: " << persistence << std::endl;
                 } else {
                     std::cerr << "Unknown texture type: " << textureType << std::endl;
                 }
@@ -1076,12 +1012,10 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
             const libconfig::Setting& normalMapSetting = setting["material"]["normalMap"];
             if (normalMapSetting.exists("path")) {
                 std::string normalMapPath = static_cast<const char*>(normalMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (normalMapSetting.exists("strength")) {
                     strength = static_cast<double>(normalMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -1091,7 +1025,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded normal map from: " << normalMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading normal map: " << normalMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + normalMapPath;
                         std::cout << "Trying alternative path for normal map: " << alternativePath << " with strength: " << strength << std::endl;
@@ -1104,18 +1037,14 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Ajout du support pour les displacement maps
         if (setting["material"].exists("displacementMap")) {
             const libconfig::Setting& dispMapSetting = setting["material"]["displacementMap"];
             if (dispMapSetting.exists("path")) {
                 std::string dispMapPath = static_cast<const char*>(dispMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (dispMapSetting.exists("strength")) {
                     strength = static_cast<double>(dispMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -1125,7 +1054,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded displacement map from: " << dispMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading displacement map: " << dispMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + dispMapPath;
                         std::cout << "Trying alternative path for displacement map: " << alternativePath << std::endl;
@@ -1138,8 +1066,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Ajout du support pour les specular maps
         if (setting["material"].exists("specularMap")) {
             const libconfig::Setting& specMapSetting = setting["material"]["specularMap"];
             if (specMapSetting.exists("path")) {
@@ -1152,7 +1078,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded specular map from: " << specMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading specular map: " << specMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + specMapPath;
                         std::cout << "Trying alternative path for specular map: " << alternativePath << std::endl;
@@ -1165,20 +1090,15 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Ajout du support pour les ambient occlusion maps
         if (setting["material"].exists("aoMap") || setting["material"].exists("ambientOcclusionMap")) {
-            const libconfig::Setting& aoMapSetting = setting["material"].exists("aoMap") ? 
+            const libconfig::Setting& aoMapSetting = setting["material"].exists("aoMap") ?
                 setting["material"]["aoMap"] : setting["material"]["ambientOcclusionMap"];
-            
             if (aoMapSetting.exists("path")) {
                 std::string aoMapPath = static_cast<const char*>(aoMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (aoMapSetting.exists("strength")) {
                     strength = static_cast<double>(aoMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -1188,7 +1108,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded ambient occlusion map from: " << aoMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading ambient occlusion map: " << aoMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + aoMapPath;
                         std::cout << "Trying alternative path for ambient occlusion map: " << alternativePath << std::endl;
@@ -1201,25 +1120,18 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-        
-        // Récupération du coefficient de brillance (shininess) pour les reflets spéculaires
         if (setting["material"].exists("shininess")) {
             material->shininess = static_cast<double>(setting["material"]["shininess"]);
-            // Limiter à une valeur raisonnable
             material->shininess = std::max(1.0, material->shininess);
         }
-
-        // Ajout du support pour les normal maps
         if (setting["material"].exists("normalMap")) {
             const libconfig::Setting& normalMapSetting = setting["material"]["normalMap"];
             if (normalMapSetting.exists("path")) {
                 std::string normalMapPath = static_cast<const char*>(normalMapSetting["path"]);
-                
-                // Récupération de la force de l'effet (strength)
-                double strength = 1.0;  // Valeur par défaut
+                double strength = 1.0;
                 if (normalMapSetting.exists("strength")) {
                     strength = static_cast<double>(normalMapSetting["strength"]);
-                    strength = std::max(0.0, std::min(1.0, strength));  // Limiter entre 0 et 1
+                    strength = std::max(0.0, std::min(1.0, strength));
                 }
 
                 try {
@@ -1229,7 +1141,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                     std::cout << "Successfully loaded normal map from: " << normalMapPath << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Error loading normal map: " << normalMapPath << " - " << e.what() << std::endl;
-                    // Si le chargement échoue, on essaie avec un chemin relatif au dossier d'exécution
                     try {
                         std::string alternativePath = "../../" + normalMapPath;
                         std::cout << "Trying alternative path for normal map: " << alternativePath << " with strength: " << strength << std::endl;
@@ -1242,8 +1153,6 @@ std::shared_ptr<Material> PrimitivesParser::extractMaterialFromSetting(const lib
                 }
             }
         }
-
-        // Ajout du support pour les textures procédurales
         if (setting["material"].exists("proceduralTexture")) {
             const libconfig::Setting& proceduralTextureSetting = setting["material"]["proceduralTexture"];
             if (proceduralTextureSetting.exists("type")) {

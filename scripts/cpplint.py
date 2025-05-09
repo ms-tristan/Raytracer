@@ -12,7 +12,8 @@ EXCLUDED_RULES = [
     "-build/header_guard",
     "-whitespace/parens",
     "-build/c++11",
-    "-runtime/references"
+    "-runtime/references",
+    "-build/c++17"
 ]
 
 def run_cpplint(directory):

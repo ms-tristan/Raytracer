@@ -21,6 +21,7 @@ class Torus : public IPrimitive, public std::enable_shared_from_this<Torus> {
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
+    std::string sourceFile = "";
 
  public:
     Math::Point3D center;
@@ -43,6 +44,14 @@ class Torus : public IPrimitive, public std::enable_shared_from_this<Torus> {
         return getTypeNameStatic();
     }
 
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
+    }
+
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;
@@ -56,6 +65,30 @@ class Torus : public IPrimitive, public std::enable_shared_from_this<Torus> {
     bool checkBoundingSphereIntersection(const Ray &ray) const;
     Ray transformRayForRotation(const Ray &ray) const;
     Math::Vector3D calculateNormal(const Math::Point3D &hitPoint) const;
+
+    Math::Point3D sampleTorus(double u, double v) const {
+        double phi = u * 2.0 * M_PI;
+        double theta = v * 2.0 * M_PI;
+
+        Math::Vector3D basisX, basisY;
+        if (std::abs(axis.X) < 0.9) {
+            basisX = axis.cross(Math::Vector3D(Math::Coords{1, 0, 0})).normalize();
+        } else {
+            basisX = axis.cross(Math::Vector3D(Math::Coords{0, 1, 0})).normalize();
+        }
+        basisY = axis.cross(basisX).normalize();
+
+        Math::Point3D ringPoint = center +
+            basisX * (majorRadius * std::cos(phi)) +
+            basisY * (majorRadius * std::sin(phi));
+
+        Math::Vector3D tubeOffset =
+            basisX * (minorRadius * std::cos(theta) * std::cos(phi)) +
+            basisY * (minorRadius * std::cos(theta) * std::sin(phi)) +
+            axis * (minorRadius * std::sin(theta));
+
+        return ringPoint + tubeOffset;
+    }
 };
 }  // namespace RayTracer
 

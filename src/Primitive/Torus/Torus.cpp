@@ -136,6 +136,59 @@ std::optional<HitInfo> Torus::hit(const Ray &ray, double tMin, double tMax) {
             info.hitPoint = ray.origin + ray.direction * t;
             info.normal = calculateNormal(p);
 
+            Math::Vector3D hitPointVector = p - center;
+
+            double heightFromCenter = hitPointVector.dot(axis);
+            Math::Vector3D projectedVector = hitPointVector - axis * heightFromCenter;
+            double projLength = projectedVector.length();
+
+            Math::Vector3D normalized;
+            if (projLength > EPSILON) {
+                normalized = projectedVector / projLength;
+            } else {
+                if (std::abs(axis.X) < std::abs(axis.Y) && std::abs(axis.X) < std::abs(axis.Z)) {
+                    normalized = axis.cross(Math::Vector3D(Math::Coords{1, 0, 0})).normalize();
+                } else {
+                    normalized = axis.cross(Math::Vector3D(Math::Coords{0, 1, 0})).normalize();
+                }
+            }
+
+            Math::Point3D tubeCenter = center + normalized * majorRadius;
+
+            Math::Vector3D basisX, basisY;
+            if (std::abs(axis.X) < 0.9) {
+                basisX = Math::Vector3D(Math::Coords{1, 0, 0}).cross(axis).normalize();
+            } else {
+                basisX = Math::Vector3D(Math::Coords{0, 1, 0}).cross(axis).normalize();
+            }
+            basisY = axis.cross(basisX).normalize();
+
+            double phi = std::atan2(normalized.dot(basisY), normalized.dot(basisX));
+            double u = (phi + M_PI) / (2.0 * M_PI);
+
+            Math::Vector3D tubeVector = p - tubeCenter;
+            double tubeHeight = tubeVector.dot(axis);
+            Math::Vector3D tubeRadial = tubeVector - axis * tubeHeight;
+            double tubeRadialLength = tubeRadial.length();
+
+            if (tubeRadialLength > EPSILON) {
+                tubeRadial = tubeRadial / tubeRadialLength;
+
+                double cosTheta = tubeRadial.dot(normalized);
+                double sinTheta = tubeRadial.dot(axis.cross(normalized).normalize());
+                double theta = std::atan2(sinTheta, cosTheta);
+                double v = (theta + M_PI) / (2.0 * M_PI);
+
+                u = std::fmod(u, 1.0);
+                if (u < 0) u += 1.0;
+                v = std::fmod(v, 1.0);
+                if (v < 0) v += 1.0;
+
+                info.uv = Math::Vector2D(u, v);
+            } else {
+                info.uv = Math::Vector2D(0, 0);
+            }
+
             if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
                 if (rotationX != 0.0) {
                     RayTracer::Rotate rotateX("x", rotationX);
@@ -166,6 +219,7 @@ std::shared_ptr<IPrimitive> Torus::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 
@@ -182,6 +236,13 @@ void Torus::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) cons
 
     (*setting).add("major_radius", libconfig::Setting::TypeFloat) = static_cast<double>(majorRadius);
     (*setting).add("minor_radius", libconfig::Setting::TypeFloat) = static_cast<double>(minorRadius);
+
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
+        libconfig::Setting& rotation = setting->add("rotation", libconfig::Setting::TypeGroup);
+        rotation.add("x", libconfig::Setting::TypeFloat) = rotationX;
+        rotation.add("y", libconfig::Setting::TypeFloat) = rotationY;
+        rotation.add("z", libconfig::Setting::TypeFloat) = rotationZ;
+    }
 
     auto materialSetting = &((*setting).add("material", libconfig::Setting::TypeGroup));
     auto colorSetting = &((*materialSetting).add("color", libconfig::Setting::TypeGroup));

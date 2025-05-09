@@ -63,7 +63,6 @@ class TorusPlugin : public IPrimitivePlugin {
 
 extern "C" {
     IPrimitivePlugin* createPrimitivePlugin() {
-        std::cout << "Creating torus primitive plugin" << std::endl;
         return new TorusPlugin();
     }
 }

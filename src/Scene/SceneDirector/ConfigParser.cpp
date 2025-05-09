@@ -310,10 +310,6 @@ void PrimitivesParser::parse(const libconfig::Setting& setting, std::shared_ptr<
     }
 
     auto loadedPluginNames = pluginManager->getLoadedPluginNames();
-    for (const auto& name : loadedPluginNames) {
-        std::cout << name << " ";
-    }
-    std::cout << std::endl;
 
     for (int i = 0; i < setting.getLength(); ++i) {
         const std::string& typeName = setting[i].getName();

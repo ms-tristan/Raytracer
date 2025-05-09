@@ -146,6 +146,23 @@ const std::shared_ptr<Material>& material) {
     return createPrimitive("cones", params, material);
 }
 
+SceneBuilder& SceneBuilder::addTorus(const Math::Point3D& center,
+const Math::Vector3D& axis, double majorRadius, double minorRadius,
+const std::shared_ptr<Material>& material) {
+    std::map<std::string, double> params = {
+        {"x", center.X},
+        {"y", center.Y},
+        {"z", center.Z},
+        {"ax", axis.X},
+        {"ay", axis.Y},
+        {"az", axis.Z},
+        {"major_radius", majorRadius},
+        {"minor_radius", minorRadius}
+    };
+
+    return createPrimitive("torus", params, material);
+}
+
 SceneBuilder& SceneBuilder::addPostProcess(const std::shared_ptr<IPostProcess>& postProcess) {
     scene->addPostProcess(postProcess);
     return *this;

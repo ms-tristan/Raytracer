@@ -162,8 +162,6 @@ double tMin, double tMax) {
     info.normal = normal;
     info.uv = Math::Vector2D(u, v);
     try {
-        // Au lieu d'utiliser shared_from_this() qui peut échouer dans un contexte de plugin,
-        // assignons directement un nouveau shared_ptr à l'objet courant
         info.primitive = std::make_shared<Cylinder>(*this);
     } catch (const std::exception& e) {
         std::cerr << "Error in Cylinder::hit(): " << e.what() << std::endl;

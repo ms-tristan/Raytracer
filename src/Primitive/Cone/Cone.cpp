@@ -170,8 +170,6 @@ double tMax) {
     info.hitPoint = ray.origin + ray.direction * t;
     info.normal = normal;
     try {
-        // Au lieu d'utiliser shared_from_this() qui peut échouer dans un contexte de plugin,
-        // assignons directement un nouveau shared_ptr à l'objet courant
         info.primitive = std::make_shared<Cone>(*this);
     } catch (const std::exception& e) {
         std::cerr << "Error in Cone::hit(): " << e.what() << std::endl;

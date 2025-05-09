@@ -179,8 +179,6 @@ double tMin, double tMax) {
     info.uv = Math::Vector2D(u, v);
     info.normal = normal.normalize();
     try {
-        // Au lieu d'utiliser shared_from_this() qui peut échouer dans un contexte de plugin,
-        // assignons directement un nouveau shared_ptr à l'objet courant
         info.primitive = std::make_shared<Box>(*this);
     } catch (const std::exception& e) {
         std::cerr << "Error in Box::hit(): " << e.what() << std::endl;

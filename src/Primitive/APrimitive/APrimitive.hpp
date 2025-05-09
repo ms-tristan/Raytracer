@@ -19,7 +19,7 @@ class APrimitive : public IPrimitive {
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
-    std::string sourceFile = "";  // Track the source file for imported primitives
+    std::string sourceFile = "";
 
  public:
     APrimitive();

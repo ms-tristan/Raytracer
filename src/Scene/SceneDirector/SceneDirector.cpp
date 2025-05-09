@@ -17,6 +17,7 @@
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
 #include "Material/Material.hpp"
+#include "Exception/SceneImportException.hpp"
 
 namespace RayTracer {
 
@@ -65,10 +66,15 @@ const std::string& filename) {
         currentSceneFile = filename;
 
         SceneConfigParser parser;
-        return parser.parseFile(filename);
+        auto scene = parser.parseFile(filename);
+        if (!scene) {
+            throw SceneImportException(filename, "Failed to parse scene file - no scene was created");
+        }
+        return scene;
+    } catch (const IException& ex) {
+        throw;
     } catch (const std::exception& ex) {
-        std::cerr << "Error creating scene from file: " << ex.what() << std::endl;
-        return createDefaultScene();
+        throw SceneImportException(filename, "Failed to load scene: " + std::string(ex.what()));
     }
 }
 

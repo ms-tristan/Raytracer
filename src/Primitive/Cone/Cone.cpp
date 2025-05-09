@@ -160,6 +160,7 @@ std::shared_ptr<IPrimitive> Cone::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 

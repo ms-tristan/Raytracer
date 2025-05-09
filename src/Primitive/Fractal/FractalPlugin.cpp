@@ -61,7 +61,7 @@ class FractalPlugin : public IPrimitivePlugin {
                             ? static_cast<int>(std::round(params.at("maxIterations"))) : 15;
         double bailout = params.find("bailout") != params.end()
                          ? params.at("bailout") : 4.0;
-        std::cout << "Creating fractal with maxIterations=" << maxIterations
+        std::cout << " fractal with maxIterations=" << maxIterations
                   << ", bailout=" << bailout << std::endl;
         auto fractal = std::make_shared<Fractal>(center, boundingRadius,
                                               fractalType, maxIterations,
@@ -107,16 +107,16 @@ class FractalPlugin : public IPrimitivePlugin {
                    fractalType == "qjulia_spiral" || fractalType == "qjulia_cosmic") {
             // Set default Quaternion Julia constants if not specified
             switch (fractalType[0]) {
-                case 'q': // Any quaternion julia
+                case 'q':  // Any quaternion julia
                     fractal->setQuaternionConstant(0.3, 0.5, 0.4, 0.2);
                     break;
-                case 'f': // flower
+                case 'f':  // flower
                     fractal->setQuaternionConstant(0.4, 0.3, 0.2, 0.1);
                     break;
-                case 's': // spiral
+                case 's':  // spiral
                     fractal->setQuaternionConstant(0.1, 0.6, 0.3, 0.2);
                     break;
-                case 'c': // cosmic
+                case 'c':  // cosmic
                     fractal->setQuaternionConstant(0.1, 0.2, 0.7, 0.1);
                     break;
                 default:
@@ -201,7 +201,7 @@ std::string determineFractalType(const std::map<std::string, double>& params) {
             for (const auto& pair : params) {
                 // Look for special parameters that might indicate the fractal type as a string
                 if (pair.first.find("fractalType_") == 0) {
-                    std::string typeName = pair.first.substr(12); // Remove "fractalType_" prefix
+                    std::string typeName = pair.first.substr(12);  // Remove "fractalType_" prefix
                     // Check for known types
                     if (typeName == "string_mandelbrot" || typeName == "mandelbrot") {
                         fractalType = "mandelbrot";
@@ -247,7 +247,7 @@ std::string determineFractalType(const std::map<std::string, double>& params) {
                 case 10: return "qjulia_cosmic";
                 default:
                     std::cerr << "Unknown fractal type ID: " << typeId << ". Using default type." << std::endl;
-                    break; // Will use default "mandelbrot"
+                    break;  // Will use default "mandelbrot"
             }
         }
     }
@@ -273,7 +273,6 @@ std::string determineFractalType(const std::map<std::string, double>& params) {
 
 extern "C" {
     IPrimitivePlugin* createPrimitivePlugin() {
-        std::cout << "Creating fractal primitive plugin" << std::endl;
         return new FractalPlugin();
     }
 }

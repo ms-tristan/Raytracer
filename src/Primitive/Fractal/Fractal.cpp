@@ -252,6 +252,7 @@ std::shared_ptr<IPrimitive> Fractal::clone() const {
     copy->rotationZ = rotationZ;
     copy->power = power;
     copy->fractalType = fractalType->clone();
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 

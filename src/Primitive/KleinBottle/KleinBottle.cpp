@@ -51,6 +51,7 @@ std::shared_ptr<IPrimitive> KleinBottle::clone() const {
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;
+    copy->setSourceFile(sourceFile);
     return copy;
 }
 
@@ -200,4 +201,4 @@ std::optional<HitInfo> KleinBottle::hit(const Ray &ray, double tMin, double tMax
     return std::nullopt;
 }
 
-} // namespace RayTracer
+}  // namespace RayTracer

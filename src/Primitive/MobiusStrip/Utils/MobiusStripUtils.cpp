@@ -126,5 +126,5 @@ MobiusIntersection findClosestIntersection(const Ray& ray, const Math::Point3D& 
     return result;
 }
 
-}
+}  // namespace MobiusStripUtils
 }  // namespace RayTracer

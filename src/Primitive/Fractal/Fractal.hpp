@@ -28,6 +28,7 @@ class Fractal : public IPrimitive, public std::enable_shared_from_this<Fractal> 
     double bailout;
     double power;
     std::shared_ptr<IFractalType> fractalType;
+    std::string sourceFile = "";
     std::optional<HitInfo> rayMarch(const Ray& ray, double tMin, double tMax) const;
     Math::Vector3D estimateNormal(const Math::Point3D& p) const;
 
@@ -48,6 +49,14 @@ class Fractal : public IPrimitive, public std::enable_shared_from_this<Fractal> 
 
     std::string getTypeName() const override {
         return Fractal::getTypeNameStatic();
+    }
+
+    void setSourceFile(const std::string& source) override {
+        sourceFile = source;
+    }
+
+    std::string getSourceFile() const override {
+        return sourceFile;
     }
 
     void setFractalType(const std::string& name);

@@ -8,6 +8,7 @@ include_directories(${INCLUDE_DIRS})
 
 # Add subdirectories for each component
 add_subdirectory(Camera)
+add_subdirectory(Exception)
 add_subdirectory(IObserver)
 add_subdirectory(Light)
 add_subdirectory(Material)

@@ -40,6 +40,25 @@ class ConfigParser {
    Math::Vector3D parseColor(const libconfig::Setting& setting);
 };
 
+struct ImportOptions {
+    bool importCamera = true;
+    bool importLights = true;
+    bool importPrimitives = true;
+    bool importShaders = true;
+    bool importPostProcess = true;
+};
+
+class ImportParser : public ConfigParser {
+ public:
+   void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
+   void processImports(const libconfig::Config& cfg, std::shared_ptr<SceneBuilder> builder);
+
+ private:
+   void importScene(const std::string& filePath, const std::string& alias,
+                   const ImportOptions& options, std::shared_ptr<SceneBuilder> builder);
+   std::map<std::string, std::string> importAliases;
+};
+
 class CameraParser : public ConfigParser {
  public:
    void parse(const libconfig::Setting& setting, std::shared_ptr<SceneBuilder> builder) override;
@@ -65,6 +84,7 @@ class PrimitivesParser : public ConfigParser {
          const libconfig::Setting& setting,
          const std::vector<std::string>& requiredParams);
    std::shared_ptr<Material> extractMaterialFromSetting(const libconfig::Setting& setting);
+   void processImportedPrimitive(const std::string& importAlias, std::shared_ptr<SceneBuilder> builder);
 };
 
 class ShadersParser : public ConfigParser {
@@ -90,10 +110,15 @@ class SceneConfigParser {
  public:
    SceneConfigParser();
    std::unique_ptr<Scene> parseFile(const std::string& filename);
+   std::unique_ptr<Scene> parseFile(const std::string& filename, const ImportOptions& options);
+
+   std::map<std::string, std::string> importAliases;
 
  private:
    std::shared_ptr<SceneBuilder> builder;
    std::unordered_map<std::string, std::unique_ptr<ConfigParser>> sectionParsers;
+   void processImports(const libconfig::Config& cfg);
+   ImportOptions currentImportOptions;
 };
 
 }  // namespace RayTracer

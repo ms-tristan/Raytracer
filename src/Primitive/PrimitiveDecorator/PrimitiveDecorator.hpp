@@ -9,6 +9,7 @@
 #ifndef SRC_PRIMITIVE_PRIMITIVEDECORATOR_PRIMITIVEDECORATOR_HPP_
     #define SRC_PRIMITIVE_PRIMITIVEDECORATOR_PRIMITIVEDECORATOR_HPP_
     #include <memory>
+    #include <string>
     #include <libconfig.h++>
     #include "Primitive/IPrimitive.hpp"
 
@@ -25,6 +26,8 @@ class PrimitiveDecorator : public IPrimitive, public std::enable_shared_from_thi
     void rotateX(double degrees) override;
     void rotateY(double degrees) override;
     void rotateZ(double degrees) override;
+    void setSourceFile(const std::string& source) override;
+    std::string getSourceFile() const override;
     std::optional<HitInfo> hit(const Ray &ray, double tMin,
         double tMax) override;
     std::shared_ptr<Material> getMaterial() const override;

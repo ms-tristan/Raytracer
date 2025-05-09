@@ -23,9 +23,13 @@
 
 
 namespace RayTracer {
+
+class SceneConfigParser;
+
 class SceneBuilder {
  private:
     std::unique_ptr<Scene> scene;
+    void* sceneConfigParser = nullptr;
 
  public:
     SceneBuilder();
@@ -56,6 +60,9 @@ class SceneBuilder {
     SceneBuilder& addCone(const Math::Point3D& apex,
         const Math::Vector3D& axis, double radius, double height,
         const std::shared_ptr<Material>& material);
+
+    void setSceneConfigParser(void* parser) { sceneConfigParser = parser; }
+    void* getSceneConfigParser() const { return sceneConfigParser; }
 
     std::unique_ptr<Scene> build();
 };

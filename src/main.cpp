@@ -84,6 +84,8 @@ int main(int argc, char **argv) {
     RayTracer::SceneDirector director;
     std::shared_ptr<RayTracer::Scene> scene;
     std::string sceneFile = "scenes/default_scene.cfg";
+    bool ppmOutput = false;
+    std::string ppmFilename;
 
     try {
         for (int i = 1; i < argc; ++i) {
@@ -106,7 +108,6 @@ int main(int argc, char **argv) {
                 sceneFile = arg;
             }
         }
-
         scene = director.createSceneFromFile(sceneFile);
 
         if (!scene) {
@@ -115,7 +116,6 @@ int main(int argc, char **argv) {
         }
 
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
-
         renderToPPM(*scene, *camera, image_width, image_height, outputFile);
 
         if (displayMode) {
@@ -123,7 +123,6 @@ int main(int argc, char **argv) {
             displayManager->initialize(image_width, image_height, "Raytracer", false);
 
             auto eventsManager = std::make_shared<RayTracer::SFMLEventsManager>(displayManager->getWindow());
-
             RayTracer::Renderer renderer(displayManager);
 
             RayTracer::InputManager inputManager(eventsManager, image_width, image_height);
@@ -133,7 +132,6 @@ int main(int argc, char **argv) {
             while (displayManager->isWindowOpen()) {
                 renderer.drawScene(*scene, *camera);
                 inputManager.processInput(scene, camera);
-
                 if (eventsManager->isKeyPressed("ESCAPE"))
                     displayManager->closeWindow();
             }

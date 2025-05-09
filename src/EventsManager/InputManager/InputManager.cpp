@@ -152,8 +152,6 @@ void InputManager::handleObjectScrolling(std::shared_ptr<Scene> scene, std::shar
 
     if (static_cast<int>(mouseOffset) != 0) {
         auto currentMousePos = _eventsManager->getMousePos();
-        sf::Vector2i currentPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
-
         double u = static_cast<double>(currentMousePos.x) / (_windowWidth - 1);
         double v = static_cast<double>((_windowHeight - 1) - currentMousePos.y) / (_windowHeight - 1);
 

@@ -17,46 +17,35 @@
 
 namespace RayTracer {
 
-class SupersamplingPostProcessPlugin : public IPostProcessPlugin {
- public:
-    ~SupersamplingPostProcessPlugin() override = default;
+std::string SupersamplingPostProcessPlugin::getTypeName() const {
+    return SupersamplingPostProcess::getTypeNameStatic();
+}
 
-    std::string getTypeName() const override {
-        return SupersamplingPostProcess::getTypeNameStatic();
-    }
-
-    std::shared_ptr<IPostProcess> createPostProcess(
-        const std::map<std::string, double>& params) override {
-        auto requiredParams = getRequiredParameters();
-        for (const auto& param : requiredParams) {
-            if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: " + param);
-            }
+std::shared_ptr<IPostProcess> SupersamplingPostProcessPlugin::createPostProcess(
+    const std::map<std::string, double>& params) {
+    auto requiredParams = getRequiredParameters();
+    for (const auto& param : requiredParams) {
+        if (params.find(param) == params.end()) {
+            throw std::runtime_error("Missing required parameter: " + param);
         }
-
-        int samplesPerPixel = static_cast<int>(params.at("samplesPerPixel"));
-        return std::make_shared<SupersamplingPostProcess>(samplesPerPixel);
     }
 
-    std::vector<std::string> getRequiredParameters() const override {
-        return {"samplesPerPixel"};
+    int samplesPerPixel = static_cast<int>(params.at("samplesPerPixel"));
+    return std::make_shared<SupersamplingPostProcess>(samplesPerPixel);
+}
+
+std::vector<std::string> SupersamplingPostProcessPlugin::getRequiredParameters() const {
+    return {"samplesPerPixel"};
+}
+
+std::shared_ptr<IPostProcess> SupersamplingPostProcessPlugin::createPostProcessFromSetting(
+    const libconfig::Setting& setting) {
+    if (!setting.exists("samplesPerPixel")) {
+        throw std::runtime_error("Missing required parameter: samplesPerPixel");
     }
 
-    std::shared_ptr<IPostProcess> createPostProcessFromSetting(
-        const libconfig::Setting& setting) override {
-        if (!setting.exists("samplesPerPixel")) {
-            throw std::runtime_error("Missing required parameter: samplesPerPixel");
-        }
-
-        int samplesPerPixel = static_cast<int>(setting["samplesPerPixel"]);
-        return std::make_shared<SupersamplingPostProcess>(samplesPerPixel);
-    }
-};
-
-extern "C" {
-    IPostProcessPlugin* createPostProcessPlugin() {
-        return new SupersamplingPostProcessPlugin();
-    }
+    int samplesPerPixel = static_cast<int>(setting["samplesPerPixel"]);
+    return std::make_shared<SupersamplingPostProcess>(samplesPerPixel);
 }
 
 }  // namespace RayTracer

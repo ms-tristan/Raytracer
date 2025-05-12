@@ -7,7 +7,7 @@
 
 #ifndef SRC_PRIMITIVE_INFINITECYLINDER_INFINITECYLINDER_HPP_
     #define SRC_PRIMITIVE_INFINITECYLINDER_INFINITECYLINDER_HPP_
-    
+
     #include <string>
     #include <memory>
     #include "Primitive/IPrimitive.hpp"

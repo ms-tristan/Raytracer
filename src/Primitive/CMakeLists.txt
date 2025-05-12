@@ -12,6 +12,7 @@ add_subdirectory(Torus)
 add_subdirectory(MobiusStrip)
 add_subdirectory(Fractal)
 add_subdirectory(KleinBottle)
+add_subdirectory(InfiniteCylinder)
 
 # List primitive source files directly
 set(PRIMITIVE_LOCAL_SOURCES "")

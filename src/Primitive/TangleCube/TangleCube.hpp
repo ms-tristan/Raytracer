@@ -1,5 +1,6 @@
 #ifndef SRC_PRIMITIVE_TANGLECUBE_TANGLECUBE_HPP_
     #define SRC_PRIMITIVE_TANGLECUBE_TANGLECUBE_HPP_
+    
     #include <string>
     #include <memory>
     #include "Primitive/IPrimitive.hpp"
@@ -13,6 +14,7 @@ class TangleCube : public IPrimitive, public std::enable_shared_from_this<Tangle
     double rotationX = 0.0;
     double rotationY = 0.0;
     double rotationZ = 0.0;
+    std::string sourceFile = "";
 
  public:
     Math::Point3D center;
@@ -44,6 +46,14 @@ class TangleCube : public IPrimitive, public std::enable_shared_from_this<Tangle
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
+
+    void setSourceFile(const std::string& source) {
+        sourceFile = source;
+    }
+    
+    std::string getSourceFile() const {
+        return sourceFile;
+    }
 };
 }  // namespace RayTracer
 

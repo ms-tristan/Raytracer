@@ -29,7 +29,7 @@ class Fractal : public IPrimitive, public std::enable_shared_from_this<Fractal> 
     double power;
     std::shared_ptr<IFractalType> fractalType;
     std::string sourceFile = "";
-    std::optional<HitInfo> rayMarch(const Ray& ray, double tMin, double tMax) const;
+    std::optional<HitInfo> rayMarch(const Ray& ray, double tMin, double tMax);
     Math::Vector3D estimateNormal(const Math::Point3D& p) const;
 
  public:

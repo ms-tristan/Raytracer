@@ -126,7 +126,7 @@ double tMax) {
     sphereCopy->rotationX = rotationX;
     sphereCopy->rotationY = rotationY;
     sphereCopy->rotationZ = rotationZ;
-    info.primitive = sphereCopy;
+    info.primitive = std::static_pointer_cast<IPrimitive>(shared_from_this());
     return info;
 }
 

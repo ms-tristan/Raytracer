@@ -162,7 +162,7 @@ double tMin, double tMax) {
     info.normal = normal;
     info.uv = Math::Vector2D(u, v);
     try {
-        info.primitive = std::make_shared<Cylinder>(*this);
+        info.primitive = std::static_pointer_cast<IPrimitive>(shared_from_this());
     } catch (const std::exception& e) {
         std::cerr << "Error in Cylinder::hit(): " << e.what() << std::endl;
         return std::nullopt;

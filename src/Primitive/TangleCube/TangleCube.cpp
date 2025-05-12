@@ -76,9 +76,9 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
         double x = p.X * scale;
         double y = p.Y * scale;
         double z = p.Z * scale;
-        
-        return (pow(x, 4) - 5.0 * x * x + 
-                pow(y, 4) - 5.0 * y * y + 
+
+        return (pow(x, 4) - 5.0 * x * x +
+                pow(y, 4) - 5.0 * y * y +
                 pow(z, 4) - 5.0 * z * z + 11.8);
     };
 
@@ -138,23 +138,23 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
         double curr_t = t + i * (tMax - tMin) / MAX_STEPS;
         Math::Vector3D p = transformedRay.origin + transformedRay.direction * curr_t - center;
         double curr_sdf = tangleCubeSDF(p);
-        
+
         if (prev_sdf * curr_sdf < 0) {
             double t_low = curr_t - (tMax - tMin) / MAX_STEPS;
             double t_high = curr_t;
             double mid_sdf;
-            
+
             for (int j = 0; j < BINARY_STEPS; j++) {
                 double t_mid = (t_low + t_high) * 0.5;
                 Math::Vector3D mid_p = transformedRay.origin + transformedRay.direction * t_mid - center;
                 mid_sdf = tangleCubeSDF(mid_p);
-                
+
                 if (std::abs(mid_sdf) < EPSILON) {
                     hit_found = true;
                     closest_t = t_mid;
                     break;
                 }
-                
+
                 if (prev_sdf * mid_sdf < 0) {
                     t_high = t_mid;
                 } else {
@@ -162,7 +162,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
                     prev_sdf = mid_sdf;
                 }
             }
-            
+
             if (!hit_found) {
                 closest_t = (t_low + t_high) * 0.5;
                 hit_found = true;
@@ -170,16 +170,16 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
             
             break;
         }
-        
+
         prev_sdf = curr_sdf;
     }
-    
+
     if (!hit_found) {
         t = tMin;
         for (int i = 0; i < MAX_STEPS && t < tMax; i++) {
             Math::Vector3D p = transformedRay.origin + transformedRay.direction * t - center;
             double d = tangleCubeSDF(p);
-            
+
             if (std::abs(d) < EPSILON) {
                 hit_found = true;
                 closest_t = t;
@@ -187,7 +187,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
             }
             double step = std::abs(d) * 0.1;
             step = std::max(step, EPSILON * 10.0);
-            
+
             t += step;
         }
     }

@@ -14,6 +14,7 @@
 #include <utility>
 #include <algorithm>
 #include <libconfig.h++>
+#include "WindowSize.hpp"
 #include "ConfigParser.hpp"
 #include "Light/DirectionalLight/DirectionalLight.hpp"
 #include "Light/AmbientLight/AmbientLight.hpp"
@@ -206,7 +207,7 @@ void CameraParser::parse(const libconfig::Setting& setting, std::shared_ptr<Scen
     }
 
     if (setting.exists("resolution")) {
-        int width = 800, height = 600;
+        int width = WIDTH, height = HEIGHT;
         if (setting["resolution"].exists("width"))
             width = static_cast<int>(setting["resolution"]["width"]);
         if (setting["resolution"].exists("height"))
@@ -453,16 +454,34 @@ std::map<std::string, double> PostProcessParser::extractParametersFromSetting(
         if (name == "type")
             continue;
 
-        if (setting[i].getType() == libconfig::Setting::TypeFloat ||
-            setting[i].getType() == libconfig::Setting::TypeInt) {
-            params[name] = static_cast<double>(setting[i]);
+        try {
+            if (setting[i].getType() == libconfig::Setting::TypeFloat ||
+                setting[i].getType() == libconfig::Setting::TypeInt) {
+                params[name] = static_cast<double>(setting[i]);
+            } else if (name == "samplesPerPixel" &&
+                      (setting[i].getType() == libconfig::Setting::TypeString ||
+                       setting[i].getType() == libconfig::Setting::TypeGroup)) {
+                std::cerr << "Warning: 'samplesPerPixel' should be a numeric value. Using default value of 4." << std::endl;
+                params[name] = 4.0;
+            }
+        } catch (const libconfig::SettingTypeException& ex) {
+            std::cerr << "Warning: Could not convert parameter '" << name
+                      << "' to a numeric value. Using default if available." << std::endl;
+            if (name == "samplesPerPixel") {
+                params[name] = 4.0;
+            }
         }
     }
 
     for (const auto& param : requiredParams) {
         if (params.find(param) == params.end()) {
-            // Throw an exception for missing required parameters
-            throw ConfigParseException("Missing required parameter '" + param + "' for PostProcess");
+            if (param == "samplesPerPixel") {
+                std::cerr << "Warning: Missing required parameter '" << param
+                          << "' for SupersamplingPostProcess. Using default value of 4." << std::endl;
+                params[param] = 4.0;
+            } else {
+                throw ConfigParseException("Missing required parameter '" + param + "' for PostProcess");
+            }
         }
     }
 

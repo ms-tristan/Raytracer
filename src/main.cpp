@@ -16,7 +16,7 @@
 #include <fstream>
 
 #include <SFML/Graphics.hpp>
-
+#include "WindowSize.hpp"
 // Exception system
 #include "Exception/IException.hpp"
 #include "Exception/BaseException.hpp"
@@ -56,6 +56,9 @@
 #include "Math/Point3D/Point3D.hpp"
 #include "Ray/Ray.hpp"
 
+// Post-processing effects
+#include "PostProcess/SupersamplingPostProcess/SupersamplingPostProcess.hpp"
+
 void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
                  int width, int height, const std::string& filename) {
     std::ofstream outFile(filename);
@@ -68,13 +71,28 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
     std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
     std::cout.rdbuf(outFile.rdbuf());
 
+    int samplesPerPixel = 1;
+    for (const auto& postProcess : scene.getPostProcessEffects()) {
+        auto supersamplingPostProcess = std::dynamic_pointer_cast<RayTracer::SupersamplingPostProcess>(postProcess);
+        if (supersamplingPostProcess) {
+            samplesPerPixel = supersamplingPostProcess->getSamplesPerPixel();
+            break;
+        }
+    }
+    const_cast<RayTracer::Scene&>(scene).setImageDimensions(width, height);
+
     for (int j = height - 1; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
             double u = static_cast<double>(i) / (width - 1);
             double v = static_cast<double>(j) / (height - 1);
 
-            RayTracer::Ray ray = camera.ray(u, v);
-            Math::Vector3D pixelColor = scene.computeColor(ray);
+            Math::Vector3D pixelColor;
+            if (samplesPerPixel > 1) {
+                pixelColor = camera.supersampleRay(u, v, scene, samplesPerPixel);
+            } else {
+                RayTracer::Ray ray = camera.ray(u, v);
+                pixelColor = scene.computeColor(ray);
+            }
 
             scene.writeColor(pixelColor);
         }
@@ -85,8 +103,8 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
 }
 
 int main(int argc, char **argv) {
-    const int image_width = 800;
-    const int image_height = 600;
+    const int image_width = WIDTH;
+    const int image_height = HEIGHT;
     bool displayMode = true;
     std::string outputFile = "output.ppm";
 

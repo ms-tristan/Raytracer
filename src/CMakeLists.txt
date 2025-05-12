@@ -52,6 +52,7 @@ set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/PostProcessFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginLoader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/SupersamplingPostProcess/SupersamplingPostProcess.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ATexture.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/NormalMap/NormalMap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/SpecularMap/SpecularMap.cpp
@@ -87,6 +88,8 @@ target_link_libraries(raytracer PRIVATE
     eventsmanager
     scenedirector
     shader
+    postprocess
+    supersampling_postprocess
     PkgConfig::LIBCONFIG
 )
 

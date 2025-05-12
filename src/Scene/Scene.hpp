@@ -13,6 +13,7 @@
   #include <memory>
   #include <vector>
   #include <libconfig.h++>
+  #include "WindowSize.hpp"
   #include "Camera/Camera.hpp"
   #include "defs.hpp"
   #include "Light/AmbientLight/AmbientLight.hpp"
@@ -35,8 +36,9 @@ class Scene {
     AmbientLight ambientLight;
     Camera camera;
     static constexpr int maxReflectionDepth = 5;
+    int imageWidth = WIDTH;
+    int imageHeight = HEIGHT;
 
-    // Helper methods for applyDisplacementMapping
     Math::Vector3D createTangentVector(const Math::Vector3D &normal) const;
     void applyDisplacementMapping(std::optional<HitInfo> &hit,
                                 const std::shared_ptr<Material> &material) const;
@@ -224,6 +226,28 @@ class Scene {
      * @return The ambient light
      */
     const AmbientLight& getAmbientLight() const { return ambientLight; }
+
+    /**
+     * @brief Gets the image width
+     * @return The image width
+     */
+    int getImageWidth() const { return imageWidth; }
+
+    /**
+     * @brief Gets the image height
+     * @return The image height
+     */
+    int getImageHeight() const { return imageHeight; }
+
+    /**
+     * @brief Sets the image dimensions
+     * @param width The image width
+     * @param height The image height
+     */
+    void setImageDimensions(int width, int height) {
+        imageWidth = width;
+        imageHeight = height;
+    }
 };
 }  // namespace RayTracer
 

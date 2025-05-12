@@ -59,5 +59,4 @@ extern "C" {
         return new TangleCubePlugin();
     }
 }
-
 }  // namespace RayTracer

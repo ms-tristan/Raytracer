@@ -67,6 +67,20 @@ void SFMLEventsManager::initKeyMap() {
     _keyMap["RSHIFT"] = sf::Keyboard::RShift;
     _keyMap["LCONTROL"] = sf::Keyboard::LControl;
     _keyMap["RCONTROL"] = sf::Keyboard::RControl;
+    _keyMap["LALT"] = sf::Keyboard::LAlt;
+    _keyMap["RALT"] = sf::Keyboard::RAlt;
+
+    _buttonMap["LEFT"] = sf::Mouse::Left;
+    _buttonMap["RIGHT"] = sf::Mouse::Right;
+    _buttonMap["MIDDLE"] = sf::Mouse::Middle;
+}
+
+bool SFMLEventsManager::isButtonPressed(std::string button) const {
+    auto it = _buttonMap.find(button);
+    if (it == _buttonMap.end()) {
+        return false;
+    }
+    return sf::Mouse::isButtonPressed(it->second);
 }
 
 bool SFMLEventsManager::isKeyPressed(std::string key) const {

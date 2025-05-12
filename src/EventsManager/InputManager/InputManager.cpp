@@ -84,7 +84,7 @@ void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
         camera->rotateX(-_rotateSpeed);
     }
 
-    bool rightMouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Right);
+    bool rightMouseIsPressed = _eventsManager->isButtonPressed("RIGHT");
     if (rightMouseIsPressed) {
         auto currentMousePos = _eventsManager->getMousePos();
         sf::Vector2i currentPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
@@ -107,7 +107,7 @@ void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
 
 void InputManager::handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera) {
     auto currentMousePos = _eventsManager->getMousePos();
-    bool mouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+    bool mouseIsPressed = _eventsManager->isButtonPressed("LEFT");
 
     if (mouseIsPressed && !_mouseWasPressed) {
         double u = static_cast<double>(currentMousePos.x) / (_windowWidth - 1);
@@ -135,6 +135,7 @@ void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
     int deltaY = currentMousePos.y - _dragStartPos.y;
 
     if (deltaX != 0 || deltaY != 0) {
+        std::cout << "Dragging object: " << _selectedPrimitive->getTypeName() << std::endl;
         Math::Point3D screenCenter = camera->screen.origin +
             camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
         Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();
@@ -142,6 +143,7 @@ void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
         Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
         Math::Vector3D moveVec = rightDir * (deltaX * 0.01) + upDir * (-deltaY * 0.01);
+        std::cout << "Translation vector: " << moveVec.X << ", " << moveVec.Y << ", " << moveVec.Z << std::endl;
         _selectedPrimitive->translate(moveVec);
         _dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
     }

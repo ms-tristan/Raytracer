@@ -57,4 +57,4 @@ class TangleCube : public IPrimitive, public std::enable_shared_from_this<Tangle
 };
 }  // namespace RayTracer
 
-#endif  // 
+#endif  // SRC_PRIMITIVE_TANGLECUBE_TANGLECUBE_HPP_

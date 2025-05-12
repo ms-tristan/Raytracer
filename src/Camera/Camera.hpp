@@ -11,8 +11,8 @@
 
 #include <memory>
 #include <cmath>
-#include <libconfig.h++>
 #include <random>
+#include <libconfig.h++>
 
 #include "Math/Point3D/Point3D.hpp"
 #include "Ray/Ray.hpp"

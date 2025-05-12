@@ -13,6 +13,7 @@
 #include <iostream>
 #include "PostProcess/Plugin/IPostProcessPlugin.hpp"
 #include "SupersamplingPostProcess.hpp"
+#include "PostProcess/SupersamplingPostProcess/SupersamplingPostProcessPlugin.hpp"
 
 namespace RayTracer {
 

@@ -167,7 +167,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
                 closest_t = (t_low + t_high) * 0.5;
                 hit_found = true;
             }
-            
+
             break;
         }
 

@@ -1,6 +1,6 @@
 #ifndef SRC_PRIMITIVE_TANGLECUBE_TANGLECUBE_HPP_
     #define SRC_PRIMITIVE_TANGLECUBE_TANGLECUBE_HPP_
-    
+
     #include <string>
     #include <memory>
     #include "Primitive/IPrimitive.hpp"
@@ -57,4 +57,4 @@ class TangleCube : public IPrimitive, public std::enable_shared_from_this<Tangle
 };
 }  // namespace RayTracer
 
-#endif  // SRC_PRIMITIVE_TANGLECUBE_TANGLECUBE_HPP_
+#endif  // 

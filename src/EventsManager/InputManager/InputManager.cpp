@@ -129,7 +129,6 @@ void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
     int deltaY = currentMousePos.y - _dragStartPos.y;
 
     if (deltaX != 0 || deltaY != 0) {
-        std::cout << "Dragging object: " << _selectedPrimitive->getTypeName() << std::endl;
         Math::Point3D screenCenter = camera->screen.origin +
             camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
         Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();
@@ -137,7 +136,6 @@ void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
         Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
         Math::Vector3D moveVec = rightDir * (deltaX * 0.01) + upDir * (-deltaY * 0.01);
-        std::cout << "Translation vector: " << moveVec.X << ", " << moveVec.Y << ", " << moveVec.Z << std::endl;
         _selectedPrimitive->translate(moveVec);
         _dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
     }

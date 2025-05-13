@@ -115,7 +115,6 @@ void InputManager::handleObjectSelection(std::shared_ptr<Scene> scene, std::shar
             _selectedPrimitive = hit->primitive;
             _dragStartPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
         }
-    } else if (mouseIsPressed && _isDragging) {
     } else if (!mouseIsPressed && _isDragging) {
         _isDragging = false;
         _selectedPrimitive = nullptr;

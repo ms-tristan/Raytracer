@@ -27,6 +27,19 @@ class GrayscalePostProcess : public IPostProcess {
         const std::vector<Math::Vector3D>& frameBuffer,
         int width, int height) const override;
 
+    /**
+     * @brief Get a parameter value by name
+     *
+     * @param paramName The name of the parameter to retrieve
+     * @return The parameter value
+     */
+    double getParameter(const std::string& paramName) const override {
+        if (paramName == "intensity") {
+            return intensity;
+        }
+        return 0.0;
+    }
+
     std::string getTypeName() const override;
 
     static std::string getTypeNameStatic();

@@ -7,8 +7,10 @@
 */
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include "Camera/Camera.hpp"
 #include "Transformation/Rotate/Rotate.hpp"
+#include "Scene/Scene.hpp"
 
 namespace RayTracer {
 Camera::Camera()
@@ -67,6 +69,43 @@ Ray Camera::ray(double u, double v) const {
     Math::Point3D point = screen.pointAt(u, v);
     Math::Vector3D direction = (point - origin).normalize();
     return Ray(origin, direction);
+}
+
+Math::Vector3D Camera::supersampleRay(double u, double v, const Scene& scene, int samplesPerPixel) const {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<double> dis(-0.5, 0.5);
+    int samplesPerAxis = static_cast<int>(std::sqrt(samplesPerPixel));
+    double pixelSizeU = 1.0 / std::max(1, scene.getImageWidth() - 1);
+    double pixelSizeV = 1.0 / std::max(1, scene.getImageHeight() - 1);
+    Math::Vector3D accumulatedColor(Math::Coords{0.0, 0.0, 0.0});
+    if (samplesPerAxis > 1) {
+        for (int i = 0; i < samplesPerAxis; ++i) {
+            for (int j = 0; j < samplesPerAxis; ++j) {
+                double offsetU = (i + 0.5) / samplesPerAxis - 0.5;
+                double offsetV = (j + 0.5) / samplesPerAxis - 0.5;
+                double sampleU = u + offsetU * pixelSizeU;
+                double sampleV = v + offsetV * pixelSizeV;
+                Ray sampleRay = ray(sampleU, sampleV);
+                Math::Vector3D sampleColor = scene.computeColor(sampleRay);
+                accumulatedColor += sampleColor;
+            }
+        }
+    } else {
+        for (int i = 0; i < samplesPerPixel; ++i) {
+            double offsetU = dis(gen);
+            double offsetV = dis(gen);
+            double sampleU = u + offsetU * pixelSizeU;
+            double sampleV = v + offsetV * pixelSizeV;
+            Ray sampleRay = ray(sampleU, sampleV);
+            Math::Vector3D sampleColor = scene.computeColor(sampleRay);
+            accumulatedColor += sampleColor;
+        }
+    }
+    accumulatedColor.X /= samplesPerPixel;
+    accumulatedColor.Y /= samplesPerPixel;
+    accumulatedColor.Z /= samplesPerPixel;
+    return accumulatedColor;
 }
 
 void Camera::translate(const Math::Vector3D &translation) {

@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <cmath>
+#include <random>
 #include <libconfig.h++>
 
 #include "Math/Point3D/Point3D.hpp"
@@ -18,6 +19,10 @@
 #include "Rectangle3D/Rectangle3D.hpp"
 
 namespace RayTracer {
+// Forward declarations
+class Scene;
+class SupersamplingPostProcess;
+
 class Camera {
  public:
     Math::Point3D origin;
@@ -34,6 +39,17 @@ class Camera {
     void setFOV(double newFov);
     double getFOV() const;
     Ray ray(double u, double v) const;
+
+    /**
+     * @brief Generate multiple rays for supersampling and return the average color
+     *
+     * @param u Base U coordinate (0.0 - 1.0)
+     * @param v Base V coordinate (0.0 - 1.0)
+     * @param scene The scene to render
+     * @param samplesPerPixel Number of samples to take per pixel
+     * @return Average color from all sample rays
+     */
+    Math::Vector3D supersampleRay(double u, double v, const Scene& scene, int samplesPerPixel) const;
 
     void rotateX(double degrees);
     void rotateY(double degrees);

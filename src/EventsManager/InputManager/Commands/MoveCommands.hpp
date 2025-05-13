@@ -87,9 +87,10 @@ class MouseRotateCommand : public ICommand {
         sf::Vector2i& lastMousePos,
         bool& rightMouseWasPressed,
         double sensitivity)
-        : _eventsManager(eventsManager), _camera(camera), 
-          _lastMousePos(lastMousePos), _rightMouseWasPressed(rightMouseWasPressed),
-          _sensitivity(sensitivity) {}
+        : _eventsManager(eventsManager), _camera(camera)
+        , _lastMousePos(lastMousePos)
+        , _rightMouseWasPressed(rightMouseWasPressed)
+        , _sensitivity(sensitivity) {}
 
     bool isActive() const override {
         return _eventsManager->isButtonPressed("RIGHT");

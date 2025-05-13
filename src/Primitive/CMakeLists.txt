@@ -13,6 +13,7 @@ add_subdirectory(MobiusStrip)
 add_subdirectory(Fractal)
 add_subdirectory(KleinBottle)
 add_subdirectory(InfiniteCylinder)
+add_subdirectory(InfiniteCone)
 add_subdirectory(TangleCube)
 
 

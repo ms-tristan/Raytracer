@@ -42,72 +42,66 @@ void InputManager::processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Ca
     }
 }
 
-void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
+void InputManager::setupCameraCommands(std::shared_ptr<Camera> camera) {
     Math::Point3D screenCenter = camera->screen.origin +
         camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
     Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();
     Math::Vector3D upDir = camera->screen.left_side.normalize();
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
-    double currentMoveSpeed = _moveSpeed;
-    if (_eventsManager->isKeyPressed("LSHIFT")) {
-        currentMoveSpeed *= 3.5;
-    }
-    if (_eventsManager->isKeyPressed("Z")) {
-        camera->translate(forwardDir * currentMoveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("S")) {
-        camera->translate(forwardDir * -currentMoveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("Q")) {
-        camera->translate(rightDir * -currentMoveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("D")) {
-        camera->translate(rightDir * currentMoveSpeed);
-    }
-    if (_eventsManager->isKeyPressed("SPACE")) {
-        camera->translate(Math::Vector3D(Math::Coords{0.0, currentMoveSpeed, 0.0}));
-    }
-    if (_eventsManager->isKeyPressed("LCONTROL")) {
-        camera->translate(Math::Vector3D(Math::Coords{0.0, -currentMoveSpeed, 0.0}));
-    }
-    if (_eventsManager->isKeyPressed("LEFT")) {
-        camera->rotateY(_rotateSpeed);
-    }
-    if (_eventsManager->isKeyPressed("RIGHT")) {
-        camera->rotateY(-_rotateSpeed);
-    }
-    if (_eventsManager->isKeyPressed("UP")) {
-        camera->rotateX(_rotateSpeed);
-    }
-    if (_eventsManager->isKeyPressed("DOWN")) {
-        camera->rotateX(-_rotateSpeed);
-    }
+    _cameraCommands.clear();
 
-    bool rightMouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Right);
-    if (rightMouseIsPressed) {
-        auto currentMousePos = _eventsManager->getMousePos();
-        sf::Vector2i currentPos = {static_cast<int>(currentMousePos.x), static_cast<int>(currentMousePos.y)};
+    _cameraCommands.push_back(std::make_shared<CameraTranslateCommand>(
+        _eventsManager, camera, "Z", forwardDir, _moveSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraTranslateCommand>(
+        _eventsManager, camera, "S", forwardDir * -1.0, _moveSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraTranslateCommand>(
+        _eventsManager, camera, "Q", rightDir * -1.0, _moveSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraTranslateCommand>(
+        _eventsManager, camera, "D", rightDir, _moveSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraTranslateCommand>(
+        _eventsManager, camera, "SPACE", Math::Vector3D(Math::Coords{0.0, 1.0, 0.0}), _moveSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraTranslateCommand>(
+        _eventsManager, camera, "LCONTROL", Math::Vector3D(Math::Coords{0.0, -1.0, 0.0}), _moveSpeed));
 
-        if (_rightMouseWasPressed) {
-            int deltaX = currentPos.x - _lastMousePos.x;
-            int deltaY = currentPos.y - _lastMousePos.y;
+    _cameraCommands.push_back(std::make_shared<CameraRotateCommand>(
+        _eventsManager, camera, "LEFT", false, _rotateSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraRotateCommand>(
+        _eventsManager, camera, "RIGHT", false, -_rotateSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraRotateCommand>(
+        _eventsManager, camera, "UP", true, _rotateSpeed));
+    _cameraCommands.push_back(std::make_shared<CameraRotateCommand>(
+        _eventsManager, camera, "DOWN", true, -_rotateSpeed));
 
-            if (deltaX != 0) {
-                camera->rotateY(-deltaX * _mouseRotateSensitivity);
-            }
-            if (deltaY != 0) {
-                camera->rotateX(-deltaY * _mouseRotateSensitivity);
-            }
+    _cameraCommands.push_back(std::make_shared<MouseRotateCommand>(
+        _eventsManager, camera, _lastMousePos, _rightMouseWasPressed, _mouseRotateSensitivity));
+}
+
+void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
+    setupCameraCommands(camera);
+
+    double speedMultiplier = _eventsManager->isKeyPressed("LSHIFT") ? 3.5 : 1.0;
+    for (auto& command : _cameraCommands) {
+        auto translateCmd = std::dynamic_pointer_cast<CameraTranslateCommand>(command);
+        if (translateCmd) {
+            translateCmd->setSpeed(_moveSpeed * speedMultiplier);
         }
-        _lastMousePos = currentPos;
+
+        if (command->isActive()) {
+            _moving = true;
+            command->execute();
+        }
     }
-    _rightMouseWasPressed = rightMouseIsPressed;
+
+    bool rightMouseIsPressed = _eventsManager->isButtonPressed("RIGHT");
+    if (!rightMouseIsPressed) {
+        _rightMouseWasPressed = false;
+    }
 }
 
 void InputManager::handleObjectSelection(std::shared_ptr<Scene> scene, std::shared_ptr<Camera> camera) {
     auto currentMousePos = _eventsManager->getMousePos();
-    bool mouseIsPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+    bool mouseIsPressed = _eventsManager->isButtonPressed("LEFT");
 
     if (mouseIsPressed && !_mouseWasPressed) {
         double u = static_cast<double>(currentMousePos.x) / (_windowWidth - 1);

@@ -163,7 +163,7 @@ std::optional<HitInfo> Fractal::hit(const Ray &ray, double tMin, double tMax) {
     return rayMarch(transformedRay, entryT, exitT);
 }
 
-std::optional<HitInfo> Fractal::rayMarch(const Ray& ray, double tMin, double tMax) const {
+std::optional<HitInfo> Fractal::rayMarch(const Ray& ray, double tMin, double tMax) {
     const double PRECISION = 0.00001;
     const int MAX_STEPS = 500;
     const double EPSILON = 0.0001 * boundingRadius;
@@ -185,7 +185,7 @@ std::optional<HitInfo> Fractal::rayMarch(const Ray& ray, double tMin, double tMa
             info.hitPoint = ray.origin + ray.direction * t;
             info.normal = estimateNormal(info.hitPoint);
             info.normal = info.normal.normalize();
-            info.primitive = const_cast<Fractal*>(this)->shared_from_this();
+            info.primitive = std::static_pointer_cast<IPrimitive>(shared_from_this());
             if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
                 if (rotationX != 0.0) {
                     RayTracer::Rotate rotateX("x", rotationX);
@@ -246,7 +246,7 @@ std::shared_ptr<Material> Fractal::getMaterial() const {
 
 std::shared_ptr<IPrimitive> Fractal::clone() const {
     auto copy = std::make_shared<Fractal>(center, boundingRadius, fractalType->getName(),
-                                         maxIterations, bailout, material);
+                                          maxIterations, bailout, material);
     copy->rotationX = rotationX;
     copy->rotationY = rotationY;
     copy->rotationZ = rotationZ;

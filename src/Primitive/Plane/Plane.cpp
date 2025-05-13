@@ -114,12 +114,7 @@ double tMax) {
     if (v < 0) v += 1.0;
 
     info.uv = Math::Vector2D(u, v);
-    // Créer une copie de l'objet actuel avec le clone au lieu d'utiliser le constructeur de copie
-    std::shared_ptr<Plane> planeCopy = std::make_shared<Plane>(position, normal, material);
-    planeCopy->rotationX = rotationX;
-    planeCopy->rotationY = rotationY;
-    planeCopy->rotationZ = rotationZ;
-    info.primitive = planeCopy;
+    info.primitive = std::static_pointer_cast<IPrimitive>(shared_from_this());
     return info;
 }
 

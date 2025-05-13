@@ -22,6 +22,7 @@ class SFMLEventsManager : public IEventsManager {
     ~SFMLEventsManager() override = default;
 
     bool isKeyPressed(std::string key) const override;
+    bool isButtonPressed(std::string button) const override;
     vector2f_t getMousePos() override;
     float getMouseWheelDelta() const override;
 
@@ -39,6 +40,7 @@ class SFMLEventsManager : public IEventsManager {
     float _mouseWheelDelta;
 
     std::unordered_map<std::string, sf::Keyboard::Key> _keyMap;
+    std::unordered_map<std::string, sf::Mouse::Button> _buttonMap;
 
     void initKeyMap();
 };

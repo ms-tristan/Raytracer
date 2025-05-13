@@ -110,7 +110,7 @@ double tMax) {
 
     Math::Point3D hitPoint = transformedRay.origin + transformedRay.direction * t;
     double heightIntersect = (hitPoint - apex).dot(axis);
-    
+
     if (heightIntersect < 0) {
         t = t2;
         if (t < tMin || t > tMax)

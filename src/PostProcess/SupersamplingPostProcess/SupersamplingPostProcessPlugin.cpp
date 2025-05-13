@@ -48,4 +48,10 @@ std::shared_ptr<IPostProcess> SupersamplingPostProcessPlugin::createPostProcessF
     return std::make_shared<SupersamplingPostProcess>(samplesPerPixel);
 }
 
-}  // namespace RayTracer
+} // namespace RayTracer
+
+extern "C" {
+    RayTracer::IPostProcessPlugin* createPostProcessPlugin() {
+        return new RayTracer::SupersamplingPostProcessPlugin();
+    }
+}

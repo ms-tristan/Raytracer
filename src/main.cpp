@@ -56,8 +56,6 @@
 #include "Math/Point3D/Point3D.hpp"
 #include "Ray/Ray.hpp"
 
-// Post-processing effects
-#include "PostProcess/SupersamplingPostProcess/SupersamplingPostProcess.hpp"
 
 void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
                  int width, int height, const std::string& filename) {
@@ -73,19 +71,17 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
 
     int samplesPerPixel = 1;
     for (const auto& postProcess : scene.getPostProcessEffects()) {
-        auto supersamplingPostProcess = std::dynamic_pointer_cast<RayTracer::SupersamplingPostProcess>(postProcess);
-        if (supersamplingPostProcess) {
-            samplesPerPixel = supersamplingPostProcess->getSamplesPerPixel();
+        if (postProcess->getTypeName() == "supersampling") {
+            samplesPerPixel = static_cast<int>(postProcess->getParameter("samples"));
             break;
         }
     }
-    const_cast<RayTracer::Scene&>(scene).setImageDimensions(width, height);
 
+    const_cast<RayTracer::Scene&>(scene).setImageDimensions(width, height);
     for (int j = height - 1; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
             double u = static_cast<double>(i) / (width - 1);
             double v = static_cast<double>(j) / (height - 1);
-
             Math::Vector3D pixelColor;
             if (samplesPerPixel > 1) {
                 pixelColor = camera.supersampleRay(u, v, scene, samplesPerPixel);
@@ -93,11 +89,9 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
                 RayTracer::Ray ray = camera.ray(u, v);
                 pixelColor = scene.computeColor(ray);
             }
-
             scene.writeColor(pixelColor);
         }
     }
-
     std::cout.rdbuf(oldCoutStreamBuf);
     outFile.close();
 }

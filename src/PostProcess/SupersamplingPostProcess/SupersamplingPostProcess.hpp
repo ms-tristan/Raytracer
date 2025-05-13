@@ -55,6 +55,19 @@ class SupersamplingPostProcess : public IPostProcess {
     int getSamplesPerPixel() const { return samplesPerPixel; }
 
     /**
+     * @brief Get a parameter value by name
+     *
+     * @param paramName The name of the parameter to retrieve
+     * @return The parameter value
+     */
+    double getParameter(const std::string& paramName) const override {
+        if (paramName == "samples") {
+            return static_cast<double>(samplesPerPixel);
+        }
+        return 0.0;
+    }
+
+    /**
      * @brief Get the type name of this post-process effect
      *
      * @return The type name

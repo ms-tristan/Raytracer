@@ -52,7 +52,7 @@ set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/PostProcessFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginLoader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/SupersamplingPostProcess/SupersamplingPostProcess.cpp
+    # Suppression de SupersamplingPostProcess des sources du core pour le rendre vraiment plugin
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ATexture.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/NormalMap/NormalMap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/SpecularMap/SpecularMap.cpp
@@ -74,7 +74,8 @@ set_target_properties(raytracer_core PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 target_include_directories(raytracer_core PRIVATE ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(raytracer_core PRIVATE dl shader postprocess)
+# Suppression de la dépendance postprocess pour garder seulement les plugins
+target_link_libraries(raytracer_core PRIVATE dl shader)
 
 
 # Create the main raytracer executable
@@ -88,8 +89,6 @@ target_link_libraries(raytracer PRIVATE
     eventsmanager
     scenedirector
     shader
-    postprocess
-    supersampling_postprocess
     PkgConfig::LIBCONFIG
 )
 

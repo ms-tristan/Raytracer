@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <atomic>
 #include <memory>
-#include "PostProcess/SupersamplingPostProcess/SupersamplingPostProcess.hpp"
+// Suppression de l'include direct de SupersamplingPostProcess
 
 namespace RayTracer {
 
@@ -44,9 +44,8 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
 
     int samplesPerPixel = 1;
     for (const auto& postProcess : scene.getPostProcessEffects()) {
-        auto supersamplingPostProcess = std::dynamic_pointer_cast<SupersamplingPostProcess>(postProcess);
-        if (supersamplingPostProcess) {
-            samplesPerPixel = supersamplingPostProcess->getSamplesPerPixel();
+        if (postProcess->getTypeName() == "supersampling") {
+            samplesPerPixel = static_cast<int>(postProcess->getParameter("samples"));
             break;
         }
     }

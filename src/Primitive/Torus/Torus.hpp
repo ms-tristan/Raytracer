@@ -36,21 +36,13 @@ class Torus : public IPrimitive, public std::enable_shared_from_this<Torus> {
         const std::shared_ptr<Material> &material);
     ~Torus() override = default;
 
-    static std::string getTypeNameStatic() {
-        return "torus";
-    }
+    static std::string getTypeNameStatic() { return "torus"; }
 
-    std::string getTypeName() const override {
-        return getTypeNameStatic();
-    }
+    std::string getTypeName() const override { return getTypeNameStatic(); }
 
-    void setSourceFile(const std::string& source) override {
-        sourceFile = source;
-    }
+    void setSourceFile(const std::string& source) override { sourceFile = source; }
 
-    std::string getSourceFile() const override {
-        return sourceFile;
-    }
+    std::string getSourceFile() const override { return sourceFile; }
 
     void translate(const Math::Vector3D &translation) override;
     void rotateX(double degrees) override;
@@ -60,6 +52,8 @@ class Torus : public IPrimitive, public std::enable_shared_from_this<Torus> {
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
+
+    Math::Point3D getPosition() const override { return center; }
 
  private:
     bool checkBoundingSphereIntersection(const Ray &ray) const;

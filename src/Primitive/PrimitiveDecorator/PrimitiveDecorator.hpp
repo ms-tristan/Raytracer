@@ -33,6 +33,8 @@ class PrimitiveDecorator : public IPrimitive, public std::enable_shared_from_thi
     std::shared_ptr<Material> getMaterial() const override;
     std::shared_ptr<IPrimitive> clone() const override = 0;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
+
+    Math::Point3D getPosition() const override { return wrappedPrimitive->getPosition(); }
 };
 }  // namespace RayTracer
 

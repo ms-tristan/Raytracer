@@ -87,7 +87,7 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
                 pixelColor = camera.supersampleRay(u, v, scene, samplesPerPixel);
             } else {
                 RayTracer::Ray ray = camera.ray(u, v);
-                pixelColor = scene.computeColor(ray);
+                pixelColor = scene.computeColor(ray, false);
             }
             scene.writeColor(pixelColor);
         }
@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
             auto prims = scene->getPrimitives();
 
             while (displayManager->isWindowOpen()) {
-                renderer.drawScene(*scene, *camera);
+                renderer.drawScene(*scene, *camera, inputManager.isMoving());
                 inputManager.processInput(scene, camera);
                 if (eventsManager->isKeyPressed("ESCAPE"))
                     displayManager->closeWindow();

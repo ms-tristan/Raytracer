@@ -78,6 +78,7 @@ camera: {
   position = { x = 0; y = -100; z = 20; };
   rotation = { x = 0; y = 0; z = 0; };
   fieldOfView = 72.0;
+  fieldOfView = 72.0;
 };
 
 primitives: {

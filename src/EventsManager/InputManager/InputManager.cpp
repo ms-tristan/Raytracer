@@ -34,6 +34,7 @@ void InputManager::processInput(std::shared_ptr<Scene> scene, std::shared_ptr<Ca
     Math::Vector3D upDir = camera->screen.left_side.normalize();
     Math::Vector3D rightDir = forwardDir.cross(upDir).normalize();
 
+    _moving = false;
     handleCameraMovement(camera);
     handleObjectSelection(scene, camera);
     handleObjectScrolling(scene, camera);
@@ -103,6 +104,8 @@ void InputManager::handleObjectSelection(std::shared_ptr<Scene> scene, std::shar
     auto currentMousePos = _eventsManager->getMousePos();
     bool mouseIsPressed = _eventsManager->isButtonPressed("LEFT");
 
+    if (mouseIsPressed)
+        _moving = true;
     if (mouseIsPressed && !_mouseWasPressed) {
         double u = static_cast<double>(currentMousePos.x) / (_windowWidth - 1);
         double v = static_cast<double>((_windowHeight - 1) - currentMousePos.y) / (_windowHeight - 1);
@@ -129,6 +132,7 @@ void InputManager::handleObjectDragging(std::shared_ptr<Camera> camera) {
     int deltaY = currentMousePos.y - _dragStartPos.y;
 
     if (deltaX != 0 || deltaY != 0) {
+        _moving = true;
         Math::Point3D screenCenter = camera->screen.origin +
             camera->screen.bottom_side * 0.5 + camera->screen.left_side * 0.5;
         Math::Vector3D forwardDir = (screenCenter - camera->origin).normalize();

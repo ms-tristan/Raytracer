@@ -113,33 +113,23 @@ MobiusIntersection findClosestIntersection(const Ray& ray, const Math::Point3D& 
 
     for (int i = 0; i < numSamples; i++) {
         double theta = (2.0 * M_PI * i) / numSamples;
-
         for (int j = -numSamples/2; j <= numSamples/2; j++) {
             double s = minorRadius * (2.0 * j / numSamples);
-
             Math::Point3D point = calculatePoint(center, theta, s, majorRadius);
-
             Math::Vector3D toPoint = point - ray.origin;
-
             double projDistance = toPoint.dot(ray.direction);
-
             if (projDistance < tMin || projDistance > tMax) 
                 continue;
-
             Math::Point3D closestPointOnRay = ray.origin + ray.direction * projDistance;
-
             double distance = (point - closestPointOnRay).length();
-
             if (distance <= thickness/2.0 && projDistance < result.distance) {
                 double thetaLow = theta - (2.0 * M_PI / numSamples);
                 double thetaHigh = theta + (2.0 * M_PI / numSamples);
                 double sLow = s - (minorRadius / (numSamples/2));
                 double sHigh = s + (minorRadius / (numSamples/2));
-
                 for (int iter = 0; iter < numIterations; iter++) {
                     double thetaMid = (thetaLow + thetaHigh) / 2.0;
                     double sMid = (sLow + sHigh) / 2.0;
-
                     Math::Point3D refinedPoint = calculatePoint(center, thetaMid, sMid, majorRadius);
                     Math::Vector3D toRefinedPoint = refinedPoint - ray.origin;
                     double refinedDistance = toRefinedPoint.dot(ray.direction);
@@ -152,13 +142,11 @@ MobiusIntersection findClosestIntersection(const Ray& ray, const Math::Point3D& 
                         theta = thetaMid;
                         s = sMid;
                     }
-
                     thetaLow = thetaMid - (thetaHigh - thetaLow) / 4.0;
                     thetaHigh = thetaMid + (thetaHigh - thetaLow) / 4.0;
                     sLow = sMid - (sHigh - sLow) / 4.0;
                     sHigh = sMid + (sHigh - sLow) / 4.0;
                 }
-
                 result.found = true;
                 result.distance = projDistance;
                 result.hitPoint = ray.origin + ray.direction * projDistance;

@@ -24,7 +24,7 @@ namespace RayTracer {
  * @brief Sets the camera for the scene
  * @param cam The camera to set
  */
-void Scene::setCamera(const Camera &cam) { _camera = cam; }
+void Scene::setCamera(const Camera& cam) { _camera = cam; }
 
 /**
  * @brief Gets the current camera of the scene
@@ -76,9 +76,14 @@ void Scene::addPostProcess(const std::shared_ptr<IPostProcess> &postProcess) {
  * @return Information about the closest hit, if any
  */
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
+
     double closest = std::numeric_limits<double>::infinity();
     std::optional<HitInfo> closestHit;
-    for (const auto &primitive : _primitives) {
+
+    const auto& primitivesToCheck = !_primitivesCache.empty() ?
+                                     _primitivesCache : _primitives;
+
+    for (const auto &primitive : primitivesToCheck) {
         auto hit = primitive->hit(ray, 0.001, closest);
         if (hit && hit->primitive) {
             auto material = hit->primitive->getMaterial();
@@ -442,8 +447,8 @@ Math::Vector3D Scene::calculateRefraction(const Ray &ray,
  * @param normal The surface normal
  * @return The reflection direction
  */
-Math::Vector3D Scene::calculateTotalInternalReflection(const Ray &ray,
-                                                     const Math::Vector3D &normal) const {
+Math::Vector3D Scene::calculateTotalInternalReflection( const Ray &ray,
+                                                        const Math::Vector3D &normal) const {
     double dotProduct = ray.direction.dot(normal);
     Math::Vector3D reflectionDir = ray.direction - normal * (2.0 * dotProduct);
     return reflectionDir.normalize();
@@ -457,10 +462,10 @@ Math::Vector3D Scene::calculateTotalInternalReflection(const Ray &ray,
  * @param refractionRatio The ratio of refractive indices
  * @return The refraction direction
  */
-Math::Vector3D Scene::calculateSnellRefraction(const Ray &ray,
-                                             const Math::Vector3D &normal,
-                                             double cosTheta,
-                                             double refractionRatio) const {
+Math::Vector3D Scene::calculateSnellRefraction( const Ray &ray,
+                                                const Math::Vector3D &normal,
+                                                double cosTheta,
+                                                double refractionRatio) const {
     Math::Vector3D perpendicular = (ray.direction + normal * cosTheta) * refractionRatio;
     Math::Vector3D parallel = normal * -std::sqrt(1.0 - perpendicular.dot(perpendicular));
     return (perpendicular + parallel).normalize();
@@ -558,6 +563,26 @@ void Scene::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) cons
             std::shared_ptr<libconfig::Setting> effectSettingPtr(&effectSetting, [](libconfig::Setting*){});
             effect->getLibConfigParams(effectSettingPtr);
         }
+    }
+}
+
+/**
+ * @brief Updates the primitive cache with primitives in front of the camera
+ * This improves rendering performance by only considering visible primitives
+ */
+void Scene::updatePrimitiveCache() {
+    _primitivesCache.clear();
+
+    Math::Point3D cameraPosition = _camera.getPosition();
+    Math::Vector3D cameraForward = _camera.getForwardVector();
+
+    for (const auto &primitive : _primitives) {
+        Math::Point3D position = primitive->getPosition();
+        Math::Vector3D dirToPrimitive = position - cameraPosition;
+
+        if (dirToPrimitive.dot(cameraForward) > 0)
+            _primitivesCache.push_back(primitive);
+
     }
 }
 

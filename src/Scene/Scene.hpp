@@ -31,9 +31,8 @@ class Scene {
  private:
 
     std::vector<std::shared_ptr<IPrimitive>> _primitives;
+    std::vector<std::shared_ptr<IPrimitive>> _primitivesCache;
     std::vector<std::shared_ptr<ILight>> _lights;
-    std::vector<std::shared_ptr<IPrimitive>> _primitivesCameraCache;
-    std::vector<std::shared_ptr<ILight>> _lightsCameraCache;
     std::vector<std::shared_ptr<IShader>> _shaders;
     std::vector<std::shared_ptr<IPostProcess>> _postProcessEffects;
     AmbientLight _ambientLight;
@@ -253,6 +252,12 @@ class Scene {
         _imageWidth = width;
         _imageHeight = height;
     }
+
+    /**
+     * @brief Updates the primitive cache with primitives in front of the camera
+     * This improves rendering performance by only considering visible primitives
+     */
+    void updatePrimitiveCache();
 };
 }  // namespace RayTracer
 

@@ -132,7 +132,6 @@ int main(int argc, char **argv) {
 
         scene = director.createSceneFromFile(sceneFile);
 
-
         if (!scene)
             throw RayTracer::SceneImportException(sceneFile, "Scene creation failed without specific error");
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
@@ -150,13 +149,13 @@ int main(int argc, char **argv) {
             auto prims = scene->getPrimitives();
 
             while (displayManager->isWindowOpen()) {
+                scene->setCamera(*camera);
+                scene->updatePrimitiveCache();
                 renderer.drawScene(*scene, *camera, inputManager.isMoving());
                 inputManager.processInput(scene, camera);
                 if (eventsManager->isKeyPressed("ESCAPE"))
                     displayManager->closeWindow();
             }
-
-            scene->setCamera(*camera);
 
             if (!director.saveSceneToFile(*scene, sceneFile))
                 std::cerr << "Failed to save the scene to " << sceneFile << std::endl;

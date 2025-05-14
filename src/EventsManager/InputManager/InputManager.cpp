@@ -81,7 +81,14 @@ void InputManager::setupCameraCommands(std::shared_ptr<Camera> camera) {
 void InputManager::handleCameraMovement(std::shared_ptr<Camera> camera) {
     setupCameraCommands(camera);
 
-    double speedMultiplier = _eventsManager->isKeyPressed("LSHIFT") ? 3.5 : 1.0;
+    bool shiftpressed = _eventsManager->isKeyPressed("LSHIFT");
+    double speedMultiplier = 1.0;
+
+    if (shiftpressed) {
+        speedMultiplier = 3.5;
+        _moving = true;
+    }
+
     for (auto& command : _cameraCommands) {
         auto translateCmd = std::dynamic_pointer_cast<CameraTranslateCommand>(command);
         if (translateCmd) {

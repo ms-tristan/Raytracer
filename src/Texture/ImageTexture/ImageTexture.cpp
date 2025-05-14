@@ -71,11 +71,11 @@ Math::Vector3D ImageTexture::getColorAt(const Math::Vector2D& uv) const {
 }
 
 double ImageTexture::normalizeCoordinate(double coord) const {
-    
+
     if (std::isnan(coord) || std::isinf(coord)) {
         return 0.0;
     }
-    
+
     double result = std::fmod(coord, 1.0);
     if (result < 0) {
         result += 1.0;

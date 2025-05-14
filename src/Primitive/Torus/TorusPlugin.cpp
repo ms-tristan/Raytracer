@@ -48,13 +48,13 @@ class TorusPlugin : public IPrimitivePlugin {
             params.at("y"),
             params.at("z")
         };
-        
+
         Math::Coords axisCoords {
             params.at("ax"),
             params.at("ay"),
             params.at("az")
         };
-        
+
         Math::Point3D center(centerCoords);
         Math::Vector3D axis(axisCoords);
         double majorRadius = params.at("major_radius");

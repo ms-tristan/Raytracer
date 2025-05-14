@@ -33,7 +33,7 @@ class APrimitive : public IPrimitive {
 
     void setSourceFile(const std::string& source) override;
     std::string getSourceFile() const override;
-    
+
     double getRotationX() const { return rotationX; }
     double getRotationY() const { return rotationY; }
     double getRotationZ() const { return rotationZ; }

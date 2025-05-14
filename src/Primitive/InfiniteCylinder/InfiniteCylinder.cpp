@@ -123,14 +123,14 @@ double tMin, double tMax) {
             RayTracer::Rotate rotateZ("z", rotationZ);
             normal = rotateZ.applyToVector(normal);
         }
-        
+
         double dotProduct = normal.dot(axis);
         if (std::abs(dotProduct) > 0.0001) {
             Math::Vector3D parallelComponent = axis * dotProduct;
             normal = (normal - parallelComponent).normalize();
         }
     }
-    
+
     double v = std::fmod(std::abs(heightIntersect), 1.0);
     Math::Vector3D reference;
     if (std::abs(axis.X) < std::abs(axis.Y) && std::abs(axis.X) < std::abs(axis.Z)) {

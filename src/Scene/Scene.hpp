@@ -29,15 +29,16 @@ namespace RayTracer {
  */
 class Scene {
  private:
-    std::vector<std::shared_ptr<IPrimitive>> primitives;
-    std::vector<std::shared_ptr<ILight>> lights;
-    std::vector<std::shared_ptr<IShader>> shaders;
-    std::vector<std::shared_ptr<IPostProcess>> postProcessEffects;
-    AmbientLight ambientLight;
-    Camera camera;
-    static constexpr int maxReflectionDepth = 5;
-    int imageWidth = WIDTH;
-    int imageHeight = HEIGHT;
+    std::vector<std::shared_ptr<IPrimitive>> _primitives;
+    std::vector<std::shared_ptr<IPrimitive>> _primitivesCache;
+    std::vector<std::shared_ptr<ILight>> _lights;
+    std::vector<std::shared_ptr<IShader>> _shaders;
+    std::vector<std::shared_ptr<IPostProcess>> _postProcessEffects;
+    AmbientLight _ambientLight;
+    Camera _camera;
+    static constexpr int _maxReflectionDepth = 5;
+    int _imageWidth = WIDTH;
+    int _imageHeight = HEIGHT;
 
     Math::Vector3D createTangentVector(const Math::Vector3D &normal) const;
     void applyDisplacementMapping(std::optional<HitInfo> &hit,
@@ -173,7 +174,9 @@ class Scene {
      * @param depth The current recursion depth
      * @return The computed color
      */
-    Math::Vector3D computeColor(const Ray &ray, int depth = 0) const;
+    Math::Vector3D computeColor(const Ray &ray,
+      const bool lowRender = false,
+      const int depth = 0) const;
 
     /**
      * @brief Applies post-processing effects to a frame buffer
@@ -201,43 +204,43 @@ class Scene {
      * @brief Gets the primitives in the scene
      * @return A vector of primitives
      */
-    const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return primitives; }
+    const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const { return _primitives; }
 
     /**
      * @brief Gets the lights in the scene
      * @return A vector of lights
      */
-    const std::vector<std::shared_ptr<ILight>>& getLights() const { return lights; }
+    const std::vector<std::shared_ptr<ILight>>& getLights() const { return _lights; }
 
     /**
      * @brief Gets the shaders in the scene
      * @return A vector of shaders
      */
-    const std::vector<std::shared_ptr<IShader>>& getShaders() const { return shaders; }
+    const std::vector<std::shared_ptr<IShader>>& getShaders() const { return _shaders; }
 
     /**
      * @brief Gets the post-processing effects in the scene
      * @return A vector of post-processing effects
      */
-    const std::vector<std::shared_ptr<IPostProcess>>& getPostProcessEffects() const { return postProcessEffects; }
+    const std::vector<std::shared_ptr<IPostProcess>>& getPostProcessEffects() const { return _postProcessEffects; }
 
     /**
      * @brief Gets the ambient light in the scene
      * @return The ambient light
      */
-    const AmbientLight& getAmbientLight() const { return ambientLight; }
+    const AmbientLight& getAmbientLight() const { return _ambientLight; }
 
     /**
      * @brief Gets the image width
      * @return The image width
      */
-    int getImageWidth() const { return imageWidth; }
+    int getImageWidth() const { return _imageWidth; }
 
     /**
      * @brief Gets the image height
      * @return The image height
      */
-    int getImageHeight() const { return imageHeight; }
+    int getImageHeight() const { return _imageHeight; }
 
     /**
      * @brief Sets the image dimensions
@@ -245,9 +248,15 @@ class Scene {
      * @param height The image height
      */
     void setImageDimensions(int width, int height) {
-        imageWidth = width;
-        imageHeight = height;
+        _imageWidth = width;
+        _imageHeight = height;
     }
+
+    /**
+     * @brief Updates the primitive cache with primitives in front of the camera
+     * This improves rendering performance by only considering visible primitives
+     */
+    void updatePrimitiveCache();
 };
 }  // namespace RayTracer
 

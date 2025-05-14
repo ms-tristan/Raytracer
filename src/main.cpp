@@ -87,7 +87,7 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
                 pixelColor = camera.supersampleRay(u, v, scene, samplesPerPixel);
             } else {
                 RayTracer::Ray ray = camera.ray(u, v);
-                pixelColor = scene.computeColor(ray);
+                pixelColor = scene.computeColor(ray, false);
             }
             scene.writeColor(pixelColor);
         }
@@ -136,9 +136,28 @@ int main(int argc, char **argv) {
             throw RayTracer::SceneImportException(sceneFile, "Scene creation failed without specific error");
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
 
-        if (!displayMode) {
-            renderToPPM(*scene, *camera, image_width, image_height, outputFile);
-            return 0;
+        if (displayMode) {
+            auto displayManager = std::make_shared<RayTracer::SFMLDisplayManager>();
+            displayManager->initialize(image_width, image_height, "Raytracer", false);
+
+            auto eventsManager = std::make_shared<RayTracer::SFMLEventsManager>(displayManager->getWindow());
+            RayTracer::Renderer renderer(displayManager);
+
+            RayTracer::InputManager inputManager(eventsManager, image_width, image_height);
+
+            auto prims = scene->getPrimitives();
+
+            while (displayManager->isWindowOpen()) {
+                scene->setCamera(*camera);
+                scene->updatePrimitiveCache();
+                renderer.drawScene(*scene, *camera, inputManager.isMoving());
+                inputManager.processInput(scene, camera);
+                if (eventsManager->isKeyPressed("ESCAPE"))
+                    displayManager->closeWindow();
+            }
+
+            if (!director.saveSceneToFile(*scene, sceneFile))
+                std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
         }
 
         auto displayManager = std::make_shared<RayTracer::SFMLDisplayManager>();

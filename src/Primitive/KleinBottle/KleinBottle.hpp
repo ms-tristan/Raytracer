@@ -59,6 +59,8 @@ class KleinBottle : public IPrimitive, public std::enable_shared_from_this<Klein
     std::shared_ptr<IPrimitive> clone() const override;
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override;
 
+    Math::Point3D getPosition() const override { return center; }
+
  private:
     double distanceEstimator(const Math::Point3D &p) const;
     double classicBottleDE(const Math::Point3D &p) const;

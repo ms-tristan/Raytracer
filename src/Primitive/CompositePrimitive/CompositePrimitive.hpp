@@ -57,6 +57,24 @@ class CompositePrimitive : public IPrimitive, public std::enable_shared_from_thi
     void add(std::shared_ptr<IPrimitive> primitive);
     void remove(std::shared_ptr<IPrimitive> primitive);
     const std::vector<std::shared_ptr<IPrimitive>>& getPrimitives() const;
+
+    Math::Point3D getPosition() const override {
+        if (primitives.empty())
+            return Math::Point3D(Math::Coords{0.0, 0.0, 0.0});
+
+        Math::Point3D average(Math::Coords{0.0, 0.0, 0.0});
+        for (const auto& primitive : primitives) {
+            Math::Point3D position = primitive->getPosition();
+            average = average + Math::Vector3D(Math::Coords{position.X, position.Y, position.Z});
+        }
+
+        double count = static_cast<double>(primitives.size());
+        return Math::Point3D(Math::Coords{
+            average.X / count,
+            average.Y / count,
+            average.Z / count
+        });
+    }
 };
 }  // namespace RayTracer
 

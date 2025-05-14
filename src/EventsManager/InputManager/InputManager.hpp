@@ -51,7 +51,7 @@ class InputManager {
     sf::Vector2i _lastMousePos;
 
     bool _isDragging;
-    bool _moving;
+    bool _moving = false;
     std::shared_ptr<IPrimitive> _selectedPrimitive;
     sf::Vector2i _dragStartPos;
 

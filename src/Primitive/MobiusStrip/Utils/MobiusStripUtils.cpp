@@ -118,7 +118,7 @@ MobiusIntersection findClosestIntersection(const Ray& ray, const Math::Point3D& 
             Math::Point3D point = calculatePoint(center, theta, s, majorRadius);
             Math::Vector3D toPoint = point - ray.origin;
             double projDistance = toPoint.dot(ray.direction);
-            if (projDistance < tMin || projDistance > tMax) 
+            if (projDistance < tMin || projDistance > tMax)
                 continue;
             Math::Point3D closestPointOnRay = ray.origin + ray.direction * projDistance;
             double distance = (point - closestPointOnRay).length();

@@ -1,0 +1,34 @@
+// Fichier de stubs pour les tests
+// Ce fichier contient des implémentations factices pour les fonctions manquantes
+
+#include <string>
+#include <memory>
+#include "Scene/Scene.hpp"
+
+// Stubs pour SceneSerializer
+namespace RayTracer {
+
+// Forward declaration des classes si nécessaire
+class SceneSerializer {
+public:
+    static bool saveToFile(const RayTracer::Scene& scene, const std::string& filepath) {
+        // Implémentation factice pour les tests
+        return true;
+    }
+};
+
+class SceneConfigParser {
+public:
+    SceneConfigParser() {
+        // Constructeur factice
+    }
+
+    std::shared_ptr<Scene> parseFile(const std::string& filepath) {
+        // Implémentation factice pour les tests
+        return std::make_shared<Scene>();
+    }
+};
+
+// Si d'autres fonctions manquantes sont détectées, ajoutez-les ici
+
+}  // namespace RayTracer

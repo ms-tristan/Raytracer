@@ -5,6 +5,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_DOCS "Enable documentation" OFF)
+option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
+
+if(ENABLE_COVERAGE)
+    if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        message(STATUS "Coverage enabled")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+        
+        add_custom_target(coverage
+            COMMAND ctest
+            COMMAND lcov --directory ${CMAKE_BINARY_DIR} --capture --output-file ${CMAKE_BINARY_DIR}/coverage.info --ignore-errors mismatch --rc geninfo_unexecuted_blocks=1
+            COMMAND lcov --remove ${CMAKE_BINARY_DIR}/coverage.info '/usr/*' '${CMAKE_BINARY_DIR}/_deps/*' --output-file ${CMAKE_BINARY_DIR}/coverage.info
+            COMMAND genhtml ${CMAKE_BINARY_DIR}/coverage.info --output-directory ${CMAKE_BINARY_DIR}/coverage_report
+            COMMENT "Generating code coverage report"
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        )
+    else()
+        message(WARNING "Coverage reporting is only available with GCC or Clang compilers")
+    endif()
+endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 

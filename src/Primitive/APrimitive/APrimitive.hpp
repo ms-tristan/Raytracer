@@ -33,6 +33,10 @@ class APrimitive : public IPrimitive {
 
     void setSourceFile(const std::string& source) override;
     std::string getSourceFile() const override;
+    
+    double getRotationX() const { return rotationX; }
+    double getRotationY() const { return rotationY; }
+    double getRotationZ() const { return rotationZ; }
 
     virtual void translate(const Math::Vector3D &translation) = 0;
     virtual std::optional<HitInfo> hit(const Ray &ray,

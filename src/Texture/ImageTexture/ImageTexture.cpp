@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <cmath>
 #include "../../../tests/external/stb_image.h"
 #include "ImageTexture.hpp"
 
@@ -37,22 +38,22 @@ void ImageTexture::createDefaultTexture() {
     height = 2;
     channels = 3;
     imageData.resize(width * height * channels);
-    // First pixel (red)
-    imageData[0] = 255; // R
-    imageData[1] = 0;   // G
-    imageData[2] = 0;   // B
-    // Second pixel (white)
-    imageData[3] = 255; // R
-    imageData[4] = 255; // G
-    imageData[5] = 255; // B
-    // Third pixel (white)
-    imageData[6] = 255; // R
-    imageData[7] = 255; // G
-    imageData[8] = 255; // B
-    // Fourth pixel (red)
-    imageData[9] = 255; // R
-    imageData[10] = 0;  // G
-    imageData[11] = 0;  // B
+
+    imageData[0] = 255;
+    imageData[1] = 0;
+    imageData[2] = 0;
+
+    imageData[3] = 255;
+    imageData[4] = 255;
+    imageData[5] = 255;
+
+    imageData[6] = 255;
+    imageData[7] = 255;
+    imageData[8] = 255;
+
+    imageData[9] = 255;
+    imageData[10] = 0;
+    imageData[11] = 0;
 }
 
 void ImageTexture::storeImageData(unsigned char* data) {
@@ -70,6 +71,11 @@ Math::Vector3D ImageTexture::getColorAt(const Math::Vector2D& uv) const {
 }
 
 double ImageTexture::normalizeCoordinate(double coord) const {
+    
+    if (std::isnan(coord) || std::isinf(coord)) {
+        return 0.0;
+    }
+    
     double result = std::fmod(coord, 1.0);
     if (result < 0) {
         result += 1.0;

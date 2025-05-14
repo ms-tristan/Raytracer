@@ -15,6 +15,7 @@ add_subdirectory(KleinBottle)
 add_subdirectory(InfiniteCylinder)
 add_subdirectory(InfiniteCone)
 add_subdirectory(TangleCube)
+add_subdirectory(Triangle)
 
 
 # List primitive source files directly

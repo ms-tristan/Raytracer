@@ -5,11 +5,11 @@
 ** Mobius Strip Utilities implementation
 */
 
-#include "Primitive/MobiusStrip/Utils/MobiusStripUtils.hpp"
-#include "Transformation/Rotate/Rotate.hpp"
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include "Primitive/MobiusStrip/Utils/MobiusStripUtils.hpp"
+#include "Transformation/Rotate/Rotate.hpp"
 
 namespace RayTracer {
 namespace MobiusStripUtils {
@@ -27,7 +27,7 @@ Math::Vector3D calculateNormal(double theta, double s, double majorRadius, doubl
 
 Math::Point3D calculatePoint(const Math::Point3D& center, double theta, double s, double majorRadius) {
     double halfTwist = theta / 2.0;
-    
+
     Math::Point3D point(Math::Coords{
         center.X + (majorRadius + s * std::cos(halfTwist)) * std::cos(theta),
         center.Y + (majorRadius + s * std::cos(halfTwist)) * std::sin(theta),
@@ -37,8 +37,7 @@ Math::Point3D calculatePoint(const Math::Point3D& center, double theta, double s
     return point;
 }
 
-bool checkBoundingSphereIntersection(const Ray& ray, const Math::Point3D& center, 
-                                    double boundingSphereRadius) {
+bool checkBoundingSphereIntersection(const Ray& ray, const Math::Point3D& center, double boundingSphereRadius) {
     Math::Vector3D oc = ray.origin - center;
     double a = ray.direction.dot(ray.direction);
     double b = 2.0 * oc.dot(ray.direction);
@@ -81,9 +80,8 @@ Ray transformRayForRotation(const Ray& ray, double rotationX, double rotationY, 
 
 Math::Vector3D rotateNormal(const Math::Vector3D& normal, double rotationX, double rotationY, double rotationZ) {
     Math::Vector3D rotatedNormal = normal;
-    
-    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
 
+    if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         if (rotationX != 0.0) {
             RayTracer::Rotate rotateX("x", rotationX);
             rotatedNormal = rotateX.applyToVector(rotatedNormal);
@@ -108,7 +106,7 @@ MobiusIntersection findClosestIntersection(const Ray& ray, const Math::Point3D& 
                                           double thickness, double tMin, double tMax) {
     const int numSamples = 100;
     const int numIterations = 5;
-    
+
     MobiusIntersection result;
     result.found = false;
     result.distance = tMax + 1.0;
@@ -129,7 +127,6 @@ MobiusIntersection findClosestIntersection(const Ray& ray, const Math::Point3D& 
                 continue;
 
             Math::Point3D closestPointOnRay = ray.origin + ray.direction * projDistance;
-
 
             double distance = (point - closestPointOnRay).length();
 

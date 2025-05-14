@@ -577,6 +577,10 @@ void Scene::updatePrimitiveCache() {
     Math::Vector3D cameraForward = _camera.getForwardVector();
 
     for (const auto &primitive : _primitives) {
+        if (primitive->getTypeName() == "planes") {
+            _primitivesCache.push_back(primitive);
+            continue;
+        }
         Math::Point3D position = primitive->getPosition();
         Math::Vector3D dirToPrimitive = position - cameraPosition;
 

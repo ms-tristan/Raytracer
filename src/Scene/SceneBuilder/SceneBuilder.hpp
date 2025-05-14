@@ -63,6 +63,9 @@ class SceneBuilder {
     SceneBuilder& addTorus(const Math::Point3D& center,
         const Math::Vector3D& axis, double majorRadius, double minorRadius,
         const std::shared_ptr<Material>& material);
+    SceneBuilder& addObjModel(const std::string& path, const std::shared_ptr<Material>& material);
+    SceneBuilder& addObjModel(const std::string& path, const std::shared_ptr<Material>& material,
+                             const Math::Vector3D& position, const Math::Vector3D& rotation, double scale = 1.0);
 
     void setSceneConfigParser(void* parser) { sceneConfigParser = parser; }
     void* getSceneConfigParser() const { return sceneConfigParser; }

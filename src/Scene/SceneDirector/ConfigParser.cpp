@@ -315,6 +315,43 @@ void PrimitivesParser::parse(const libconfig::Setting& setting, std::shared_ptr<
     for (int i = 0; i < setting.getLength(); ++i) {
         const std::string& typeName = setting[i].getName();
 
+        if (typeName == "obj_model") {
+            const libconfig::Setting& objModels = setting[typeName.c_str()];
+            int count = objModels.getLength();
+            for (int j = 0; j < count; ++j) {
+                const libconfig::Setting& objModel = objModels[j];
+                if (!objModel.exists("path")) {
+                    std::cerr << "Missing 'path' field in obj_model definition" << std::endl;
+                    throw ConfigParseException("Missing 'path' field in obj_model definition");
+                }
+                std::string objPath = static_cast<const char*>(objModel["path"]);
+                auto material = extractMaterialFromSetting(objModel);
+                Math::Vector3D position(Math::Coords{0, 0, 0});
+                Math::Vector3D rotation(Math::Coords{0, 0, 0});
+                double scale = 1.0;
+                if (objModel.exists("position")) {
+                    const auto& pos = objModel["position"];
+                    position = Math::Vector3D(Math::Coords{
+                        pos.exists("x") ? static_cast<double>(pos["x"]) : 0.0,
+                        pos.exists("y") ? static_cast<double>(pos["y"]) : 0.0,
+                        pos.exists("z") ? static_cast<double>(pos["z"]) : 0.0
+                    });
+                }
+                if (objModel.exists("rotation")) {
+                    const auto& rot = objModel["rotation"];
+                    rotation = Math::Vector3D(Math::Coords{
+                        rot.exists("x") ? static_cast<double>(rot["x"]) : 0.0,
+                        rot.exists("y") ? static_cast<double>(rot["y"]) : 0.0,
+                        rot.exists("z") ? static_cast<double>(rot["z"]) : 0.0
+                    });
+                }
+                if (objModel.exists("scale"))
+                    scale = static_cast<double>(objModel["scale"]);
+                builder->addObjModel(objPath, material, position, rotation, scale);
+            }
+            continue;
+        }
+
         if (std::find(loadedPluginNames.begin(), loadedPluginNames.end(), typeName) == loadedPluginNames.end()) {
             auto sceneParser = static_cast<SceneConfigParser*>(builder->getSceneConfigParser());
             if (sceneParser && sceneParser->importAliases.find(typeName) != sceneParser->importAliases.end()) {

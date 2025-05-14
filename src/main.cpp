@@ -132,35 +132,36 @@ int main(int argc, char **argv) {
 
         scene = director.createSceneFromFile(sceneFile);
 
-
         if (!scene)
             throw RayTracer::SceneImportException(sceneFile, "Scene creation failed without specific error");
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
-        renderToPPM(*scene, *camera, image_width, image_height, outputFile);
 
-        if (displayMode) {
-            auto displayManager = std::make_shared<RayTracer::SFMLDisplayManager>();
-            displayManager->initialize(image_width, image_height, "Raytracer", false);
-
-            auto eventsManager = std::make_shared<RayTracer::SFMLEventsManager>(displayManager->getWindow());
-            RayTracer::Renderer renderer(displayManager);
-
-            RayTracer::InputManager inputManager(eventsManager, image_width, image_height);
-
-            auto prims = scene->getPrimitives();
-
-            while (displayManager->isWindowOpen()) {
-                renderer.drawScene(*scene, *camera);
-                inputManager.processInput(scene, camera);
-                if (eventsManager->isKeyPressed("ESCAPE"))
-                    displayManager->closeWindow();
-            }
-
-            scene->setCamera(*camera);
-
-            if (!director.saveSceneToFile(*scene, sceneFile))
-                std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
+        if (!displayMode) {
+            renderToPPM(*scene, *camera, image_width, image_height, outputFile);
+            return 0;
         }
+
+        auto displayManager = std::make_shared<RayTracer::SFMLDisplayManager>();
+        displayManager->initialize(image_width, image_height, "Raytracer", false);
+
+        auto eventsManager = std::make_shared<RayTracer::SFMLEventsManager>(displayManager->getWindow());
+        RayTracer::Renderer renderer(displayManager);
+
+        RayTracer::InputManager inputManager(eventsManager, image_width, image_height);
+
+        auto prims = scene->getPrimitives();
+
+        while (displayManager->isWindowOpen()) {
+            renderer.drawScene(*scene, *camera);
+            inputManager.processInput(scene, camera);
+            if (eventsManager->isKeyPressed("ESCAPE"))
+                displayManager->closeWindow();
+        }
+
+        scene->setCamera(*camera);
+
+        if (!director.saveSceneToFile(*scene, sceneFile))
+            std::cerr << "Failed to save the scene to " << sceneFile << std::endl;
     } catch (const RayTracer::IException& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         std::cerr << "DEBUG: Exception caught in main: " << e.what() << std::endl;

@@ -65,6 +65,7 @@ class Camera {
     Math::Vector3D getForwardVector() const {
         return (screen.origin + screen.bottom_side * 0.5 + screen.left_side * 0.5 - origin).normalize();
     }
+
  private:
     void updateScreenForFOV();
     Math::Vector3D calculateRotationAngles() const;

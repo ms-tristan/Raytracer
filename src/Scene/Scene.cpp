@@ -76,7 +76,6 @@ void Scene::addPostProcess(const std::shared_ptr<IPostProcess> &postProcess) {
  * @return Information about the closest hit, if any
  */
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
-
     double closest = std::numeric_limits<double>::infinity();
     std::optional<HitInfo> closestHit;
 
@@ -586,7 +585,6 @@ void Scene::updatePrimitiveCache() {
 
         if (dirToPrimitive.dot(cameraForward) > 0)
             _primitivesCache.push_back(primitive);
-
     }
 }
 

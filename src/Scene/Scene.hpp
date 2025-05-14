@@ -29,7 +29,6 @@ namespace RayTracer {
  */
 class Scene {
  private:
-
     std::vector<std::shared_ptr<IPrimitive>> _primitives;
     std::vector<std::shared_ptr<IPrimitive>> _primitivesCache;
     std::vector<std::shared_ptr<ILight>> _lights;

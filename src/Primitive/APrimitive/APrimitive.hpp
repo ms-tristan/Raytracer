@@ -37,8 +37,8 @@ class APrimitive : public IPrimitive {
     virtual void translate(const Math::Vector3D &translation) = 0;
     virtual std::optional<HitInfo> hit(const Ray &ray,
         double tMin, double tMax) = 0;
-        
-    virtual Math::Point3D getPosition() const override = 0;
+
+    Math::Point3D getPosition() const override = 0;
 };
 }   // namespace RayTracer
 

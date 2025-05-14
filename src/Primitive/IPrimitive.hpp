@@ -15,6 +15,7 @@
   #include "defs.hpp"
   #include "Material/Material.hpp"
   #include "Math/Vector3D/Vector3D.hpp"
+  #include "Math/Point3D/Point3D.hpp"
   #include "Ray/Ray.hpp"
 namespace RayTracer {
 class IPrimitive {
@@ -35,6 +36,8 @@ class IPrimitive {
     virtual std::shared_ptr<Material> getMaterial() const = 0;
     virtual std::shared_ptr<IPrimitive> clone() const = 0;
     virtual void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const = 0;
+
+    virtual Math::Point3D getPosition() const = 0;
 };
 }  // namespace RayTracer
 

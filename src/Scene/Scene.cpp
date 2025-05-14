@@ -24,26 +24,26 @@ namespace RayTracer {
  * @brief Sets the camera for the scene
  * @param cam The camera to set
  */
-void Scene::setCamera(const Camera &cam) { camera = cam; }
+void Scene::setCamera(const Camera& cam) { _camera = cam; }
 
 /**
  * @brief Gets the current camera of the scene
  * @return The current camera
  */
-Camera Scene::getCamera() const { return camera; }
+Camera Scene::getCamera() const { return _camera; }
 
 /**
  * @brief Sets the ambient light for the scene
  * @param light The ambient light to set
  */
-void Scene::setAmbientLight(const AmbientLight &light) { ambientLight = light; }
+void Scene::setAmbientLight(const AmbientLight &light) { _ambientLight = light; }
 
 /**
  * @brief Adds a primitive to the scene
  * @param primitive The primitive to add
  */
 void Scene::addPrimitive(const std::shared_ptr<IPrimitive> &primitive) {
-    primitives.push_back(primitive);
+    _primitives.push_back(primitive);
 }
 
 /**
@@ -51,7 +51,7 @@ void Scene::addPrimitive(const std::shared_ptr<IPrimitive> &primitive) {
  * @param light The light to add
  */
 void Scene::addLight(const std::shared_ptr<ILight> &light) {
-    lights.push_back(light);
+    _lights.push_back(light);
 }
 
 /**
@@ -59,7 +59,7 @@ void Scene::addLight(const std::shared_ptr<ILight> &light) {
  * @param shader The shader to add
  */
 void Scene::addShader(const std::shared_ptr<IShader> &shader) {
-    shaders.push_back(shader);
+    _shaders.push_back(shader);
 }
 
 /**
@@ -67,7 +67,7 @@ void Scene::addShader(const std::shared_ptr<IShader> &shader) {
  * @param postProcess The post-processing effect to add
  */
 void Scene::addPostProcess(const std::shared_ptr<IPostProcess> &postProcess) {
-    postProcessEffects.push_back(postProcess);
+    _postProcessEffects.push_back(postProcess);
 }
 
 /**
@@ -78,7 +78,11 @@ void Scene::addPostProcess(const std::shared_ptr<IPostProcess> &postProcess) {
 std::optional<HitInfo> Scene::trace(const Ray &ray) const {
     double closest = std::numeric_limits<double>::infinity();
     std::optional<HitInfo> closestHit;
-    for (const auto &primitive : primitives) {
+
+    const auto& primitivesToCheck = !_primitivesCache.empty() ?
+                                     _primitivesCache : _primitives;
+
+    for (const auto &primitive : primitivesToCheck) {
         auto hit = primitive->hit(ray, 0.001, closest);
         if (hit && hit->primitive) {
             auto material = hit->primitive->getMaterial();
@@ -147,7 +151,7 @@ const Math::Vector3D &lightDir, const std::shared_ptr<ILight> &light) const {
     Ray shadowRay(shadowOrigin, lightDir);
     double maxDistance = calculateMaxShadowDistance(hitPoint, light);
 
-    for (const auto &primitive : primitives) {
+    for (const auto &primitive : _primitives) {
         auto shadowHit = primitive->hit(shadowRay, 0.001, maxDistance);
         if (shadowHit) {
             return true;
@@ -176,8 +180,9 @@ double Scene::calculateMaxShadowDistance(const Math::Point3D &hitPoint,
  * @param depth The current recursion depth
  * @return The computed color
  */
-Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
-    if (depth > maxReflectionDepth) {
+
+Math::Vector3D Scene::computeColor(const Ray &ray, const bool lowRender, const int depth) const {
+    if (depth > _maxReflectionDepth) {
         return Math::Vector3D(Math::Coords{0.0, 0.0, 0.0});
     }
     auto hit = trace(ray);
@@ -186,12 +191,15 @@ Math::Vector3D Scene::computeColor(const Ray &ray, int depth) const {
     }
     auto material = hit->primitive->getMaterial();
     Math::Vector3D baseColor = calculateBaseColor(material, hit->uv);
+    if (lowRender)
+        return baseColor;
+
     Math::Vector3D surfaceNormal = calculateSurfaceNormal(material, hit);
     double aoFactor = calculateAmbientOcclusion(material, hit->uv);
-    Math::Vector3D pixelColor = baseColor * ambientLight.color * aoFactor;
+    Math::Vector3D pixelColor = baseColor * _ambientLight.color * aoFactor;
     pixelColor = applyLighting(pixelColor, hit, ray, surfaceNormal, baseColor, material, aoFactor);
     pixelColor = applyReflectionAndRefraction(pixelColor, hit, ray, surfaceNormal, material, depth);
-    for (const auto& shader : shaders) {
+    for (const auto& shader : _shaders) {
         pixelColor = shader->apply(pixelColor, *hit, ray);
     }
     return pixelColor;
@@ -261,7 +269,7 @@ Math::Vector3D Scene::applyLighting(const Math::Vector3D &basePixelColor,
                                   const std::shared_ptr<Material> &material,
                                   double aoFactor) const {
     Math::Vector3D pixelColor = basePixelColor;
-    for (const auto &light : lights) {
+    for (const auto &light : _lights) {
         Math::Vector3D lightDir = light->getLightDirection(hit->hitPoint);
         Math::Vector3D lightColor = getLightColor(light, hit->hitPoint);
         bool shadowed = isInShadow(hit->hitPoint, lightDir, light);
@@ -359,10 +367,10 @@ Math::Vector3D Scene::applyReflectionAndRefraction(const Math::Vector3D &baseCol
     double transparency = material->transparency;
     double epsilon = 0.001;
     Math::Vector3D resultColor = baseColor * (1.0 - reflectivity - transparency);
-    if (reflectivity > 0.0 && depth < maxReflectionDepth) {
+    if (reflectivity > 0.0 && depth < _maxReflectionDepth) {
         resultColor += calculateReflection(ray, hit, normal, reflectivity, epsilon, depth);
     }
-    if (transparency > 0.0 && depth < maxReflectionDepth) {
+    if (transparency > 0.0 && depth < _maxReflectionDepth) {
         resultColor += calculateRefraction(ray, hit, normal, material, transparency, epsilon, depth);
     }
     return resultColor;
@@ -389,7 +397,7 @@ Math::Vector3D Scene::calculateReflection(const Ray &ray,
     reflectionDir = reflectionDir.normalize();
     Math::Point3D reflectionOrigin = hit->hitPoint + reflectionDir * epsilon;
     Ray reflectionRay(reflectionOrigin, reflectionDir);
-    Math::Vector3D reflectedColor = computeColor(reflectionRay, depth + 1);
+    Math::Vector3D reflectedColor = computeColor(reflectionRay, false, depth + 1);
     return reflectedColor * reflectivity;
 }
 
@@ -428,7 +436,7 @@ Math::Vector3D Scene::calculateRefraction(const Ray &ray,
     }
     Math::Point3D refractionOrigin = hit->hitPoint + refractionDir * epsilon;
     Ray refractionRay(refractionOrigin, refractionDir);
-    Math::Vector3D refractedColor = computeColor(refractionRay, depth + 1);
+    Math::Vector3D refractedColor = computeColor(refractionRay, false, depth + 1);
     return refractedColor * transparency;
 }
 
@@ -438,8 +446,8 @@ Math::Vector3D Scene::calculateRefraction(const Ray &ray,
  * @param normal The surface normal
  * @return The reflection direction
  */
-Math::Vector3D Scene::calculateTotalInternalReflection(const Ray &ray,
-                                                     const Math::Vector3D &normal) const {
+Math::Vector3D Scene::calculateTotalInternalReflection( const Ray &ray,
+                                                        const Math::Vector3D &normal) const {
     double dotProduct = ray.direction.dot(normal);
     Math::Vector3D reflectionDir = ray.direction - normal * (2.0 * dotProduct);
     return reflectionDir.normalize();
@@ -453,10 +461,10 @@ Math::Vector3D Scene::calculateTotalInternalReflection(const Ray &ray,
  * @param refractionRatio The ratio of refractive indices
  * @return The refraction direction
  */
-Math::Vector3D Scene::calculateSnellRefraction(const Ray &ray,
-                                             const Math::Vector3D &normal,
-                                             double cosTheta,
-                                             double refractionRatio) const {
+Math::Vector3D Scene::calculateSnellRefraction( const Ray &ray,
+                                                const Math::Vector3D &normal,
+                                                double cosTheta,
+                                                double refractionRatio) const {
     Math::Vector3D perpendicular = (ray.direction + normal * cosTheta) * refractionRatio;
     Math::Vector3D parallel = normal * -std::sqrt(1.0 - perpendicular.dot(perpendicular));
     return (perpendicular + parallel).normalize();
@@ -474,7 +482,7 @@ std::vector<Math::Vector3D> Scene::applyPostProcessingToFrameBuffer(
 
         std::vector<Math::Vector3D> processedBuffer = frameBuffer;
 
-    for (const auto& effect : postProcessEffects) {
+    for (const auto& effect : _postProcessEffects) {
         processedBuffer = effect->processFrameBuffer(processedBuffer, width, height);
     }
 
@@ -496,7 +504,7 @@ void Scene::writeColor(const Math::Vector3D &color) const {
 void Scene::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const {
     libconfig::Setting& cameraSettings = setting->add("camera", libconfig::Setting::TypeGroup);
     std::shared_ptr<libconfig::Setting> cameraSettingsPtr(&cameraSettings, [](libconfig::Setting*){});
-    camera.getLibConfigParams(cameraSettingsPtr);
+    _camera.getLibConfigParams(cameraSettingsPtr);
 
     libconfig::Setting& primitives = setting->add("primitives", libconfig::Setting::TypeGroup);
 
@@ -516,7 +524,7 @@ void Scene::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) cons
 
     libconfig::Setting& lights = setting->add("lights", libconfig::Setting::TypeGroup);
 
-    lights.add("ambient", libconfig::Setting::TypeFloat) = ambientLight.getLightColor().X;
+    lights.add("ambient", libconfig::Setting::TypeFloat) = _ambientLight.getLightColor().X;
     lights.add("diffuse", libconfig::Setting::TypeFloat) = 0.6;
 
     libconfig::Setting& pointLights = lights.add("point", libconfig::Setting::TypeList);
@@ -536,24 +544,47 @@ void Scene::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) cons
         }
     }
 
-    if (!shaders.empty()) {
+    if (!_shaders.empty()) {
         libconfig::Setting& shadersSettings = setting->add("shaders", libconfig::Setting::TypeList);
 
-        for (const auto& shader : shaders) {
+        for (const auto& shader : _shaders) {
             libconfig::Setting& shaderSetting = shadersSettings.add(libconfig::Setting::TypeGroup);
             std::shared_ptr<libconfig::Setting> shaderSettingPtr(&shaderSetting, [](libconfig::Setting*){});
             shader->getLibConfigParams(shaderSettingPtr);
         }
     }
 
-    if (!postProcessEffects.empty()) {
+    if (!_postProcessEffects.empty()) {
         libconfig::Setting& postProcessSettings = setting->add("postprocess", libconfig::Setting::TypeList);
 
-        for (const auto& effect : postProcessEffects) {
+        for (const auto& effect : _postProcessEffects) {
             libconfig::Setting& effectSetting = postProcessSettings.add(libconfig::Setting::TypeGroup);
             std::shared_ptr<libconfig::Setting> effectSettingPtr(&effectSetting, [](libconfig::Setting*){});
             effect->getLibConfigParams(effectSettingPtr);
         }
+    }
+}
+
+/**
+ * @brief Updates the primitive cache with primitives in front of the camera
+ * This improves rendering performance by only considering visible primitives
+ */
+void Scene::updatePrimitiveCache() {
+    _primitivesCache.clear();
+
+    Math::Point3D cameraPosition = _camera.getPosition();
+    Math::Vector3D cameraForward = _camera.getForwardVector();
+
+    for (const auto &primitive : _primitives) {
+        if (primitive->getTypeName() == "planes") {
+            _primitivesCache.push_back(primitive);
+            continue;
+        }
+        Math::Point3D position = primitive->getPosition();
+        Math::Vector3D dirToPrimitive = position - cameraPosition;
+
+        if (dirToPrimitive.dot(cameraForward) > 0)
+            _primitivesCache.push_back(primitive);
     }
 }
 

@@ -24,7 +24,7 @@ Renderer::Renderer(std::shared_ptr<IDisplayManager> displayManager)
 Renderer::~Renderer() {
 }
 
-void Renderer::drawScene(const Scene& scene, const Camera& camera) {
+void Renderer::drawScene(const Scene& scene, const Camera& camera, const bool lowRender) {
     auto windowSize = _displayManager->getWindowSize();
     int imageWidth = windowSize.x;
     int imageHeight = windowSize.y;
@@ -52,9 +52,8 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
     auto renderTiles = [&]() {
         while (true) {
             int tileIndex = nextTileIndex.fetch_add(1);
-            if (tileIndex >= totalTiles) {
+            if (tileIndex >= totalTiles)
                 break;
-            }
 
             int tileY = tileIndex / numTilesX;
             int tileX = tileIndex % numTilesX;
@@ -65,16 +64,23 @@ void Renderer::drawScene(const Scene& scene, const Camera& camera) {
             int endY = std::min(startY + tileSize, imageHeight);
 
             for (int y = startY; y < endY; ++y) {
+                if (!(y % 5 == 0) && lowRender)
+                    continue;
+
                 for (int x = startX; x < endX; ++x) {
+                    if (!(x % 5 == 0) && lowRender)
+                        continue;
+
                     double u = static_cast<double>(x) / (imageWidth - 1);
                     double v = static_cast<double>((imageHeight - 1) - y) / (imageHeight - 1);
 
                     Math::Vector3D pixelColor;
-                    if (samplesPerPixel > 1) {
+                    if (lowRender) {
+                        pixelColor = scene.computeColor(camera.ray(u, v), true);
+                    } else if (samplesPerPixel > 1) {
                         pixelColor = camera.supersampleRay(u, v, scene, samplesPerPixel);
                     } else {
-                        Ray ray = camera.ray(u, v);
-                        pixelColor = scene.computeColor(ray);
+                        pixelColor = scene.computeColor(camera.ray(u, v), false);
                     }
 
                     rawColorBuffer[y * imageWidth + x] = pixelColor;

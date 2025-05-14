@@ -50,6 +50,14 @@ void Triangle::rotateZ(double degrees) {
     rotationZ += degrees;
 }
 
+Math::Point3D Triangle::getPosition() const {
+    return Math::Point3D(Math::Coords{
+        (vertex1.X + vertex2.X + vertex3.X) / 3.0,
+        (vertex1.Y + vertex2.Y + vertex3.Y) / 3.0,
+        (vertex1.Z + vertex2.Z + vertex3.Z) / 3.0
+    });
+}
+
 std::optional<HitInfo> Triangle::hit(const Ray &ray, double tMin,
 double tMax) {
     Ray transformedRay = ray;
@@ -77,13 +85,11 @@ double tMax) {
         transformedRay = Ray(newOrigin, newDirection);
     }
 
-    // Moller-Trumbore algorithm for ray-triangle intersection
     Math::Vector3D edge1 = vertex2 - vertex1;
     Math::Vector3D edge2 = vertex3 - vertex1;
     Math::Vector3D h = transformedRay.direction.cross(edge2);
     double a = edge1.dot(h);
 
-    // Check if ray is parallel to triangle
     if (std::abs(a) < 1e-8)
         return std::nullopt;
 
@@ -91,33 +97,26 @@ double tMax) {
     Math::Vector3D s = transformedRay.origin - vertex1;
     double u = f * s.dot(h);
 
-    // Check if intersection is outside triangle
     if (u < 0.0 || u > 1.0)
         return std::nullopt;
 
     Math::Vector3D q = s.cross(edge1);
     double v = f * transformedRay.direction.dot(q);
 
-    // Check if intersection is outside triangle
     if (v < 0.0 || u + v > 1.0)
         return std::nullopt;
 
-    // Calculate t
     double t = f * edge2.dot(q);
 
-    // Check if intersection is within the valid range
     if (t < tMin || t > tMax)
         return std::nullopt;
 
-    // Calculate hit information
     Math::Point3D hitPoint = transformedRay.origin + transformedRay.direction * t;
     Math::Vector3D triangleNormal = normal;
 
-    // Make sure normal points against ray direction
     if (triangleNormal.dot(transformedRay.direction) > 0)
         triangleNormal = triangleNormal * -1.0;
 
-    // Apply rotations to the normal if needed
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         if (rotationX != 0.0) {
             RayTracer::Rotate rotateX("x", rotationX);
@@ -133,7 +132,6 @@ double tMax) {
         }
     }
 
-    // Calculate UV coordinates for texture mapping
     double w = 1.0 - u - v;
     double textureU = u;
     double textureV = v;

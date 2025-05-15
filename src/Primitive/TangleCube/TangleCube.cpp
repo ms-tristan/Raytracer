@@ -67,8 +67,8 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
 
         transformedRay = Ray(newOrigin, newDirection);
     }
-    const int MAX_STEPS = 256;
-    const double EPSILON = 0.0001;
+    const int MAX_STEPS = 512;
+    const double EPSILON = 0.00005;
     const double MAX_DIST = 20.0;
 
     auto tangleCubeSDF = [this](const Math::Vector3D& p) -> double {
@@ -76,14 +76,18 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
         double x = p.X * scale;
         double y = p.Y * scale;
         double z = p.Z * scale;
-
-        return (pow(x, 4) - 5.0 * x * x +
+        double smoothFactor = 0.01;
+        double base_value = pow(x, 4) - 5.0 * x * x +
                 pow(y, 4) - 5.0 * y * y +
-                pow(z, 4) - 5.0 * z * z + 11.8);
+                pow(z, 4) - 5.0 * z * z + 11.8;
+        
+        double sphereComponent = x*x + y*y + z*z - 3.5;
+        double blend = std::min(0.0, base_value) * 0.8 + std::min(0.0, sphereComponent) * 0.2;
+        return base_value * 0.95 + blend * 0.05;
     };
 
     auto calculateNormal = [&tangleCubeSDF](const Math::Vector3D& p) -> Math::Vector3D {
-        const double eps = 0.0001;
+        const double eps = 0.00005;
         Math::Vector3D norm = Math::Vector3D(Math::Coords{
             .Xcoords = tangleCubeSDF(p + Math::Vector3D(Math::Coords{.Xcoords = eps, .Ycoords = 0, .Zcoords = 0})) -
                      tangleCubeSDF(p - Math::Vector3D(Math::Coords{.Xcoords = eps, .Ycoords = 0, .Zcoords = 0})),
@@ -95,7 +99,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
         return norm.normalize();
     };
 
-    double boundingSize = size * 1.5;
+    double boundingSize = size * 1.6;
     Math::Vector3D boxMin = Math::Vector3D(Math::Coords{
         .Xcoords = center.X - boundingSize,
         .Ycoords = center.Y - boundingSize,
@@ -129,7 +133,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
     tMax = std::min(tMax, tmax);
 
     double t = tMin;
-    const int BINARY_STEPS = 20;
+    const int BINARY_STEPS = 32; 
     bool hit_found = false;
     double closest_t = tMax;
 
@@ -138,12 +142,10 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
         double curr_t = t + i * (tMax - tMin) / MAX_STEPS;
         Math::Vector3D p = transformedRay.origin + transformedRay.direction * curr_t - center;
         double curr_sdf = tangleCubeSDF(p);
-
         if (prev_sdf * curr_sdf < 0) {
             double t_low = curr_t - (tMax - tMin) / MAX_STEPS;
             double t_high = curr_t;
             double mid_sdf;
-
             for (int j = 0; j < BINARY_STEPS; j++) {
                 double t_mid = (t_low + t_high) * 0.5;
                 Math::Vector3D mid_p = transformedRay.origin + transformedRay.direction * t_mid - center;
@@ -173,20 +175,21 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
 
         prev_sdf = curr_sdf;
     }
-
     if (!hit_found) {
         t = tMin;
+        double min_step = EPSILON * 5.0;
         for (int i = 0; i < MAX_STEPS && t < tMax; i++) {
             Math::Vector3D p = transformedRay.origin + transformedRay.direction * t - center;
             double d = tangleCubeSDF(p);
-
             if (std::abs(d) < EPSILON) {
                 hit_found = true;
                 closest_t = t;
                 break;
             }
-            double step = std::abs(d) * 0.1;
-            step = std::max(step, EPSILON * 10.0);
+
+            double step = std::abs(d) * 0.25;
+            step = std::max(step, min_step);
+            step = std::min(step, (tMax - t) * 0.5);
 
             t += step;
         }

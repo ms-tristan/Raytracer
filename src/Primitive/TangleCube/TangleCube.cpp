@@ -80,7 +80,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
         double base_value = pow(x, 4) - 5.0 * x * x +
                 pow(y, 4) - 5.0 * y * y +
                 pow(z, 4) - 5.0 * z * z + 11.8;
-        
+
         double sphereComponent = x*x + y*y + z*z - 3.5;
         double blend = std::min(0.0, base_value) * 0.8 + std::min(0.0, sphereComponent) * 0.2;
         return base_value * 0.95 + blend * 0.05;
@@ -133,7 +133,7 @@ std::optional<HitInfo> TangleCube::hit(const Ray &ray, double tMin, double tMax)
     tMax = std::min(tMax, tmax);
 
     double t = tMin;
-    const int BINARY_STEPS = 32; 
+    const int BINARY_STEPS = 32;
     bool hit_found = false;
     double closest_t = tMax;
 

@@ -57,7 +57,7 @@ jobs:
         run: |
           sudo apt update -y && sudo apt install -y --no-install-recommends \
             cmake g++ clang clang-tidy clang-format libconfig++-dev libsfml-dev gcovr python3-pip \
-            cpplint
+            cpplint lcov
 
       - name: Build project
         run: |

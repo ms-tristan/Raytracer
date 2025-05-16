@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <utility>
 
 namespace RayTracer {
 InfiniteCone::InfiniteCone(const Math::Point3D &apex, const Math::Vector3D &axis,
@@ -161,7 +162,7 @@ double tMax) {
 
     if (projection.length() < 1e-6) {
         double u = 0.0;
-        
+    
         HitInfo info;
         info.uv = Math::Vector2D(u, v);
         info.distance = t;
@@ -175,7 +176,7 @@ double tMax) {
         }
         return info;
     }
-    
+
     projection = projection.normalize();
     double cosTheta = projection.dot(reference);
     double sinTheta = projection.dot(tangent);

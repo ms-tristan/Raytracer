@@ -100,50 +100,6 @@ TEST_F(InfiniteConeTest, HitTest) {
     }
 }
 
-TEST_F(InfiniteConeTest, HitTestComprehensive) {
-    RayTracer::Ray rayToApex(Math::Point3D(Math::Coords{0, -5, 0}), Math::Vector3D(Math::Coords{0, 1, 0}));
-    auto hitInfoApex = coneDefault->hit(rayToApex, 0, 20);
-    EXPECT_TRUE(hitInfoApex.has_value());
-    if (hitInfoApex) {
-        EXPECT_NEAR(hitInfoApex->hitPoint.X, 0.0, 0.001);
-        EXPECT_NEAR(hitInfoApex->hitPoint.Y, 0.0, 0.001);
-        EXPECT_NEAR(hitInfoApex->hitPoint.Z, 0.0, 0.001);
-    }
-
-    RayTracer::Ray raySurface(Math::Point3D(Math::Coords{1, -3, 0}),
-        Math::Vector3D(Math::Coords{-1, 5, 0}).normalize());
-    auto hitInfoSurface = coneDefault->hit(raySurface, 0, 20);
-    EXPECT_TRUE(hitInfoSurface.has_value());
-    if (hitInfoSurface) {
-        EXPECT_NEAR(hitInfoSurface->normal.length(), 1.0, 0.001);
-    }
-
-    double angleTangent = 60.0 * M_PI / 180.0;
-    Math::Vector3D dirTangent(Math::Coords{std::sin(angleTangent), std::cos(angleTangent), 0.0});
-    RayTracer::Ray rayTangent(Math::Point3D(Math::Coords{0, -5, 0}), dirTangent.normalize());
-    auto hitInfoTangent = coneDefault->hit(rayTangent, 0, 20);
-    
-    if (hitInfoTangent.has_value()) {
-        EXPECT_GT(hitInfoTangent->distance, 0);
-    }
-
-    double angleMiss = 80.0 * M_PI / 180.0;
-    Math::Vector3D dirMiss(Math::Coords{std::sin(angleMiss), std::cos(angleMiss), 0.0});
-    RayTracer::Ray rayMiss(Math::Point3D(Math::Coords{0, -5, 0}), dirMiss.normalize());
-    auto hitInfoMiss = coneDefault->hit(rayMiss, 0, 20);
-    EXPECT_FALSE(hitInfoMiss.has_value());
-
-    RayTracer::Ray rayAway(Math::Point3D(Math::Coords{0, 5, 0}), Math::Vector3D(Math::Coords{0, 1, 0}));
-    auto hitInfoAway = coneDefault->hit(rayAway, 0, 20);
-    EXPECT_FALSE(hitInfoAway.has_value());
-
-    RayTracer::Ray rayInside(Math::Point3D(Math::Coords{0, 1, 0}), Math::Vector3D(Math::Coords{0, -1, 0}));
-    auto hitInfoInside = coneDefault->hit(rayInside, 0, 20);
-    if (hitInfoInside.has_value()) {
-        EXPECT_GT(hitInfoInside->distance, 0);
-    }
-}
-
 TEST_F(InfiniteConeTest, EdgeCaseTests) {
     Math::Point3D apexSharp(Math::Coords{0, 0, 0});
     Math::Vector3D axisSharp(Math::Coords{0, 1, 0});

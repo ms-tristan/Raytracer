@@ -29,6 +29,7 @@ class ConcretePrimitive : public APrimitive {
     }
     void getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) const override {}
     std::string getTypeName() const override { return "ConcreteTestPrimitive"; }
+    Math::Point3D getPosition() const { return Math::Point3D(Math::Coords{0.0, 0.0, 0.0}); }
 };
 }
 

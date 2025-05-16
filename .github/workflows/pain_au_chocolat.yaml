@@ -103,15 +103,6 @@ jobs:
             exit 1
           fi
 
-    #   - name: Check Libraries
-    #     run: |
-    #       for lib in $(echo ${{ env.LIBRARY }} | tr "," "\n"); do
-    #         if [ ! -f "./lib/$lib" ]; then
-    #           echo "❌ Library $lib not found in ./lib/"
-    #           exit 1
-    #         else
-    #           echo "✅ Library $lib found in ./lib/"
-    #         fi
       - name: Clean up
         run: |
           rm -rf build

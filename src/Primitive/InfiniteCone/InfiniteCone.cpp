@@ -93,6 +93,9 @@ double tMax) {
         co.dot(transformedRay.direction));
     double c = oc_dot_axis * oc_dot_axis - cosAngle2 * co.dot(co);
 
+    if (std::abs(a) < 1e-6)
+        return std::nullopt;
+
     double discriminant = b * b - 4 * a * c;
     if (discriminant < 0)
         return std::nullopt;
@@ -100,6 +103,10 @@ double tMax) {
     double sqrtd = std::sqrt(discriminant);
     double t1 = (-b - sqrtd) / (2 * a);
     double t2 = (-b + sqrtd) / (2 * a);
+
+    if (t1 > t2) {
+        std::swap(t1, t2);
+    }
 
     double t = t1;
     if (t < tMin || t > tMax) {
@@ -117,7 +124,7 @@ double tMax) {
 
     Math::Vector3D normal = (hitPoint - axisPoint).normalize();
 
-    normal = normal + axis * (cosAngle / (1.0 - cosAngle));
+    normal = normal + axis * (cosAngle / (1.0 - cosAngle)) * (heightIntersect >= 0 ? 1 : -1);
     normal = normal.normalize();
 
     if (normal.dot(transformedRay.direction) > 0)
@@ -140,8 +147,7 @@ double tMax) {
 
     Math::Vector3D apexToHit = hitPoint - apex;
 
-    double v = std::fmod(heightIntersect / 10.0, 1.0);
-    if (v < 0) v += 1.0;
+    double v = std::fmod(std::abs(heightIntersect) / 10.0, 1.0);
 
     Math::Vector3D reference;
     if (std::abs(axis.X) < std::abs(axis.Y) && std::abs(axis.X) < std::abs(axis.Z)) {
@@ -150,7 +156,26 @@ double tMax) {
         reference = Math::Vector3D(Math::Coords{0, 1, 0}).cross(axis).normalize();
     }
     Math::Vector3D tangent = axis.cross(reference).normalize();
+
     Math::Vector3D projection = apexToHit - axis * (apexToHit.dot(axis) / axis.dot(axis));
+
+    if (projection.length() < 1e-6) {
+        double u = 0.0;
+        
+        HitInfo info;
+        info.uv = Math::Vector2D(u, v);
+        info.distance = t;
+        info.hitPoint = ray.origin + ray.direction * t;
+        info.normal = normal;
+        try {
+            info.primitive = std::make_shared<InfiniteCone>(*this);
+        } catch (const std::exception& e) {
+            std::cerr << "Error in InfiniteCone::hit(): " << e.what() << std::endl;
+            return std::nullopt;
+        }
+        return info;
+    }
+    
     projection = projection.normalize();
     double cosTheta = projection.dot(reference);
     double sinTheta = projection.dot(tangent);

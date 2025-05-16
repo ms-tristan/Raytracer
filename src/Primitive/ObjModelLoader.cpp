@@ -45,17 +45,16 @@ ObjModelLoader::loadObjModel(const std::string& path, const std::shared_ptr<Mate
                 std::string idxStr;
                 std::getline(tokenStream, idxStr, '/');
                 int idx = std::stoi(idxStr);
-                // Handle negative indices (relative to end of list)
                 if (idx < 0) idx = static_cast<int>(vertices.size()) + idx + 1;
-                indices.push_back(idx - 1); // OBJ is 1-based
+                indices.push_back(idx - 1);
             }
-            // Fan triangulation for faces with >3 vertices
             for (size_t i = 1; i + 1 < indices.size(); ++i) {
                 int idx0 = indices[0];
                 int idx1 = indices[i];
                 int idx2 = indices[i + 1];
                 if (idx0 >= 0 && idx1 >= 0 && idx2 >= 0 &&
-                    idx0 < (int)vertices.size() && idx1 < (int)vertices.size() && idx2 < (int)vertices.size()) {
+                    idx0 < static_cast<int>(vertices.size()) && idx1 < static_cast<int>(vertices.size())
+                        && idx2 < static_cast<int>(vertices.size())) {
                     std::map<std::string, double> params = {
                         {"v1x", vertices[idx0].X},
                         {"v1y", vertices[idx0].Y},

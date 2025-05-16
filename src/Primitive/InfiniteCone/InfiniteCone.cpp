@@ -111,17 +111,6 @@ double tMax) {
     Math::Point3D hitPoint = transformedRay.origin + transformedRay.direction * t;
     double heightIntersect = (hitPoint - apex).dot(axis);
 
-    if (heightIntersect < 0) {
-        t = t2;
-        if (t < tMin || t > tMax)
-            return std::nullopt;
-
-        hitPoint = transformedRay.origin + transformedRay.direction * t;
-        heightIntersect = (hitPoint - apex).dot(axis);
-        if (heightIntersect < 0)
-            return std::nullopt;
-    }
-
     Math::Vector3D cp = hitPoint - apex;
     double m = cp.dot(axis) / axis.dot(axis);
     Math::Point3D axisPoint = apex + axis * m;

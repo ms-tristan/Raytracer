@@ -162,7 +162,7 @@ double tMax) {
 
     if (projection.length() < 1e-6) {
         double u = 0.0;
-    
+
         HitInfo info;
         info.uv = Math::Vector2D(u, v);
         info.distance = t;

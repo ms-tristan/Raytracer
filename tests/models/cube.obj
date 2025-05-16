@@ -1,0 +1,38 @@
+# Simple cube OBJ file for testing
+# Vertices
+v -1.0 -1.0 -1.0
+v -1.0 -1.0 1.0
+v -1.0 1.0 -1.0
+v -1.0 1.0 1.0
+v 1.0 -1.0 -1.0
+v 1.0 -1.0 1.0
+v 1.0 1.0 -1.0
+v 1.0 1.0 1.0
+
+# Normals
+vn -1.0 0.0 0.0
+vn 1.0 0.0 0.0
+vn 0.0 -1.0 0.0
+vn 0.0 1.0 0.0
+vn 0.0 0.0 -1.0
+vn 0.0 0.0 1.0
+
+# Faces (triangles) with vertex/normal indices
+# Left face
+f 1//1 3//1 4//1
+f 1//1 4//1 2//1
+# Right face
+f 5//2 7//2 8//2
+f 5//2 8//2 6//2
+# Bottom face
+f 1//3 2//3 6//3
+f 1//3 6//3 5//3
+# Top face
+f 3//4 7//4 8//4
+f 3//4 8//4 4//4
+# Back face
+f 1//5 3//5 7//5
+f 1//5 7//5 5//5
+# Front face
+f 2//6 4//6 8//6
+f 2//6 8//6 6//6

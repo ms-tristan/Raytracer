@@ -15,6 +15,7 @@ add_subdirectory(KleinBottle)
 add_subdirectory(InfiniteCylinder)
 add_subdirectory(InfiniteCone)
 add_subdirectory(TangleCube)
+add_subdirectory(Triangle)
 
 
 # List primitive source files directly
@@ -30,5 +31,6 @@ set(PRIMITIVE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/APrimitive/APrimitive.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CompositePrimitive/CompositePrimitive.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PrimitiveDecorator/PrimitiveDecorator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ObjModelLoader.cpp
     PARENT_SCOPE
 )

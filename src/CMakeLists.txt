@@ -7,13 +7,13 @@ set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${INCLUDE_DIRS})
 
 # Add subdirectories for each component
+add_subdirectory(Primitive)
 add_subdirectory(Camera)
 add_subdirectory(Exception)
 add_subdirectory(IObserver)
 add_subdirectory(Light)
 add_subdirectory(Material)
 add_subdirectory(Math)
-add_subdirectory(Primitive)
 add_subdirectory(Ray)
 add_subdirectory(Rectangle3D)
 add_subdirectory(Scene)
@@ -49,10 +49,10 @@ set(CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/APrimitive/APrimitive.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/PrimitiveFactory/PrimitiveFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/CompositePrimitive/CompositePrimitive.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Primitive/ObjModelLoader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/PostProcessFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Plugin/PostProcessPluginLoader.cpp
-    # Suppression de SupersamplingPostProcess des sources du core pour le rendre vraiment plugin
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/ATexture.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/NormalMap/NormalMap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Texture/SpecularMap/SpecularMap.cpp

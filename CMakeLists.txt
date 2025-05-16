@@ -39,10 +39,26 @@ if (ENABLE_TESTS)
     add_subdirectory(tests)
 endif()
 
+# First, get a list of all plugin targets
+file(GLOB_RECURSE PLUGIN_CMAKE_FILES "${CMAKE_SOURCE_DIR}/src/*/CMakeLists.txt")
+set(PLUGIN_TARGETS "")
+foreach(PLUGIN_CMAKE ${PLUGIN_CMAKE_FILES})
+    file(READ "${PLUGIN_CMAKE}" PLUGIN_CMAKE_CONTENT)
+    string(REGEX MATCHALL "add_library\\([a-zA-Z0-9_]+ SHARED" PLUGIN_MATCHES "${PLUGIN_CMAKE_CONTENT}")
+    foreach(MATCH ${PLUGIN_MATCHES})
+        string(REGEX REPLACE "add_library\\(([a-zA-Z0-9_]+) SHARED" "\\1" PLUGIN_TARGET "${MATCH}")
+        list(APPEND PLUGIN_TARGETS ${PLUGIN_TARGET})
+    endforeach()
+endforeach()
+
+# Add custom target to copy plugins, with explicit dependencies on all plugin targets
+# This ensures the plugins are only copied after all compilations are complete
 add_custom_target(copy_plugins ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_BINARY_DIR}/plugins/
     ${CMAKE_SOURCE_DIR}/plugins/
     COMMENT "Copying plugins to root directory"
-    DEPENDS raytracer
+    DEPENDS raytracer ${PLUGIN_TARGETS}
 )
+
+add_dependencies(copy_plugins ${PLUGIN_TARGETS})

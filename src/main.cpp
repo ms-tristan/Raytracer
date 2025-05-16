@@ -99,7 +99,7 @@ void renderToPPM(const RayTracer::Scene& scene, const RayTracer::Camera& camera,
 int main(int argc, char **argv) {
     const int image_width = WIDTH;
     const int image_height = HEIGHT;
-    bool displayMode = true;
+    bool displayMode = false;
     std::string outputFile = "output.ppm";
 
     RayTracer::SceneDirector director;
@@ -115,14 +115,14 @@ int main(int argc, char **argv) {
                 sceneFile = argv[++i];
             } else if (arg == "--output" && i + 1 < argc) {
                 outputFile = argv[++i];
-            } else if (arg == "--no-display") {
-                displayMode = false;
+            } else if (arg == "--graphic") {
+                displayMode = true;
             } else if (arg == "--help") {
                 std::cout << "Usage: ./raytracer [options]\n"
                           << "Options:\n"
                           << "  --file <filename>    Specify scene file (default: scenes/default_scene.cfg)\n"
                           << "  --output <filename>  Specify output PPM file (default: output.ppm)\n"
-                          << "  --no-display         Render to PPM file without displaying window\n"
+                          << "  --graphic            Render in a window (doesn't create a .ppm)\n"
                           << "  --help               Display this help message\n";
                 return 0;
             } else if (i == 1 && arg[0] != '-') {
@@ -135,7 +135,9 @@ int main(int argc, char **argv) {
         if (!scene)
             throw RayTracer::SceneImportException(sceneFile, "Scene creation failed without specific error");
         auto camera = std::make_shared<RayTracer::Camera>(scene->getCamera());
-        renderToPPM(*scene, *camera, image_width, image_height, outputFile);
+
+        if (!displayMode)
+            renderToPPM(*scene, *camera, image_width, image_height, outputFile);
 
         if (displayMode) {
             auto displayManager = std::make_shared<RayTracer::SFMLDisplayManager>();

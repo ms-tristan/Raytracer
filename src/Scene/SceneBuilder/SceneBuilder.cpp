@@ -13,6 +13,7 @@
 #include "SceneBuilder.hpp"
 #include "Primitive/PrimitiveFactory/PrimitiveFactory.hpp"
 #include "Primitive/Plugin/PluginLoader.hpp"
+#include "Primitive/ObjModelLoader.hpp"
 
 namespace RayTracer {
 
@@ -168,7 +169,27 @@ SceneBuilder& SceneBuilder::addPostProcess(const std::shared_ptr<IPostProcess>& 
     return *this;
 }
 
+SceneBuilder& SceneBuilder::addObjModel(const std::string& path, const std::shared_ptr<Material>& material) {
+    auto composite = ObjModelLoader::loadObjModel(path, material);
+    addPrimitive(composite);
+    return *this;
+}
+
+SceneBuilder& SceneBuilder::addObjModel(const std::string& path, const std::shared_ptr<Material>& material,
+                                        const Math::Vector3D& position, const Math::Vector3D& rotation, double scale) {
+    auto composite = ObjModelLoader::loadObjModel(path, material);
+
+    if (rotation.X != 0.0) composite->rotateX(rotation.X);
+    if (rotation.Y != 0.0) composite->rotateY(rotation.Y);
+    if (rotation.Z != 0.0) composite->rotateZ(rotation.Z);
+    composite->translate(position);
+    addPrimitive(composite);
+    return *this;
+}
+
 std::unique_ptr<Scene> SceneBuilder::build() {
+    if (scene)
+        scene->setObjModelInfos(objModelInfos);
     return std::move(scene);
 }
 

@@ -22,6 +22,7 @@
   #include "Ray/Ray.hpp"
   #include "Shader/IShader.hpp"
   #include "PostProcess/IPostProcess.hpp"
+  #include "Scene/SceneDirector/ObjModelInfo.hpp"
 
 namespace RayTracer {
 /**
@@ -39,6 +40,7 @@ class Scene {
     static constexpr int _maxReflectionDepth = 5;
     int _imageWidth = WIDTH;
     int _imageHeight = HEIGHT;
+    std::vector<RayTracer::ObjModelInfo> objModelInfos;
 
     Math::Vector3D createTangentVector(const Math::Vector3D &normal) const;
     void applyDisplacementMapping(std::optional<HitInfo> &hit,
@@ -257,6 +259,18 @@ class Scene {
      * This improves rendering performance by only considering visible primitives
      */
     void updatePrimitiveCache();
+
+    /**
+     * @brief Sets the obj model infos for the scene
+     * @param infos The obj model infos to set
+     */
+    void setObjModelInfos(const std::vector<RayTracer::ObjModelInfo>& infos) { objModelInfos = infos; }
+
+    /**
+     * @brief Gets the obj model infos in the scene
+     * @return A vector of obj model infos
+     */
+    const std::vector<RayTracer::ObjModelInfo>& getObjModelInfos() const { return objModelInfos; }
 };
 }  // namespace RayTracer
 

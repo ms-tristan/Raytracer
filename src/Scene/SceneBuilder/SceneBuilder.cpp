@@ -188,6 +188,8 @@ SceneBuilder& SceneBuilder::addObjModel(const std::string& path, const std::shar
 }
 
 std::unique_ptr<Scene> SceneBuilder::build() {
+    if (scene)
+        scene->setObjModelInfos(objModelInfos);
     return std::move(scene);
 }
 

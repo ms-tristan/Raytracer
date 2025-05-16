@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <map>
+#include <vector>
 #include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
 #include "Light/AmbientLight/AmbientLight.hpp"
@@ -20,7 +21,7 @@
 #include "Material/Material.hpp"
 #include "Shader/IShader.hpp"
 #include "PostProcess/IPostProcess.hpp"
-
+#include "Scene/SceneDirector/ObjModelInfo.hpp"
 
 namespace RayTracer {
 
@@ -30,6 +31,7 @@ class SceneBuilder {
  private:
     std::unique_ptr<Scene> scene;
     void* sceneConfigParser = nullptr;
+    std::vector<RayTracer::ObjModelInfo> objModelInfos;
 
  public:
     SceneBuilder();
@@ -66,6 +68,9 @@ class SceneBuilder {
     SceneBuilder& addObjModel(const std::string& path, const std::shared_ptr<Material>& material);
     SceneBuilder& addObjModel(const std::string& path, const std::shared_ptr<Material>& material,
                              const Math::Vector3D& position, const Math::Vector3D& rotation, double scale = 1.0);
+
+    void addObjModelInfo(const RayTracer::ObjModelInfo& info) { objModelInfos.push_back(info); }
+    const std::vector<RayTracer::ObjModelInfo>& getObjModelInfos() const { return objModelInfos; }
 
     void setSceneConfigParser(void* parser) { sceneConfigParser = parser; }
     void* getSceneConfigParser() const { return sceneConfigParser; }

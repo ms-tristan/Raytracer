@@ -511,12 +511,13 @@ void Scene::getLibConfigParams(std::shared_ptr<libconfig::Setting> setting) cons
     std::map<std::string, libconfig::Setting*> primitiveTypes;
 
     for (const auto& primitive : getPrimitives()) {
-        if (primitiveTypes.find(primitive->getTypeName()) == primitiveTypes.end()) {
-            primitiveTypes[primitive->getTypeName()] = &primitives.add(
-                primitive->getTypeName(), libconfig::Setting::TypeList);
-        }
+        std::string typeName = primitive->getTypeName();
+        if (typeName == "composites")
+            continue;
+        if (primitiveTypes.find(typeName) == primitiveTypes.end())
+            primitiveTypes[typeName] = &primitives.add(typeName, libconfig::Setting::TypeList);
 
-        libconfig::Setting& primitiveSetting = *primitiveTypes[primitive->getTypeName()];
+        libconfig::Setting& primitiveSetting = *primitiveTypes[typeName];
         libconfig::Setting& primitiveGroup = primitiveSetting.add(libconfig::Setting::TypeGroup);
         std::shared_ptr<libconfig::Setting> primitiveGroupPtr(&primitiveGroup, [](libconfig::Setting*){});
         primitive->getLibConfigParams(primitiveGroupPtr);

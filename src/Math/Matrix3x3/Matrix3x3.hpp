@@ -1,5 +1,3 @@
-// filepath: /home/alex/Raytracer/src/Math/Matrix3x3/Matrix3x3.hpp
-// Copyright <2025> Epitech
 /*
 ** EPITECH PROJECT, 2025
 ** Raytracer

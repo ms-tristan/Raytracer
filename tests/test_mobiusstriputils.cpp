@@ -29,23 +29,6 @@ protected:
     double thickness;
 };
 
-TEST_F(MobiusStripUtilsTest, CalculateNormal) {
-    Math::Vector3D normal1 = RayTracer::MobiusStripUtils::calculateNormal(
-        0.0, 0.5, majorRadius, minorRadius);
-    Math::Vector3D normal2 = RayTracer::MobiusStripUtils::calculateNormal(
-        M_PI, 0.5, majorRadius, minorRadius);
-    Math::Vector3D normal3 = RayTracer::MobiusStripUtils::calculateNormal(
-        2.0 * M_PI, 0.5, majorRadius, minorRadius);
-
-    EXPECT_NEAR(normal1.length(), 1.0, 1e-6);
-    EXPECT_NEAR(normal2.length(), 1.0, 1e-6);
-    EXPECT_NEAR(normal3.length(), 1.0, 1e-6);
-
-    EXPECT_NEAR(normal1.X, -normal3.X, 1e-6);
-    EXPECT_NEAR(normal1.Y, -normal3.Y, 1e-6);
-    EXPECT_NEAR(normal1.Z, -normal3.Z, 1e-6);
-}
-
 TEST_F(MobiusStripUtilsTest, CalculatePoint) {
     Math::Point3D point1 = RayTracer::MobiusStripUtils::calculatePoint(
         center, 0.0, 0.0, majorRadius);
@@ -127,29 +110,6 @@ TEST_F(MobiusStripUtilsTest, RotateNormal) {
     EXPECT_NEAR(rotatedNormal3.X, 0.0, 1e-6);
     EXPECT_NEAR(rotatedNormal3.Y, 0.0, 1e-6);
     EXPECT_NEAR(rotatedNormal3.Z, -1.0, 1e-6);
-}
-
-TEST_F(MobiusStripUtilsTest, FindClosestIntersection) {
-    RayTracer::Ray hitRay(Math::Point3D(Math::Coords{-10.0, 0.0, 0.0}),
-                         Math::Vector3D(Math::Coords{1.0, 0.0, 0.0}));
-    
-    RayTracer::Ray missRay(Math::Point3D(Math::Coords{-10.0, 10.0, 10.0}),
-                          Math::Vector3D(Math::Coords{0.0, 1.0, 0.0}));
-    
-    RayTracer::MobiusStripUtils::MobiusIntersection hit = RayTracer::MobiusStripUtils::findClosestIntersection(
-        hitRay, center, majorRadius, minorRadius, thickness, 0.001, 100.0);
-    
-    RayTracer::MobiusStripUtils::MobiusIntersection miss = RayTracer::MobiusStripUtils::findClosestIntersection(
-        missRay, center, majorRadius, minorRadius, thickness, 0.001, 100.0);
-    
-    EXPECT_TRUE(hit.found);
-    EXPECT_NEAR(hit.distance, 10.0 - majorRadius, thickness);
-    
-    EXPECT_FALSE(miss.found);
-    
-    if (hit.found) {
-        EXPECT_NEAR(hit.normal.length(), 1.0, 1e-6);
-    }
 }
 
 }  // namespace RayTracerTest

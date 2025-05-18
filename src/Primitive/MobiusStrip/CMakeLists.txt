@@ -15,5 +15,11 @@ set_target_properties(Mobius_plugin PROPERTIES
     PREFIX ""
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/primitives")
 
+# Add coverage options if enabled
+if(ENABLE_COVERAGE)
+    target_compile_options(Mobius_plugin PRIVATE -O0 -g --coverage -fprofile-arcs -ftest-coverage)
+    target_link_libraries(Mobius_plugin PRIVATE --coverage)
+endif()
+
 # Add only core sources to the Mobius_SOURCES variable
 set(Mobius_SOURCES ${MOBIUS_CORE_SOURCES} PARENT_SCOPE)

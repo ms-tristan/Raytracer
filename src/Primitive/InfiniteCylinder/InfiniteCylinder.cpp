@@ -108,6 +108,8 @@ double tMin, double tMax) {
         normal = normal * -1.0;
     }
 
+    Math::Vector3D untransformedNormal = normal;
+
     if (rotationX != 0.0 || rotationY != 0.0 || rotationZ != 0.0) {
         if (rotationX != 0.0) {
             RayTracer::Rotate rotateX("x", rotationX);
@@ -121,7 +123,14 @@ double tMin, double tMax) {
             RayTracer::Rotate rotateZ("z", rotationZ);
             normal = rotateZ.applyToVector(normal);
         }
+
+        double dotProduct = normal.dot(axis);
+        if (std::abs(dotProduct) > 0.0001) {
+            Math::Vector3D parallelComponent = axis * dotProduct;
+            normal = (normal - parallelComponent).normalize();
+        }
     }
+
     double v = std::fmod(std::abs(heightIntersect), 1.0);
     Math::Vector3D reference;
     if (std::abs(axis.X) < std::abs(axis.Y) && std::abs(axis.X) < std::abs(axis.Z)) {

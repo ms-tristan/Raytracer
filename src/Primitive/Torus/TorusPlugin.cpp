@@ -11,10 +11,13 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <limits>
 #include "Primitive/Plugin/IPrimitivePlugin.hpp"
 #include "Primitive/Torus/Torus.hpp"
 #include "Math/Point3D/Point3D.hpp"
 #include "Math/Vector3D/Vector3D.hpp"
+#include "Exception/ValueRangeException.hpp"
+#include "Exception/ConfigParseException.hpp"
 
 namespace RayTracer {
 
@@ -23,7 +26,11 @@ class TorusPlugin : public IPrimitivePlugin {
     ~TorusPlugin() override = default;
 
     std::string getTypeName() const override {
-        return Torus::getTypeNameStatic();
+        return getTypeNameStatic();
+    }
+
+    static std::string getTypeNameStatic() {
+        return "torus";
     }
 
     std::shared_ptr<IPrimitive> createPrimitive(
@@ -32,8 +39,7 @@ class TorusPlugin : public IPrimitivePlugin {
         auto requiredParams = getRequiredParameters();
         for (const auto& param : requiredParams) {
             if (params.find(param) == params.end()) {
-                throw std::runtime_error("Missing required parameter: "
-                    + param);
+                throw ConfigParseException("Missing required parameter: " + param);
             }
         }
 
@@ -42,6 +48,7 @@ class TorusPlugin : public IPrimitivePlugin {
             params.at("y"),
             params.at("z")
         };
+
         Math::Coords axisCoords {
             params.at("ax"),
             params.at("ay"),
@@ -52,6 +59,13 @@ class TorusPlugin : public IPrimitivePlugin {
         Math::Vector3D axis(axisCoords);
         double majorRadius = params.at("major_radius");
         double minorRadius = params.at("minor_radius");
+
+        if (majorRadius <= 0)
+            throw ValueRangeException("Torus major radius", majorRadius, 0.0, std::numeric_limits<double>::max());
+        if (minorRadius <= 0)
+            throw ValueRangeException("Torus minor radius", minorRadius, 0.0, std::numeric_limits<double>::max());
+        if (minorRadius >= majorRadius)
+            throw ValueRangeException("Torus minor radius", minorRadius, 0.0, majorRadius);
 
         return std::make_shared<Torus>(center, axis, majorRadius, minorRadius, material);
     }

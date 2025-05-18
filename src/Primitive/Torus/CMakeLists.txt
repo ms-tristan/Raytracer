@@ -12,4 +12,10 @@ set_target_properties(torus_plugin PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/primitives"
 )
 
+# Add coverage options if enabled
+if(ENABLE_COVERAGE)
+    target_compile_options(torus_plugin PRIVATE -O0 -g --coverage -fprofile-arcs -ftest-coverage)
+    target_link_libraries(torus_plugin PRIVATE --coverage)
+endif()
+
 set(TORUS_SOURCES ${TORUS_CORE_SOURCES} PARENT_SCOPE)

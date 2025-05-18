@@ -20,3 +20,9 @@ set_target_properties(fractal_plugin PROPERTIES
     SUFFIX ".so"
     OUTPUT_NAME "fractal_plugin"
 )
+
+# Add coverage options if enabled
+if(ENABLE_COVERAGE)
+    target_compile_options(fractal_plugin PRIVATE -O0 -g --coverage -fprofile-arcs -ftest-coverage)
+    target_link_libraries(fractal_plugin PRIVATE --coverage)
+endif()

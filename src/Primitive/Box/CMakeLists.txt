@@ -13,5 +13,11 @@ set_target_properties(box_plugin PROPERTIES
     PREFIX "" 
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/primitives")
 
+# Add coverage options if enabled
+if(ENABLE_COVERAGE)
+    target_compile_options(box_plugin PRIVATE -O0 -g --coverage -fprofile-arcs -ftest-coverage)
+    target_link_libraries(box_plugin PRIVATE --coverage)
+endif()
+
 # Add only core sources to the BOX_SOURCES variable
 set(BOX_SOURCES ${BOX_CORE_SOURCES} PARENT_SCOPE)

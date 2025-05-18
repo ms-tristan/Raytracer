@@ -5,6 +5,7 @@
 ** File description:
 ** Mobius Strip Utils implementation
 */
+
 #include "Primitive/MobiusStrip/Utils/MobiusStripUtils.hpp"
 #include "Transformation/Rotate/Rotate.hpp"
 

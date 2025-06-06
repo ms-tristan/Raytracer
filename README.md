@@ -136,3 +136,4 @@ Made as part of the Epitech B-OOP-400 project by :
 - Samuel Tesson <samuel.tesson@epitech.eu>
 - Clément Talneau <clement.talneau@epitech.eu>
 - Tristan Masse <tristan.masse@epitech.eu>
+- Alex Augereau <alex.augereau@epitech.eu>

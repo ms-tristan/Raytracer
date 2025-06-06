@@ -66,9 +66,11 @@ cd ..
 
 ### 🎨 Run the raytracer
 ```bash
-./raytracer <scene_file.cfg>
+./raytracer <scene_file.cfg> [--graphic]
 ```
-Output will be saved as a .ppm image.
+In graphic mode, a window will open displaying the scene. You can move in it with ZQSD, turn with the arrows,
+and move object by dragging them with the mouse.
+Else output will be saved as a .ppm image.
 
 ### 📜 Example scene file
 Scene files are written in libconfig++ format. Example:
